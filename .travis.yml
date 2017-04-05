@@ -1,0 +1,25 @@
+language: java
+
+services:
+  - docker
+
+jdk:
+  - oraclejdk8
+  - oraclejdk7
+
+env:
+  global:
+    - DOCKER_CFG=$HOME/.docker/config.json
+    - DOCKER_REPO="viniciusam/oracledb"
+    - UTPLSQL_VERSION="v3.0.0-beta"
+    - UTPLSQL_FILE="utPLSQLv3.0.0.562-beta"
+  matrix:
+    - ORACLE_VERSION="11g-xe-r2" CONNECTION_STR="127.0.0.1:1521/XE" DOCKER_OPTIONS="--shm-size=1g"
+
+cache:
+  directories:
+    - $DOCKER_CFG
+
+install:
+  - bash .travis/start_db.sh
+  - bash .travis/install_utplsql.sh
