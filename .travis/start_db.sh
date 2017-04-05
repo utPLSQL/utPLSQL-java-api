@@ -2,7 +2,7 @@
 set -e
 
 # If docker credentials are not cached, do the login.
-if [ ! -f $DOCKER_CFG ]; then
+if [ ! -f $DOCKER_CFG/config.json ]; then
     docker login -u "$DOCKER_USER" -p "$DOCKER_PASSWORD"
 else
     echo "Using docker login from cache..."

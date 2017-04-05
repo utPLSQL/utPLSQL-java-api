@@ -9,7 +9,7 @@ jdk:
 
 env:
   global:
-    - DOCKER_CFG=$HOME/.docker/config.json
+    - DOCKER_CFG=$HOME/.docker
     - DOCKER_REPO="viniciusam/oracledb"
     - UTPLSQL_VERSION="v3.0.0-beta"
     - UTPLSQL_FILE="utPLSQLv3.0.0.562-beta"
