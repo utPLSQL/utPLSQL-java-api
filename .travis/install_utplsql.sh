@@ -8,11 +8,8 @@ curl -L -O "https://github.com/utPLSQL/utPLSQL/releases/download/$UTPLSQL_VERSIO
 cat > install.sh.tmp <<EOF
 tar -xzf $UTPLSQL_FILE.tar.gz
 rm $UTPLSQL_FILE.tar.gz
-
 cd /$UTPLSQL_FILE/source
-
-sqlplus -S -L system/oracle@//$CONNECTION_STR @install_headless.sql
-sqlplus -S -L system/oracle@//$CONNECTION_STR @install.sql ut3
+sqlplus -S -L sys/oracle@//$CONNECTION_STR AS SYSDBA @install_headless.sql
 EOF
 
 # Copy utPLSQL files to the container and install it.
