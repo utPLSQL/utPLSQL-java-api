@@ -21,6 +21,7 @@ cache:
     - $DOCKER_CFG
 
 install:
+  - bash .travis/maven_cfg.sh
   - bash .travis/start_db.sh
   - bash .travis/install_utplsql.sh
 
