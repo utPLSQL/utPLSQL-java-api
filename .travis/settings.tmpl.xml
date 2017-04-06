@@ -26,8 +26,8 @@ under the License.
     <servers>
         <server>
             <id>maven.oracle.com</id>
-            <username>###USERNAME###</username>
-            <password>###PASSWORD###</password>
+            <username>###ORACLE_OTN_USER###</username>
+            <password>###ORACLE_OTN_PASSWORD###</password>
             <configuration>
                 <basicAuthScope>
                     <host>ANY</host>

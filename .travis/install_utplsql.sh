@@ -1,5 +1,5 @@
 #!/bin/bash
-set -e
+set -ev
 
 # Download the specified version of utPLSQL.
 curl -L -O "https://github.com/utPLSQL/utPLSQL/releases/download/$UTPLSQL_VERSION/$UTPLSQL_FILE.tar.gz"

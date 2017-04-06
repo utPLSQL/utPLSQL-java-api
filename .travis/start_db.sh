@@ -1,5 +1,5 @@
 #!/bin/bash
-set -e
+set -ev
 
 # If docker credentials are not cached, do the login.
 if [ ! -f $DOCKER_CFG/config.json ]; then

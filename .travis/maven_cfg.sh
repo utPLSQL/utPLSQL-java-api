@@ -1,9 +1,10 @@
 #!/bin/bash
-set -e
+set -ev
 cd $(dirname $(readlink -f $0))
 
 if [ "$ORACLE_OTN_USER" == "" ] || [ "$ORACLE_OTN_PASSWORD" == "" ]; then
     echo "Oracle OTN username/password not specified."
+    exit 1
 fi
 
 MAVEN_SETTINGS=$HOME/.m2/settings.xml
