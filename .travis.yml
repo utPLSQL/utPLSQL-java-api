@@ -25,4 +25,4 @@ install:
   - bash .travis/install_utplsql.sh
 
 script:
-  - test true
+  - mvn test -B
