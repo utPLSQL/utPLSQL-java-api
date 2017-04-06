@@ -11,6 +11,7 @@ env:
   global:
     - DOCKER_CFG=$HOME/.docker
     - DOCKER_REPO="viniciusam/oracledb"
+    - MAVEN_SETTINGS=$HOME/.m2/settings.xml # TODO: Cache?
     - UTPLSQL_VERSION="v3.0.0-beta"
     - UTPLSQL_FILE="utPLSQLv3.0.0.562-beta"
   matrix:
@@ -26,4 +27,4 @@ install:
   - bash .travis/install_utplsql.sh
 
 script:
-  - mvn test -B
+  - mvn --settings $MAVEN_SETTINGS test -B # TODO: Why is not working with settings on user folder?
