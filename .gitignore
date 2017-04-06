@@ -1,5 +1,4 @@
 # IntelliJ
-*.iml
 .idea/workspace.xml
 .idea/libraries/
 

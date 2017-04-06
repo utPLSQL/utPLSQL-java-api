@@ -4,14 +4,15 @@ services:
   - docker
 
 jdk:
-  - oraclejdk8
   - oraclejdk7
+  # - oraclejdk8
 
 env:
   global:
     - DOCKER_CFG=$HOME/.docker
     - DOCKER_REPO="viniciusam/oracledb"
-    - MAVEN_SETTINGS=$HOME/.m2/settings.xml # TODO: Cache?
+    - MAVEN_HOME=$HOME/.m2
+    - MAVEN_SETTINGS=$HOME/settings.xml
     - UTPLSQL_VERSION="v3.0.0-beta"
     - UTPLSQL_FILE="utPLSQLv3.0.0.562-beta"
   matrix:
@@ -20,6 +21,7 @@ env:
 cache:
   directories:
     - $DOCKER_CFG
+    - $MAVEN_HOME
 
 install:
   - bash .travis/maven_cfg.sh
@@ -27,4 +29,4 @@ install:
   - bash .travis/install_utplsql.sh
 
 script:
-  - mvn --settings $MAVEN_SETTINGS test -B # TODO: Why is not working with settings on user folder?
+  - mvn --settings $MAVEN_SETTINGS test -B
