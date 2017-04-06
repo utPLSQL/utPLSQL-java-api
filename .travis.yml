@@ -23,3 +23,6 @@ cache:
 install:
   - bash .travis/start_db.sh
   - bash .travis/install_utplsql.sh
+
+script:
+  - test true
