@@ -3,8 +3,9 @@ set -ev
 cd $(dirname $(readlink -f $0))
 
 mavenSettings=$HOME/.m2/settings.xml
+mavenCached=$HOME/.m2/.cached
 
-if [ -d $mavenSettings ]; then
+if [ -f $mavenCached ]; then
     echo "Using cached maven user config..."
     exit 0
 fi
@@ -14,19 +15,14 @@ if [ "$ORACLE_OTN_USER" == "" ] || [ "$ORACLE_OTN_PASSWORD" == "" ]; then
     exit 1
 fi
 
-# If not cached, download and install maven.
-# Then create the settings file, with username/password for oracle server.
-# curl -L -O "http://mirror.nbtelecom.com.br/apache/maven/maven-3/3.3.9/binaries/apache-maven-3.3.9-bin.tar.gz"
-# tar -xzf apache-maven-3.3.9-bin.tar.gz
-# mv apache-maven-3.3.9 $MAVEN_HOME
-# rm apache-maven-3.3.9-bin.tar.gz
-
+# Download wagon-http recommended by Oracle.
+# On maven latest version this is not needed, but travis doesn't have it.
 curl -L -O "http://central.maven.org/maven2/org/apache/maven/wagon/wagon-http/2.8/wagon-http-2.8-shaded.jar"
 sudo mv wagon-http-2.8-shaded.jar $MAVEN_HOME/lib/ext/
 
-# MAVEN_CFG=$MAVEN_HOME/conf/settings.xml
+# Create the settings file with oracle server config.
 cp settings.tmpl.xml $mavenSettings
 sed -i -e "s|###USERNAME###|$ORACLE_OTN_USER|g" $mavenSettings
 sed -i -e "s|###PASSWORD###|$ORACLE_OTN_PASSWORD|g" $mavenSettings
 
-# $MAVEN_HOME/bin/mvn -v
+touch $mavenCached

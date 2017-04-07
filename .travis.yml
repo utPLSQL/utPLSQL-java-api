@@ -6,13 +6,12 @@ services:
 
 jdk:
   - oraclejdk7
-  # - oraclejdk8
+  - oraclejdk8
 
 env:
   global:
     - DOCKER_CFG=$HOME/.docker
     - DOCKER_REPO="viniciusam/oracledb"
-    # - MAVEN_HOME=$HOME/apache-maven
     - MAVEN_HOME=/usr/local/maven
     - UTPLSQL_VERSION="v3.0.0-beta"
     - UTPLSQL_FILE="utPLSQLv3.0.0.562-beta"
@@ -23,12 +22,12 @@ cache:
   directories:
     - $DOCKER_CFG
     - $HOME/.m2
-    - $MAVEN_HOME/lib/ext
+    - $MAVEN_HOME/lib/ext # Used to cache wagon-http lib.
 
 install:
   - bash .travis/maven_cfg.sh
-  # - bash .travis/start_db.sh
-  # - bash .travis/install_utplsql.sh
+  - bash .travis/start_db.sh
+  - bash .travis/install_utplsql.sh
 
 script:
   - mvn test -B
