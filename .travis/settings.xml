@@ -48,9 +48,4 @@ under the License.
         </server>
     </servers>
 
-    <pluginGroups></pluginGroups>
-    <proxies></proxies>
-    <mirrors></mirrors>
-    <profiles></profiles>
-
 </settings>

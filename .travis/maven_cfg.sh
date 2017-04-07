@@ -11,3 +11,10 @@ fi
 # cp settings.tmpl.xml $MAVEN_SETTINGS
 # sed -i -e "s|###USERNAME###|$ORACLE_OTN_USER|g" $MAVEN_SETTINGS
 # sed -i -e "s|###PASSWORD###|$ORACLE_OTN_PASSWORD|g" $MAVEN_SETTINGS
+
+echo $M2_HOME
+echo $JAVA_HOME
+ls -la $M2_HOME
+ls -la $MAVEN_HOME
+
+sudo find / -type d -iname "maven"

@@ -1,3 +1,4 @@
+sudo: required
 language: java
 
 services:
@@ -25,8 +26,8 @@ cache:
 
 install:
   - bash .travis/maven_cfg.sh
-  - bash .travis/start_db.sh
-  - bash .travis/install_utplsql.sh
+  # - bash .travis/start_db.sh
+  # - bash .travis/install_utplsql.sh
 
 script:
   - mvn --settings $MAVEN_SETTINGS test -B
