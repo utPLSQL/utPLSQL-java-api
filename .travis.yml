@@ -12,7 +12,8 @@ env:
   global:
     - DOCKER_CFG=$HOME/.docker
     - DOCKER_REPO="viniciusam/oracledb"
-    - MAVEN_HOME=$HOME/apache-maven
+    # - MAVEN_HOME=$HOME/apache-maven
+    - MAVEN_HOME=/usr/local/maven
     - UTPLSQL_VERSION="v3.0.0-beta"
     - UTPLSQL_FILE="utPLSQLv3.0.0.562-beta"
   matrix:
@@ -21,7 +22,8 @@ env:
 cache:
   directories:
     - $DOCKER_CFG
-    - $MAVEN_HOME
+    - $HOME/.m2
+    - $MAVEN_HOME/lib/ext
 
 install:
   - bash .travis/maven_cfg.sh
@@ -29,4 +31,4 @@ install:
   # - bash .travis/install_utplsql.sh
 
 script:
-  - $MAVEN_HOME/bin/mvn test -B
+  - mvn test -B
