@@ -12,7 +12,7 @@ env:
     - DOCKER_CFG=$HOME/.docker
     - DOCKER_REPO="viniciusam/oracledb"
     - MAVEN_HOME=$HOME/.m2
-    - MAVEN_SETTINGS=$HOME/settings.xml
+    - MAVEN_SETTINGS=.travis/settings.xml
     - UTPLSQL_VERSION="v3.0.0-beta"
     - UTPLSQL_FILE="utPLSQLv3.0.0.562-beta"
   matrix:
