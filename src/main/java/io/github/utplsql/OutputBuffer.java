@@ -20,17 +20,17 @@ public final class OutputBuffer {
         ResultSet resultSet = null;
         try {
             callableStatement = UTPLSQL.getConnection()
-                    .prepareCall("BEGIN :lines := ut_output_buffer.get_lines_cursor(:reporter_id); END;");
+                    .prepareCall("BEGIN ? := ut_output_buffer.get_lines_cursor(?); END;");
 
-            callableStatement.registerOutParameter(":lines", OracleTypes.CURSOR);
-            callableStatement.setString(":reporter_id", reporterId);
+            callableStatement.registerOutParameter(1, OracleTypes.CURSOR);
+            callableStatement.setString(2, reporterId);
             callableStatement.execute();
 
-            resultSet = (ResultSet) callableStatement.getObject(":lines");
+            resultSet = (ResultSet) callableStatement.getObject(1);
 
             List<String> outputLines = new ArrayList<>();
             while (resultSet.next()) {
-                outputLines.add(resultSet.getString(0));
+                outputLines.add(resultSet.getString("text"));
             }
             return outputLines;
         } finally {

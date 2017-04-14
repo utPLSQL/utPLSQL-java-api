@@ -7,7 +7,7 @@ package io.github.utplsql.types;
 public enum CustomTypes {
     // Object names must be upper case.
     UT_DOCUMENTATION_REPORTER("UT_DOCUMENTATION_REPORTER"),
-    UT_VARCHAF2_LIST("UT_VARCHAF2_LIST");
+    UT_VARCHAF2_LIST("UT_VARCHAR2_LIST");
 
     private String typeName;
 

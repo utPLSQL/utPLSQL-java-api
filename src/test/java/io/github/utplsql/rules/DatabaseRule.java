@@ -10,7 +10,8 @@ public class DatabaseRule extends ExternalResource {
 
     @Override
     protected void before() throws Throwable {
-        UTPLSQL.init("jdbc:oracle:thin:@docker:1521:xe", "app", "app");
+        // TODO: Options file.
+        UTPLSQL.init("jdbc:oracle:thin:@127.0.0.1:1521:xe", "ut3", "ut3");
     }
 
     @Override

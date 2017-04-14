@@ -7,7 +7,6 @@ import org.junit.Assert;
 import org.junit.ClassRule;
 import org.junit.Test;
 
-import java.sql.Connection;
 import java.sql.SQLException;
 import java.util.List;
 
@@ -22,19 +21,17 @@ public class OutputBufferTest {
     @Test
     public void getLinesFromOutputBuffer() {
         try {
-            Connection conn = UTPLSQL.getConnection();
-            conn.setAutoCommit(false);
-
             BaseReporter reporter = new DocumentationReporter();
             reporter.setReporterId(UTPLSQL.newSysGuid());
             TestRunner.run("", reporter);
 
             List<String> outputLines = OutputBuffer.getAllLines(reporter.getReporterId());
-            for (int i = 0; i < outputLines.size(); i++) {
-                System.out.println(outputLines.get(0));
-            }
 
-            conn.commit();
+            // Debug
+            System.out.println("Reporter ID: " + reporter.getReporterId());
+            for (int i = 0; i < outputLines.size(); i++) {
+                System.out.println(outputLines.get(i));
+            }
         } catch (SQLException e) {
             Assert.fail(e.getMessage());
         }

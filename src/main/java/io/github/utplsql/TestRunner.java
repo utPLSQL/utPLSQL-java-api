@@ -16,7 +16,7 @@ public final class TestRunner {
         CallableStatement callableStatement = null;
         try {
             callableStatement = UTPLSQL.getConnection()
-                    .prepareCall("BEGIN ut.run(); END;");
+                    .prepareCall("BEGIN ut_runner.run(); END;");
             callableStatement.execute();
         } finally {
             if (callableStatement != null)
@@ -32,7 +32,7 @@ public final class TestRunner {
         CallableStatement callableStatement = null;
         try {
             callableStatement = UTPLSQL.getConnection()
-                    .prepareCall("BEGIN ut.run(:path, :reporter); END;");
+                    .prepareCall("BEGIN ut_runner.run(:path, :reporter); END;");
             callableStatement.setString(":path", path);
             callableStatement.setObject(":reporter", reporter);
             callableStatement.execute();
