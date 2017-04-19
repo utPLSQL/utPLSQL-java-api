@@ -1,0 +1,33 @@
+sudo: required
+language: java
+
+services:
+  - docker
+
+jdk:
+#  - oraclejdk7
+  - oraclejdk8
+
+env:
+  global:
+    - DOCKER_CFG=$HOME/.docker
+    - DOCKER_REPO="viniciusam/oracledb"
+    - MAVEN_HOME=/usr/local/maven
+    - UTPLSQL_VERSION="v3.0.0-beta"
+    - UTPLSQL_FILE="utPLSQLv3.0.0.562-beta"
+  matrix:
+    - ORACLE_VERSION="11g-xe-r2" CONNECTION_STR="127.0.0.1:1521/XE" DOCKER_OPTIONS="--shm-size=1g"
+
+cache:
+  directories:
+    - $DOCKER_CFG
+    - $HOME/.m2
+    - $MAVEN_HOME/lib/ext # Used to cache wagon-http lib.
+
+install:
+  - bash .travis/maven_cfg.sh
+  - bash .travis/start_db.sh
+  - bash .travis/install_utplsql.sh
+
+script:
+  - mvn test -B
