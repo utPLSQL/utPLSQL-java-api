@@ -5,7 +5,7 @@ services:
   - docker
 
 jdk:
-  - oraclejdk7
+#  - oraclejdk7
   - oraclejdk8
 
 env:

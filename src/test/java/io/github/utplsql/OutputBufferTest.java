@@ -18,17 +18,48 @@ public class OutputBufferTest {
     @ClassRule
     public static final DatabaseRule sInitialization = new DatabaseRule();
 
+    private BaseReporter currentReporter = null;
+
+    public BaseReporter createReporter() throws SQLException {
+        BaseReporter reporter = new DocumentationReporter();
+        reporter.setReporterId(UTPLSQL.newSysGuid());
+        System.out.println("Reporter ID: " + reporter.getReporterId());
+        return reporter;
+    }
+
     @Test
     public void getLinesFromOutputBuffer() {
         try {
-            BaseReporter reporter = new DocumentationReporter();
-            reporter.setReporterId(UTPLSQL.newSysGuid());
-            TestRunner.run("", reporter);
+            final BaseReporter reporter = createReporter();
+//            new TestRunner().run("", reporter);
+            new Thread(() -> {
+                try {
+                    new TestRunner().run("", reporter);
+                } catch (SQLException e) {
+                    e.printStackTrace();
+                }
+            }).start();
 
-            List<String> outputLines = OutputBuffer.getAllLines(reporter.getReporterId());
+            List<String> outputLines = new OutputBuffer(reporter.getReporterId())
+                    .getLines();
 
-            // Debug
-            System.out.println("Reporter ID: " + reporter.getReporterId());
+            for (int i = 0; i < outputLines.size(); i++) {
+                System.out.println(outputLines.get(i));
+            }
+        } catch (SQLException e) {
+            Assert.fail(e.getMessage());
+        }
+    }
+
+    @Test
+    public void getAllLinesFromOutputBuffer() {
+        try {
+            final BaseReporter reporter = createReporter();
+            new TestRunner().run("", reporter);
+
+            List<String> outputLines = new OutputBuffer(reporter.getReporterId())
+                    .getAllLines();
+
             for (int i = 0; i < outputLines.size(); i++) {
                 System.out.println(outputLines.get(i));
             }

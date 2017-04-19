@@ -8,11 +8,11 @@ import java.sql.SQLException;
 /**
  * Created by Vinicius Avellar on 12/04/2017.
  */
-public final class TestRunner {
+public class TestRunner {
 
-    private TestRunner() {}
+    public TestRunner() {}
 
-    public static void run() throws SQLException {
+    public void run() throws SQLException {
         CallableStatement callableStatement = null;
         try {
             callableStatement = UTPLSQL.getConnection()
@@ -24,7 +24,7 @@ public final class TestRunner {
         }
     }
 
-    public static void run(String path, BaseReporter reporter) throws SQLException {
+    public void run(String path, BaseReporter reporter) throws SQLException {
         if (reporter.getReporterId() == null || reporter.getReporterId().isEmpty()) {
             reporter.setReporterId(UTPLSQL.newSysGuid());
         }

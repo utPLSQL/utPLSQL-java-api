@@ -20,7 +20,7 @@ public class TestRunnerTest {
     @Test
     public void runWithoutParams() {
         try {
-            TestRunner.run();
+            new TestRunner().run();
         } catch (SQLException e) {
             Assert.fail(e.getMessage());
         }
@@ -30,7 +30,7 @@ public class TestRunnerTest {
     public void runWithDocumentationReporter() {
         try {
             BaseReporter reporter = new DocumentationReporter();
-            TestRunner.run("", reporter);
+            new TestRunner().run("", reporter);
             Assert.assertNotNull(reporter.getReporterId());
         } catch (SQLException e) {
             Assert.fail(e.getMessage());
