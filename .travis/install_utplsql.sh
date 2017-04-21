@@ -2,22 +2,30 @@
 set -ev
 
 # Download the specified version of utPLSQL.
-curl -L -O "https://github.com/utPLSQL/utPLSQL/releases/download/$UTPLSQL_VERSION/$UTPLSQL_FILE.tar.gz"
+# UTPLSQL_VERSION="v3.0.0-beta"
+# UTPLSQL_FILE="utPLSQLv3.0.0.562-beta"
+# curl -L -O "https://github.com/utPLSQL/utPLSQL/releases/download/$UTPLSQL_VERSION/$UTPLSQL_FILE.tar.gz"
+
+# Download develop branch of utPLSQL.
+UTPLSQL_VERSION="develop"
+UTPLSQL_FILE="utPLSQL"
+git clone -b develop --single-branch https://github.com/utPLSQL/utPLSQL.git
+# tar -czf $UTPLSQL_FILE.tar.gz $UTPLSQL_FILE && rm -rf $UTPLSQL_FILE
 
 # Create a temporary install script.
 cat > install.sh.tmp <<EOF
-tar -xzf $UTPLSQL_FILE.tar.gz
-rm $UTPLSQL_FILE.tar.gz
+# tar -xzf $UTPLSQL_FILE.tar.gz && rm $UTPLSQL_FILE.tar.gz
 cd /$UTPLSQL_FILE/source
 sqlplus -S -L sys/oracle@//$CONNECTION_STR AS SYSDBA @install_headless.sql
 EOF
 
 # Copy utPLSQL files to the container and install it.
-docker cp ./$UTPLSQL_FILE.tar.gz $ORACLE_VERSION:/$UTPLSQL_FILE.tar.gz
+# docker cp ./$UTPLSQL_FILE.tar.gz $ORACLE_VERSION:/$UTPLSQL_FILE.tar.gz
+docker cp ./$UTPLSQL_FILE $ORACLE_VERSION:/$UTPLSQL_FILE
 docker cp ./install.sh.tmp $ORACLE_VERSION:/install.sh
 
 # Remove temporary files.
-rm $UTPLSQL_FILE.tar.gz
+# rm $UTPLSQL_FILE.tar.gz
 rm install.sh.tmp
 
 # Execute the utPLSQL installation inside the container.
