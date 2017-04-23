@@ -1,9 +1,6 @@
-package io.github.utplsql.types;
+package io.github.utplsql.api.types;
 
-import java.sql.SQLData;
-import java.sql.SQLException;
-import java.sql.SQLInput;
-import java.sql.SQLOutput;
+import java.sql.*;
 import java.util.Calendar;
 
 /**
@@ -16,7 +13,7 @@ public abstract class BaseReporter implements SQLData {
     private java.sql.Date startDate;
 
     public BaseReporter() {
-        startDate = new java.sql.Date(Calendar.getInstance().getTimeInMillis());
+        this.startDate = new java.sql.Date(Calendar.getInstance().getTimeInMillis());
     }
 
     public String getSelfType() {

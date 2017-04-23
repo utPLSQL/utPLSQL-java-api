@@ -1,8 +1,9 @@
-package io.github.utplsql;
+package io.github.utplsql.api;
 
-import io.github.utplsql.types.BaseReporter;
+import io.github.utplsql.api.types.BaseReporter;
 
 import java.sql.CallableStatement;
+import java.sql.Connection;
 import java.sql.SQLException;
 
 /**
@@ -12,11 +13,10 @@ public class TestRunner {
 
     public TestRunner() {}
 
-    public void run() throws SQLException {
+    public void run(Connection conn) throws SQLException {
         CallableStatement callableStatement = null;
         try {
-            callableStatement = UTPLSQL.getConnection()
-                    .prepareCall("BEGIN ut_runner.run(); END;");
+            callableStatement = conn.prepareCall("BEGIN ut_runner.run(); END;");
             callableStatement.execute();
         } finally {
             if (callableStatement != null)
@@ -24,15 +24,14 @@ public class TestRunner {
         }
     }
 
-    public void run(String path, BaseReporter reporter) throws SQLException {
+    public void run(Connection conn, String path, BaseReporter reporter) throws SQLException {
         if (reporter.getReporterId() == null || reporter.getReporterId().isEmpty()) {
-            reporter.setReporterId(UTPLSQL.newSysGuid());
+            reporter.setReporterId(utPLSQL.newSysGuid(conn));
         }
 
         CallableStatement callableStatement = null;
         try {
-            callableStatement = UTPLSQL.getConnection()
-                    .prepareCall("BEGIN ut_runner.run(:path, :reporter); END;");
+            callableStatement = conn.prepareCall("BEGIN ut_runner.run(:path, :reporter); END;");
             callableStatement.setString(":path", path);
             callableStatement.setObject(":reporter", reporter);
             callableStatement.execute();

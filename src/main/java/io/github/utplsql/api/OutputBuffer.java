@@ -1,13 +1,11 @@
-package io.github.utplsql;
+package io.github.utplsql.api;
 
 import oracle.jdbc.OracleTypes;
 
 import java.sql.CallableStatement;
-import java.sql.PreparedStatement;
+import java.sql.Connection;
 import java.sql.ResultSet;
 import java.sql.SQLException;
-import java.util.ArrayList;
-import java.util.List;
 
 /**
  * Created by Vinicius on 13/04/2017.
@@ -28,35 +26,11 @@ public class OutputBuffer {
         this.reporterId = reporterId;
     }
 
-    public List<String> getLines() throws SQLException {
-        PreparedStatement preparedStatement = null;
-        ResultSet resultSet = null;
-        try {
-            preparedStatement = UTPLSQL.getConnection()
-                    .prepareStatement("SELECT * FROM TABLE(ut_output_buffer.get_lines(?, 1))");
-
-            preparedStatement.setString(1, getReporterId());
-            resultSet = preparedStatement.executeQuery();
-
-            List<String> outputLines = new ArrayList<>();
-            while (resultSet.next()) {
-                outputLines.add(resultSet.getString(1));
-            }
-            return outputLines;
-        } finally {
-            if (resultSet != null)
-                resultSet.close();
-            if (preparedStatement != null)
-                preparedStatement.close();
-        }
-    }
-
-    public List<String> getAllLines() throws SQLException {
+    public OutputBufferLines fetchAvailable(Connection conn) throws SQLException {
         CallableStatement callableStatement = null;
         ResultSet resultSet = null;
         try {
-            callableStatement = UTPLSQL.getConnection()
-                    .prepareCall("BEGIN ? := ut_output_buffer.get_lines_cursor(?); END;");
+            callableStatement = conn.prepareCall("BEGIN ? := ut_output_buffer.get_available_lines(?); END;");
 
             callableStatement.registerOutParameter(1, OracleTypes.CURSOR);
             callableStatement.setString(2, getReporterId());
@@ -64,7 +38,35 @@ public class OutputBuffer {
 
             resultSet = (ResultSet) callableStatement.getObject(1);
 
-            List<String> outputLines = new ArrayList<>();
+            OutputBufferLines outputLines = new OutputBufferLines();
+            while (resultSet.next()) {
+                outputLines.add(resultSet.getString("text"));
+                if (resultSet.getInt("is_finished") == 1)
+                    outputLines.setFinished(true);
+            }
+            return outputLines;
+        } finally {
+            if (resultSet != null)
+                resultSet.close();
+            if (callableStatement != null)
+                callableStatement.close();
+        }
+    }
+
+    public OutputBufferLines fetchAll(Connection conn) throws SQLException {
+        CallableStatement callableStatement = null;
+        ResultSet resultSet = null;
+        try {
+            callableStatement = conn.prepareCall("BEGIN ? := ut_output_buffer.get_lines_cursor(?); END;");
+
+            callableStatement.registerOutParameter(1, OracleTypes.CURSOR);
+            callableStatement.setString(2, getReporterId());
+            callableStatement.execute();
+
+            resultSet = (ResultSet) callableStatement.getObject(1);
+
+            OutputBufferLines outputLines = new OutputBufferLines();
+            outputLines.setFinished(true);
             while (resultSet.next()) {
                 outputLines.add(resultSet.getString("text"));
             }

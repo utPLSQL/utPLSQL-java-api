@@ -1,4 +1,4 @@
-package io.github.utplsql.types;
+package io.github.utplsql.api.types;
 
 /**
  * Created by Vinicius on 13/04/2017.

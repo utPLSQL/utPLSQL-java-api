@@ -1,4 +1,4 @@
-package io.github.utplsql.types;
+package io.github.utplsql.api.types;
 
 import java.sql.SQLException;
 
