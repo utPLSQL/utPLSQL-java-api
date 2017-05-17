@@ -4,109 +4,103 @@ import io.github.utplsql.api.rules.DatabaseRule;
 import io.github.utplsql.api.types.BaseReporter;
 import io.github.utplsql.api.types.DocumentationReporter;
 import org.junit.Assert;
-import org.junit.ClassRule;
+import org.junit.Rule;
 import org.junit.Test;
 
+import java.io.FileOutputStream;
+import java.io.PrintStream;
 import java.sql.Connection;
 import java.sql.SQLException;
-import java.util.concurrent.ExecutorService;
-import java.util.concurrent.Executors;
-import java.util.concurrent.TimeUnit;
+import java.util.ArrayList;
+import java.util.List;
+import java.util.concurrent.*;
 
 /**
  * Created by Vinicius on 13/04/2017.
  */
 public class OutputBufferTest {
 
-    @ClassRule
-    public static final DatabaseRule sInitialization = new DatabaseRule();
+    @Rule
+    public static final DatabaseRule db = new DatabaseRule();
 
     public BaseReporter createReporter() throws SQLException {
-        Connection conn = null;
-        try {
-            conn = utPLSQL.getConnection();
-            BaseReporter reporter = new DocumentationReporter();
-            reporter.setReporterId(utPLSQL.newSysGuid(conn));
-            System.out.println("Reporter ID: " + reporter.getReporterId());
-            return reporter;
-        } finally {
-            if (conn != null)
-                conn.close();
-        }
+        Connection conn = db.newConnection();
+        BaseReporter reporter = new DocumentationReporter().init(conn);
+        System.out.println("Reporter ID: " + reporter.getReporterId());
+        return reporter;
     }
 
     @Test
-    public void getLinesFromOutputBuffer() {
+    public void printAvailableLines() {
         ExecutorService executorService = Executors.newFixedThreadPool(2);
 
         try {
             final BaseReporter reporter = createReporter();
 
-            executorService.submit(() -> {
-                Connection conn = null;
+            Future<Object> task1 = executorService.submit(() -> {
                 try {
-                    conn = utPLSQL.getConnection();
+                    Connection conn = db.newConnection();
                     new TestRunner().run(conn, "", reporter);
+
+                    return Boolean.TRUE;
                 } catch (SQLException e) {
-                    e.printStackTrace();
-                    Assert.fail(e.getMessage());
-                } finally {
-                    if (conn != null)
-                        try { conn.close(); } catch (SQLException ignored) {}
+                    return e;
                 }
             });
 
-            executorService.submit(() -> {
-                Connection conn = null;
+            Future<Object> task2 = executorService.submit(() -> {
+                FileOutputStream fileOutStream = null;
                 try {
-                    conn = utPLSQL.getConnection();
-                    OutputBufferLines outputLines;
-                    do {
-                        outputLines = new OutputBuffer(reporter.getReporterId())
-                                .fetchAvailable(conn);
+                    Connection conn = db.newConnection();
+                    fileOutStream = new FileOutputStream("output.txt");
 
-                        Thread.sleep(1000);
+                    List<PrintStream> printStreams = new ArrayList<>();
+                    printStreams.add(System.out);
+                    printStreams.add(new PrintStream(fileOutStream));
 
-                        if (outputLines.getLines().size() > 0)
-                            System.out.println(outputLines.toString());
-                    } while (!outputLines.isFinished());
+                    new OutputBuffer(reporter)
+                        .printAvailable(conn, printStreams);
+
+                    return Boolean.TRUE;
                 } catch (SQLException e) {
-                    e.printStackTrace();
-                    Assert.fail(e.getMessage());
-                } catch (InterruptedException e) {
-                    e.printStackTrace();
+                    return e;
                 } finally {
-                    if (conn != null)
-                        try { conn.close(); } catch (SQLException ignored) {}
+                    if (fileOutStream != null)
+                        fileOutStream.close();
                 }
             });
 
             executorService.shutdown();
             executorService.awaitTermination(60, TimeUnit.MINUTES);
+
+            Object res1 = task1.get();
+            Object res2 = task2.get();
+
+            if (res1 instanceof Exception)
+                Assert.fail(((Exception) res1).getMessage());
+
+            if (res2 instanceof Exception)
+                Assert.fail(((Exception) res2).getMessage());
         } catch (SQLException e) {
             Assert.fail(e.getMessage());
-        } catch (InterruptedException e) {
+        } catch (InterruptedException | ExecutionException e) {
             e.printStackTrace();
         }
     }
 
     @Test
-    public void getAllLinesFromOutputBuffer() {
-        Connection conn = null;
+    public void fetchAllLines() {
         try {
             final BaseReporter reporter = createReporter();
-            conn = utPLSQL.getConnection();
+            Connection conn = db.newConnection();
             new TestRunner().run(conn, "", reporter);
 
-            OutputBufferLines outputLines = new OutputBuffer(reporter.getReporterId())
+            List<String> outputLines = new OutputBuffer(reporter)
                     .fetchAll(conn);
 
-            System.out.println(outputLines.toString());
+            Assert.assertTrue(outputLines.size() > 0);
         } catch (SQLException e) {
             Assert.fail(e.getMessage());
-        } finally {
-            if (conn != null)
-                try { conn.close(); } catch (SQLException ignored) {}
         }
     }
 

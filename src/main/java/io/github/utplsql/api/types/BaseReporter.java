@@ -1,5 +1,7 @@
 package io.github.utplsql.api.types;
 
+import io.github.utplsql.api.DBHelper;
+
 import java.sql.*;
 import java.util.Calendar;
 
@@ -12,15 +14,19 @@ public abstract class BaseReporter implements SQLData {
     private String reporterId;
     private java.sql.Date startDate;
 
-    public BaseReporter() {
-        this.startDate = new java.sql.Date(Calendar.getInstance().getTimeInMillis());
+    public BaseReporter() {}
+
+    public BaseReporter init(Connection conn) throws SQLException {
+        setStartDate(new java.sql.Date(Calendar.getInstance().getTimeInMillis()));
+        setReporterId(DBHelper.newSysGuid(conn));
+        return this;
     }
 
     public String getSelfType() {
         return this.selfType;
     }
 
-    public void setSelfType(String selfType) {
+    private void setSelfType(String selfType) {
         this.selfType = selfType;
     }
 
@@ -28,7 +34,7 @@ public abstract class BaseReporter implements SQLData {
         return this.reporterId;
     }
 
-    public void setReporterId(String reporterId) {
+    private void setReporterId(String reporterId) {
         this.reporterId = reporterId;
     }
 
@@ -36,7 +42,7 @@ public abstract class BaseReporter implements SQLData {
         return this.startDate;
     }
 
-    public void setStartDate(java.sql.Date startDate) {
+    private void setStartDate(java.sql.Date startDate) {
         this.startDate = startDate;
     }
 

@@ -1,72 +1,103 @@
 package io.github.utplsql.api;
 
+import io.github.utplsql.api.types.BaseReporter;
 import oracle.jdbc.OracleTypes;
 
-import java.sql.CallableStatement;
-import java.sql.Connection;
-import java.sql.ResultSet;
-import java.sql.SQLException;
+import java.io.PrintStream;
+import java.sql.*;
+import java.util.ArrayList;
+import java.util.List;
 
 /**
- * Created by Vinicius on 13/04/2017.
+ * Fetches the lines produced by a reporter.
  */
 public class OutputBuffer {
 
-    private String reporterId;
+    private BaseReporter reporter;
 
-    public OutputBuffer(String reporterId) {
-        this.reporterId = reporterId;
+    /**
+     * Creates a new OutputBuffer.
+     * @param reporter the reporter to be used
+     */
+    public OutputBuffer(BaseReporter reporter) {
+        this.reporter = reporter;
     }
 
-    public String getReporterId() {
-        return reporterId;
+    /**
+     * Returns the reporter used by this buffer.
+     * @return the reporter instance
+     */
+    public BaseReporter getReporter() {
+        return reporter;
     }
 
-    public void setReporterId(String reporterId) {
-        this.reporterId = reporterId;
+    /**
+     * Print the lines as soon as they are produced and write to a PrintStream.
+     * @param conn DB connection
+     * @param ps the PrintStream to be used, e.g: System.out
+     * @throws SQLException any sql errors
+     */
+    public void printAvailable(Connection conn, PrintStream ps) throws SQLException {
+        List<PrintStream> printStreams = new ArrayList<>(1);
+        printStreams.add(ps);
+        printAvailable(conn, printStreams);
     }
 
-    public OutputBufferLines fetchAvailable(Connection conn) throws SQLException {
-        CallableStatement callableStatement = null;
+    /**
+     * Print the lines as soon as they are produced and write to a list of PrintStreams.
+     * @param conn DB connection
+     * @param printStreams the PrintStream list to be used, e.g: System.out, new PrintStream(new FileOutputStream)
+     * @throws SQLException any sql errors
+     */
+    public void printAvailable(Connection conn, List<PrintStream> printStreams) throws SQLException {
+        fetchAvailable(conn, s -> {
+            for (PrintStream ps : printStreams)
+                ps.println(s);
+        });
+    }
+
+    /**
+     * Print the lines as soon as they are produced and call the callback passing the new line.
+     * @param conn DB connection
+     * @param cb the callback to be called
+     * @throws SQLException any sql errors
+     */
+    public void fetchAvailable(Connection conn, Callback cb) throws SQLException {
+        PreparedStatement preparedStatement = null;
         ResultSet resultSet = null;
         try {
-            callableStatement = conn.prepareCall("BEGIN ? := ut_output_buffer.get_available_lines(?); END;");
+            preparedStatement = conn.prepareCall("SELECT * FROM table(ut_output_buffer.get_lines(?))");
+            preparedStatement.setString(1, getReporter().getReporterId());
+            resultSet = preparedStatement.executeQuery();
 
-            callableStatement.registerOutParameter(1, OracleTypes.CURSOR);
-            callableStatement.setString(2, getReporterId());
-            callableStatement.execute();
-
-            resultSet = (ResultSet) callableStatement.getObject(1);
-
-            OutputBufferLines outputLines = new OutputBufferLines();
-            while (resultSet.next()) {
-                outputLines.add(resultSet.getString("text"));
-                if (resultSet.getInt("is_finished") == 1)
-                    outputLines.setFinished(true);
-            }
-            return outputLines;
+            while (resultSet.next())
+                cb.onLineFetched(resultSet.getString(1));
         } finally {
             if (resultSet != null)
                 resultSet.close();
-            if (callableStatement != null)
-                callableStatement.close();
+            if (preparedStatement != null)
+                preparedStatement.close();
         }
     }
 
-    public OutputBufferLines fetchAll(Connection conn) throws SQLException {
+    /**
+     * Get all lines from output buffer and return it as a list of strings.
+     * @param conn DB connection
+     * @return the lines
+     * @throws SQLException any sql errors
+     */
+    public List<String> fetchAll(Connection conn) throws SQLException {
         CallableStatement callableStatement = null;
         ResultSet resultSet = null;
         try {
             callableStatement = conn.prepareCall("BEGIN ? := ut_output_buffer.get_lines_cursor(?); END;");
-
             callableStatement.registerOutParameter(1, OracleTypes.CURSOR);
-            callableStatement.setString(2, getReporterId());
+            callableStatement.setString(2, getReporter().getReporterId());
             callableStatement.execute();
 
             resultSet = (ResultSet) callableStatement.getObject(1);
 
-            OutputBufferLines outputLines = new OutputBufferLines();
-            outputLines.setFinished(true);
+            List<String> outputLines = new ArrayList<>();
             while (resultSet.next()) {
                 outputLines.add(resultSet.getString("text"));
             }
@@ -77,6 +108,13 @@ public class OutputBuffer {
             if (callableStatement != null)
                 callableStatement.close();
         }
+    }
+
+    /**
+     * Callback to be called when a new line is available from the output buffer.
+     */
+    public interface Callback {
+        void onLineFetched(String s);
     }
 
 }

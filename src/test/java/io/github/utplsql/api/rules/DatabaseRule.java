@@ -1,17 +1,44 @@
 package io.github.utplsql.api.rules;
 
-import io.github.utplsql.api.utPLSQL;
 import org.junit.rules.ExternalResource;
+
+import java.sql.Connection;
+import java.sql.DriverManager;
+import java.sql.SQLException;
+import java.util.ArrayList;
+import java.util.List;
 
 /**
  * Created by Vinicius on 13/04/2017.
  */
 public class DatabaseRule extends ExternalResource {
 
+    private static String sUrl;
+    private static String sUser;
+    private static String sPass;
+
+    static {
+        sUrl  = System.getenv("DB_URL")  != null ? System.getenv("DB_URL")  : "127.0.0.1:1521:XE";
+        sUser = System.getenv("DB_USER") != null ? System.getenv("DB_USER") : "app";
+        sPass = System.getenv("DB_PASS") != null ? System.getenv("DB_PASS") : "app";
+    }
+
+    private List<Connection> connectionList;
+
+    public DatabaseRule() {
+        connectionList = new ArrayList<>();
+    }
+
+    public synchronized Connection newConnection() throws SQLException {
+        Connection conn = DriverManager.getConnection("jdbc:oracle:thin:@" + sUrl, sUser, sPass);
+        connectionList.add(conn);
+        return conn;
+    }
+
     @Override
-    protected void before() throws Throwable {
-        // TODO: environment variables, config file?
-        utPLSQL.init("jdbc:oracle:thin:@127.0.0.1:1521:xe", "ut3", "ut3");
+    protected void after() {
+        for (Connection conn : connectionList)
+            try { conn.close(); } catch (SQLException ignored) {}
     }
 
 }
