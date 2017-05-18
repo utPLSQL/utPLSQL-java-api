@@ -21,7 +21,7 @@ import java.util.concurrent.*;
 public class OutputBufferTest {
 
     @Rule
-    public static final DatabaseRule db = new DatabaseRule();
+    public final DatabaseRule db = new DatabaseRule();
 
     public BaseReporter createReporter() throws SQLException {
         Connection conn = db.newConnection();

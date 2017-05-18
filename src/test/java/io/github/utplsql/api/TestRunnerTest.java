@@ -16,7 +16,7 @@ import java.sql.SQLException;
 public class TestRunnerTest {
 
     @Rule
-    public static final DatabaseRule db = new DatabaseRule();
+    public final DatabaseRule db = new DatabaseRule();
 
     @Test
     public void runWithDocumentationReporter() {
