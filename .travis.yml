@@ -13,15 +13,17 @@ env:
     - DOCKER_CFG=$HOME/.docker
     - DOCKER_REPO="viniciusam/oracledb"
     - MAVEN_HOME=/usr/local/maven
-    - DB_USER=app
-    - DB_PASS=app
+    - MAVEN_CFG=$HOME/.m2
+    - API_DB_URL="127.0.0.1:1521:XE"
+    - API_DB_USER=api
+    - API_DB_PASS=api
   matrix:
     - ORACLE_VERSION="11g-xe-r2" CONNECTION_STR="127.0.0.1:1521/XE" DOCKER_OPTIONS="--shm-size=1g"
 
 cache:
   directories:
     - $DOCKER_CFG
-    - $HOME/.m2
+    - $MAVEN_CFG
     - $MAVEN_HOME/lib/ext # Used to cache wagon-http lib.
 
 install:
