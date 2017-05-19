@@ -1,5 +1,6 @@
 #!/bin/bash
 set -ev
+cd $(dirname $(readlink -f $0))
 
 # Download the specified version of utPLSQL.
 # UTPLSQL_VERSION="v3.0.0-beta"
