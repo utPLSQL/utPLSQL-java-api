@@ -17,7 +17,7 @@ git clone -b develop --single-branch https://github.com/utPLSQL/utPLSQL.git
 cat > install.sh.tmp <<EOF
 # tar -xzf $UTPLSQL_FILE.tar.gz && rm $UTPLSQL_FILE.tar.gz
 cd /$UTPLSQL_FILE/source
-sqlplus -S -L sys/oracle@//$CONNECTION_STR AS SYSDBA @install_headless.sql
+sqlplus -S -L sys/oracle@//127.0.0.1:1521/xe AS SYSDBA @install_headless.sql
 EOF
 
 # Copy utPLSQL files to the container and install it.
@@ -31,4 +31,5 @@ docker cp ./create_api_user.sh $ORACLE_VERSION:/create_api_user.sh
 rm install.sh.tmp
 
 # Execute the utPLSQL installation inside the container.
-docker exec $ORACLE_VERSION bash -c "/install.sh && /create_api_user.sh"
+docker exec $ORACLE_VERSION bash install.sh
+docker exec $ORACLE_VERSION bash create_api_user.sh

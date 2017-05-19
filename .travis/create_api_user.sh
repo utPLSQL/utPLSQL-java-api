@@ -1,8 +1,8 @@
 #!/bin/bash
 set -ev
 
-sqlplus -S -L / AS SYSDBA <<EOF
-create user $DB_USER identified by $DB_PASS
+sqlplus -S -L sys/oracle@//127.0.0.1:1521/xe AS SYSDBA <<EOF
+create user api identified by api
 quota unlimited on USERS
 default tablespace USERS;
 grant create session,
@@ -11,7 +11,7 @@ grant create session,
 	  create table,
 	  create sequence,
 	  create view
-to $DB_USER;
-grant select any dictionary to $DB_USER;
+to api;
+grant select any dictionary to api;
 exit;
 EOF
