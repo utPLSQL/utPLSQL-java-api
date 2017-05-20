@@ -9,7 +9,7 @@ public class DocumentationReporter extends BaseReporter {
 
     @Override
     public String getSQLTypeName() throws SQLException {
-        return CustomTypes.UT_DOCUMENTATION_REPORTER.getName();
+        return CustomTypes.UT_DOCUMENTATION_REPORTER;
     }
 
 }

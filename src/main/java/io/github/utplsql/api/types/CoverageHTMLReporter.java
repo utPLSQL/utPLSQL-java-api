@@ -9,7 +9,7 @@ public class CoverageHTMLReporter extends BaseReporter {
 
     @Override
     public String getSQLTypeName() throws SQLException {
-        return CustomTypes.UT_COVERAGE_HTML_REPORTER.getName();
+        return CustomTypes.UT_COVERAGE_HTML_REPORTER;
     }
 
 }
