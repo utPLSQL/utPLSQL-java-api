@@ -29,6 +29,10 @@ public class DatabaseRule extends ExternalResource {
         connectionList = new ArrayList<>();
     }
 
+    public String getUser() {
+        return sUser;
+    }
+
     public synchronized Connection newConnection() throws SQLException {
         Connection conn = DriverManager.getConnection("jdbc:oracle:thin:@" + sUrl, sUser, sPass);
         connectionList.add(conn);

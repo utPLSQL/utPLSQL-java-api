@@ -1,7 +1,6 @@
 package io.github.utplsql.api;
 
-import io.github.utplsql.api.types.BaseReporter;
-import io.github.utplsql.api.types.CustomTypes;
+import io.github.utplsql.api.reporter.Reporter;
 import oracle.jdbc.OracleConnection;
 
 import java.sql.Array;
@@ -17,7 +16,7 @@ public class TestRunner {
 
     public TestRunner() {}
 
-    public void run(Connection conn, String path, BaseReporter reporter) throws SQLException {
+    public void run(Connection conn, String path, Reporter reporter) throws SQLException {
         validateReporter(conn, reporter);
         CallableStatement callableStatement = null;
         try {
@@ -31,8 +30,8 @@ public class TestRunner {
         }
     }
 
-    public void run(Connection conn, List<String> pathList, List<BaseReporter> reporterList) throws SQLException {
-        for (BaseReporter r : reporterList)
+    public void run(Connection conn, List<String> pathList, List<Reporter> reporterList) throws SQLException {
+        for (Reporter r : reporterList)
             validateReporter(conn, r);
 
         OracleConnection oraConn = conn.unwrap(OracleConnection.class);
@@ -57,7 +56,7 @@ public class TestRunner {
      * @param reporter the reporter
      * @throws SQLException any sql exception
      */
-    private void validateReporter(Connection conn, BaseReporter reporter) throws SQLException {
+    private void validateReporter(Connection conn, Reporter reporter) throws SQLException {
         if (reporter.getReporterId() == null || reporter.getReporterId().isEmpty())
             reporter.init(conn);
     }

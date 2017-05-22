@@ -1,9 +1,9 @@
 package io.github.utplsql.api;
 
 import io.github.utplsql.api.rules.DatabaseRule;
-import io.github.utplsql.api.types.BaseReporter;
-import io.github.utplsql.api.types.CoverageHTMLReporter;
-import io.github.utplsql.api.types.DocumentationReporter;
+import io.github.utplsql.api.reporter.Reporter;
+import io.github.utplsql.api.reporter.CoverageHTMLReporter;
+import io.github.utplsql.api.reporter.DocumentationReporter;
 import org.junit.Assert;
 import org.junit.Rule;
 import org.junit.Test;
@@ -25,8 +25,8 @@ public class TestRunnerTest {
     public void runWithDocumentationReporter() {
         try {
             Connection conn = db.newConnection();
-            BaseReporter reporter = new DocumentationReporter();
-            new TestRunner().run(conn, "", reporter);
+            Reporter reporter = new DocumentationReporter();
+            new TestRunner().run(conn, db.getUser(), reporter);
             Assert.assertNotNull(reporter.getReporterId());
         } catch (SQLException e) {
             Assert.fail(e.getMessage());
@@ -39,9 +39,9 @@ public class TestRunnerTest {
             Connection conn = db.newConnection();
 
             List<String> pathList = new ArrayList<>();
-            pathList.add("app");
+            pathList.add(db.getUser());
 
-            List<BaseReporter> reporterList = new ArrayList<>();
+            List<Reporter> reporterList = new ArrayList<>();
             reporterList.add(new DocumentationReporter().init(conn));
             reporterList.add(new CoverageHTMLReporter().init(conn));
 
