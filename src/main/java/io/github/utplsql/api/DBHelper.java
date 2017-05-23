@@ -5,19 +5,45 @@ import oracle.jdbc.OracleTypes;
 import java.sql.CallableStatement;
 import java.sql.Connection;
 import java.sql.SQLException;
+import java.sql.Types;
 
 /**
- * Created by Vinicius Avellar on 12/04/2017.
+ * Database utility functions.
  */
 public final class DBHelper {
 
+    /**
+     * Return a new sys_guid from database.
+     * @param conn the connection
+     * @return the new id string
+     * @throws SQLException any database error
+     */
     public static String newSysGuid(Connection conn) throws SQLException {
         CallableStatement callableStatement = null;
         try {
-            callableStatement = conn.prepareCall("BEGIN :id := sys_guid(); END;");
-            callableStatement.registerOutParameter(":id", OracleTypes.RAW);
+            callableStatement = conn.prepareCall("BEGIN ? := sys_guid(); END;");
+            callableStatement.registerOutParameter(1, OracleTypes.RAW);
             callableStatement.executeUpdate();
-            return callableStatement.getString(":id");
+            return callableStatement.getString(1);
+        } finally {
+            if (callableStatement != null)
+                callableStatement.close();
+        }
+    }
+
+    /**
+     * Return the current schema name.
+     * @param conn the connection
+     * @return the schema name
+     * @throws SQLException any database error
+     */
+    public static String getCurrentSchema(Connection conn) throws SQLException {
+        CallableStatement callableStatement = null;
+        try {
+            callableStatement = conn.prepareCall("BEGIN ? := sys_context('userenv', 'current_schema'); END;");
+            callableStatement.registerOutParameter(1, Types.VARCHAR);
+            callableStatement.executeUpdate();
+            return callableStatement.getString(1);
         } finally {
             if (callableStatement != null)
                 callableStatement.close();
