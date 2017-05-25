@@ -12,6 +12,8 @@ import java.sql.Types;
  */
 public final class DBHelper {
 
+    private DBHelper() {}
+
     /**
      * Return a new sys_guid from database.
      * @param conn the connection

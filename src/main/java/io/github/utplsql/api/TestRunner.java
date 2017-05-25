@@ -21,9 +21,6 @@ public class TestRunner {
     private List<String> includeObjects = new ArrayList<>();
     private List<String> excludeObjects = new ArrayList<>();
 
-    public TestRunner() {
-    }
-
     public TestRunner addPath(String path) {
         this.pathList.add(path);
         return this;
@@ -84,11 +81,11 @@ public class TestRunner {
         OracleConnection oraConn = conn.unwrap(OracleConnection.class);
         Array pathArray = oraConn.createARRAY(CustomTypes.UT_VARCHAR2_LIST, this.pathList.toArray());
         Array reporterArray = oraConn.createARRAY(CustomTypes.UT_REPORTERS, this.reporterList.toArray());
-        Array coverageSchemes = oraConn.createARRAY(CustomTypes.UT_VARCHAR2_LIST, this.coverageSchemes.toArray());
-        Array sourceFiles = oraConn.createARRAY(CustomTypes.UT_VARCHAR2_LIST, this.sourceFiles.toArray());
-        Array testFiles = oraConn.createARRAY(CustomTypes.UT_VARCHAR2_LIST, this.testFiles.toArray());
-        Array includeObjects = oraConn.createARRAY(CustomTypes.UT_VARCHAR2_LIST, this.includeObjects.toArray());
-        Array excludeObjects = oraConn.createARRAY(CustomTypes.UT_VARCHAR2_LIST, this.excludeObjects.toArray());
+        Array coverageSchemesArray = oraConn.createARRAY(CustomTypes.UT_VARCHAR2_LIST, this.coverageSchemes.toArray());
+        Array sourceFilesArray = oraConn.createARRAY(CustomTypes.UT_VARCHAR2_LIST, this.sourceFiles.toArray());
+        Array testFilesArray = oraConn.createARRAY(CustomTypes.UT_VARCHAR2_LIST, this.testFiles.toArray());
+        Array includeObjectsArray = oraConn.createARRAY(CustomTypes.UT_VARCHAR2_LIST, this.includeObjects.toArray());
+        Array excludeObjectsArray = oraConn.createARRAY(CustomTypes.UT_VARCHAR2_LIST, this.excludeObjects.toArray());
 
         CallableStatement callableStatement = null;
         try {
@@ -101,11 +98,11 @@ public class TestRunner {
                     "END;");
             callableStatement.setArray(1, pathArray);
             callableStatement.setArray(2, reporterArray);
-            callableStatement.setArray(3, coverageSchemes);
-            callableStatement.setArray(4, sourceFiles);
-            callableStatement.setArray(5, testFiles);
-            callableStatement.setArray(6, includeObjects);
-            callableStatement.setArray(7, excludeObjects);
+            callableStatement.setArray(3, coverageSchemesArray);
+            callableStatement.setArray(4, sourceFilesArray);
+            callableStatement.setArray(5, testFilesArray);
+            callableStatement.setArray(6, includeObjectsArray);
+            callableStatement.setArray(7, excludeObjectsArray);
             callableStatement.execute();
         } finally {
             if (callableStatement != null)

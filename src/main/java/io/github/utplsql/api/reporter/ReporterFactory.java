@@ -15,8 +15,8 @@ public final class ReporterFactory {
             case CustomTypes.UT_COVERALLS_REPORTER: return new CoverallsReporter();
             case CustomTypes.UT_COVERAGE_SONAR_REPORTER: return new CoverageSonarReporter();
             case CustomTypes.UT_SONAR_TEST_REPORTER: return new SonarTestReporter();
+            default: throw new RuntimeException("Reporter " + reporterName + " not implemented.");
         }
-        throw new RuntimeException("Reporter " + reporterName + " not implemented.");
     }
 
 }

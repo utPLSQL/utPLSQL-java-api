@@ -66,7 +66,7 @@ public class OutputBuffer {
         PreparedStatement preparedStatement = null;
         ResultSet resultSet = null;
         try {
-            preparedStatement = conn.prepareCall("SELECT * FROM table(ut_output_buffer.get_lines(?))");
+            preparedStatement = conn.prepareStatement("SELECT * FROM table(ut_output_buffer.get_lines(?))");
             preparedStatement.setString(1, getReporter().getReporterId());
             resultSet = preparedStatement.executeQuery();
 
