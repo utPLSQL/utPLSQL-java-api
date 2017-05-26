@@ -1,6 +1,6 @@
 package io.github.utplsql.api;
 
-import io.github.utplsql.api.types.BaseReporter;
+import io.github.utplsql.api.reporter.Reporter;
 import oracle.jdbc.OracleTypes;
 
 import java.io.PrintStream;
@@ -13,13 +13,13 @@ import java.util.List;
  */
 public class OutputBuffer {
 
-    private BaseReporter reporter;
+    private Reporter reporter;
 
     /**
      * Creates a new OutputBuffer.
      * @param reporter the reporter to be used
      */
-    public OutputBuffer(BaseReporter reporter) {
+    public OutputBuffer(Reporter reporter) {
         this.reporter = reporter;
     }
 
@@ -27,7 +27,7 @@ public class OutputBuffer {
      * Returns the reporter used by this buffer.
      * @return the reporter instance
      */
-    public BaseReporter getReporter() {
+    public Reporter getReporter() {
         return reporter;
     }
 
@@ -66,7 +66,7 @@ public class OutputBuffer {
         PreparedStatement preparedStatement = null;
         ResultSet resultSet = null;
         try {
-            preparedStatement = conn.prepareCall("SELECT * FROM table(ut_output_buffer.get_lines(?))");
+            preparedStatement = conn.prepareStatement("SELECT * FROM table(ut_output_buffer.get_lines(?))");
             preparedStatement.setString(1, getReporter().getReporterId());
             resultSet = preparedStatement.executeQuery();
 

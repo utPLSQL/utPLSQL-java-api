@@ -1,12 +1,13 @@
 package io.github.utplsql.api;
 
+import io.github.utplsql.api.reporter.DocumentationReporter;
+import io.github.utplsql.api.reporter.Reporter;
 import io.github.utplsql.api.rules.DatabaseRule;
-import io.github.utplsql.api.types.BaseReporter;
-import io.github.utplsql.api.types.DocumentationReporter;
 import org.junit.Assert;
 import org.junit.Rule;
 import org.junit.Test;
 
+import java.io.File;
 import java.io.FileOutputStream;
 import java.io.PrintStream;
 import java.sql.Connection;
@@ -23,9 +24,9 @@ public class OutputBufferTest {
     @Rule
     public final DatabaseRule db = new DatabaseRule();
 
-    public BaseReporter createReporter() throws SQLException {
+    public Reporter createReporter() throws SQLException {
         Connection conn = db.newConnection();
-        BaseReporter reporter = new DocumentationReporter().init(conn);
+        Reporter reporter = new DocumentationReporter().init(conn);
         System.out.println("Reporter ID: " + reporter.getReporterId());
         return reporter;
     }
@@ -35,12 +36,15 @@ public class OutputBufferTest {
         ExecutorService executorService = Executors.newFixedThreadPool(2);
 
         try {
-            final BaseReporter reporter = createReporter();
+            final Reporter reporter = createReporter();
 
             Future<Object> task1 = executorService.submit(() -> {
                 try {
                     Connection conn = db.newConnection();
-                    new TestRunner().run(conn, "", reporter);
+                    new TestRunner()
+                            .addPath(db.getUser())
+                            .addReporter(reporter)
+                            .run(conn);
 
                     return Boolean.TRUE;
                 } catch (SQLException e) {
@@ -50,9 +54,10 @@ public class OutputBufferTest {
 
             Future<Object> task2 = executorService.submit(() -> {
                 FileOutputStream fileOutStream = null;
+                File outFile = new File("output.txt");
                 try {
                     Connection conn = db.newConnection();
-                    fileOutStream = new FileOutputStream("output.txt");
+                    fileOutStream = new FileOutputStream(outFile);
 
                     List<PrintStream> printStreams = new ArrayList<>();
                     printStreams.add(System.out);
@@ -65,8 +70,10 @@ public class OutputBufferTest {
                 } catch (SQLException e) {
                     return e;
                 } finally {
-                    if (fileOutStream != null)
+                    if (fileOutStream != null) {
                         fileOutStream.close();
+                        outFile.delete();
+                    }
                 }
             });
 
@@ -91,9 +98,12 @@ public class OutputBufferTest {
     @Test
     public void fetchAllLines() {
         try {
-            final BaseReporter reporter = createReporter();
+            final Reporter reporter = createReporter();
             Connection conn = db.newConnection();
-            new TestRunner().run(conn, "", reporter);
+            new TestRunner()
+                    .addPath(db.getUser())
+                    .addReporter(reporter)
+                    .run(conn);
 
             List<String> outputLines = new OutputBuffer(reporter)
                     .fetchAll(conn);

@@ -1,8 +1,7 @@
 package io.github.utplsql.api;
 
+import io.github.utplsql.api.reporter.*;
 import io.github.utplsql.api.rules.DatabaseRule;
-import io.github.utplsql.api.types.BaseReporter;
-import io.github.utplsql.api.types.DocumentationReporter;
 import org.junit.Assert;
 import org.junit.Rule;
 import org.junit.Test;
@@ -19,12 +18,30 @@ public class TestRunnerTest {
     public final DatabaseRule db = new DatabaseRule();
 
     @Test
-    public void runWithDocumentationReporter() {
+    public void runWithDefaultParameters() {
         try {
             Connection conn = db.newConnection();
-            BaseReporter reporter = new DocumentationReporter();
-            new TestRunner().run(conn, "", reporter);
-            Assert.assertNotNull(reporter.getReporterId());
+            new TestRunner().run(conn);
+        } catch (SQLException e) {
+            Assert.fail(e.getMessage());
+        }
+    }
+
+    @Test
+    public void runWithManyReporters() {
+        try {
+            Connection conn = db.newConnection();
+            new TestRunner()
+                    .addPath("ut3")
+                    .addPath(db.getUser())
+                    .addReporter(new DocumentationReporter().init(conn))
+                    .addReporter(new CoverageHTMLReporter().init(conn))
+                    .addReporter(new CoverageSonarReporter().init(conn))
+                    .addReporter(new CoverallsReporter().init(conn))
+                    .addReporter(new SonarTestReporter().init(conn))
+                    .addReporter(new TeamCityReporter().init(conn))
+                    .addReporter(new XUnitReporter().init(conn))
+                    .run(conn);
         } catch (SQLException e) {
             Assert.fail(e.getMessage());
         }

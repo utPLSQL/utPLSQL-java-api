@@ -1,4 +1,4 @@
-package io.github.utplsql.api.types;
+package io.github.utplsql.api.reporter;
 
 import io.github.utplsql.api.DBHelper;
 
@@ -8,15 +8,15 @@ import java.util.Calendar;
 /**
  * Created by Vinicius on 13/04/2017.
  */
-public abstract class BaseReporter implements SQLData {
+public abstract class Reporter implements SQLData {
 
     private String selfType;
     private String reporterId;
     private java.sql.Date startDate;
 
-    public BaseReporter() {}
+    public Reporter() {}
 
-    public BaseReporter init(Connection conn) throws SQLException {
+    public Reporter init(Connection conn) throws SQLException {
         setStartDate(new java.sql.Date(Calendar.getInstance().getTimeInMillis()));
         setReporterId(DBHelper.newSysGuid(conn));
         return this;

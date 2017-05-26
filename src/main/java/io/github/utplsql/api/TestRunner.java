@@ -1,25 +1,108 @@
 package io.github.utplsql.api;
 
-import io.github.utplsql.api.types.BaseReporter;
+import io.github.utplsql.api.reporter.DocumentationReporter;
+import io.github.utplsql.api.reporter.Reporter;
+import oracle.jdbc.OracleConnection;
 
-import java.sql.CallableStatement;
-import java.sql.Connection;
-import java.sql.SQLException;
+import java.sql.*;
+import java.util.ArrayList;
+import java.util.List;
 
 /**
  * Created by Vinicius Avellar on 12/04/2017.
  */
 public class TestRunner {
 
-    public TestRunner() {}
+    private List<String> pathList = new ArrayList<>();
+    private List<Reporter> reporterList = new ArrayList<>();
+    private List<String> coverageSchemes = new ArrayList<>();
+    private List<String> sourceFiles = new ArrayList<>();
+    private List<String> testFiles = new ArrayList<>();
+    private List<String> includeObjects = new ArrayList<>();
+    private List<String> excludeObjects = new ArrayList<>();
 
-    public void run(Connection conn, String path, BaseReporter reporter) throws SQLException {
-        validateReporter(conn, reporter);
+    public TestRunner addPath(String path) {
+        this.pathList.add(path);
+        return this;
+    }
+
+    public TestRunner addPathList(List<String> paths) {
+        this.pathList.addAll(paths);
+        return this;
+    }
+
+    public TestRunner addReporter(Reporter reporter) {
+        this.reporterList.add(reporter);
+        return this;
+    }
+
+    public TestRunner addReporterList(List<Reporter> reporterList) {
+        this.reporterList.addAll(reporterList);
+        return this;
+    }
+
+    public TestRunner addCoverageScheme(String coverageScheme) {
+        this.coverageSchemes.add(coverageScheme);
+        return this;
+    }
+
+    public TestRunner withSourceFiles(List<String> sourceFiles) {
+        this.sourceFiles.addAll(sourceFiles);
+        return this;
+    }
+
+    public TestRunner withTestFiles(List<String> testFiles) {
+        this.testFiles.addAll(testFiles);
+        return this;
+    }
+
+    public TestRunner includeObject(String obj) {
+        this.includeObjects.add(obj);
+        return this;
+    }
+
+    public TestRunner excludeObject(String obj) {
+        this.excludeObjects.add(obj);
+        return this;
+    }
+
+    public void run(Connection conn) throws SQLException {
+        for (Reporter r : this.reporterList)
+            validateReporter(conn, r);
+
+        if (this.pathList.isEmpty()) {
+            this.pathList.add(DBHelper.getCurrentSchema(conn));
+        }
+
+        if (this.reporterList.isEmpty()) {
+            this.reporterList.add(new DocumentationReporter().init(conn));
+        }
+
+        OracleConnection oraConn = conn.unwrap(OracleConnection.class);
+        Array pathArray = oraConn.createARRAY(CustomTypes.UT_VARCHAR2_LIST, this.pathList.toArray());
+        Array reporterArray = oraConn.createARRAY(CustomTypes.UT_REPORTERS, this.reporterList.toArray());
+        Array coverageSchemesArray = oraConn.createARRAY(CustomTypes.UT_VARCHAR2_LIST, this.coverageSchemes.toArray());
+        Array sourceFilesArray = oraConn.createARRAY(CustomTypes.UT_VARCHAR2_LIST, this.sourceFiles.toArray());
+        Array testFilesArray = oraConn.createARRAY(CustomTypes.UT_VARCHAR2_LIST, this.testFiles.toArray());
+        Array includeObjectsArray = oraConn.createARRAY(CustomTypes.UT_VARCHAR2_LIST, this.includeObjects.toArray());
+        Array excludeObjectsArray = oraConn.createARRAY(CustomTypes.UT_VARCHAR2_LIST, this.excludeObjects.toArray());
+
         CallableStatement callableStatement = null;
         try {
-            callableStatement = conn.prepareCall("BEGIN ut_runner.run(a_path => :path, a_reporter => :reporter); END;");
-            callableStatement.setString(":path", path);
-            callableStatement.setObject(":reporter", reporter);
+            callableStatement = conn.prepareCall(
+                    "BEGIN " +
+                        "ut_runner.run(" +
+                            "a_paths => ?, a_reporters => ?, a_coverage_schemes => ?," +
+                            "a_source_files => ?, a_test_files => ?, " +
+                            "a_include_objects => ?, a_exclude_objects => ?); " +
+                    "END;");
+            callableStatement.setArray(1, pathArray);
+            callableStatement.setArray(2, reporterArray);
+            callableStatement.setArray(3, coverageSchemesArray);
+            callableStatement.setArray(4, sourceFilesArray);
+            callableStatement.setArray(5, testFilesArray);
+            callableStatement.setArray(6, includeObjectsArray);
+            callableStatement.setArray(7, excludeObjectsArray);
             callableStatement.execute();
         } finally {
             if (callableStatement != null)
@@ -33,7 +116,7 @@ public class TestRunner {
      * @param reporter the reporter
      * @throws SQLException any sql exception
      */
-    private void validateReporter(Connection conn, BaseReporter reporter) throws SQLException {
+    private void validateReporter(Connection conn, Reporter reporter) throws SQLException {
         if (reporter.getReporterId() == null || reporter.getReporterId().isEmpty())
             reporter.init(conn);
     }
