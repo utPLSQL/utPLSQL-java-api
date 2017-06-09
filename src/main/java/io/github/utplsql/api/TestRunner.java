@@ -15,6 +15,7 @@ public class TestRunner {
 
     private List<String> pathList = new ArrayList<>();
     private List<Reporter> reporterList = new ArrayList<>();
+    private boolean colorConsole = false;
     private List<String> coverageSchemes = new ArrayList<>();
     private List<String> sourceFiles = new ArrayList<>();
     private List<String> testFiles = new ArrayList<>();
@@ -33,6 +34,11 @@ public class TestRunner {
 
     public TestRunner addReporter(Reporter reporter) {
         this.reporterList.add(reporter);
+        return this;
+    }
+
+    public TestRunner colorConsole(boolean colorConsole) {
+        this.colorConsole = colorConsole;
         return this;
     }
 
@@ -87,13 +93,16 @@ public class TestRunner {
         Array includeObjectsArray = oraConn.createARRAY(CustomTypes.UT_VARCHAR2_LIST, this.includeObjects.toArray());
         Array excludeObjectsArray = oraConn.createARRAY(CustomTypes.UT_VARCHAR2_LIST, this.excludeObjects.toArray());
 
+        // Workaround because Oracle JDBC doesn't support passing boolean to stored procedures.
+        String colorConsoleStr = Boolean.toString(this.colorConsole);
+
         CallableStatement callableStatement = null;
         try {
             callableStatement = conn.prepareCall(
                     "BEGIN " +
                         "ut_runner.run(" +
-                            "a_paths => ?, a_reporters => ?, a_coverage_schemes => ?," +
-                            "a_source_files => ?, a_test_files => ?, " +
+                            "a_paths => ?, a_reporters => ?, a_color_console => " + colorConsoleStr + ", " +
+                            "a_coverage_schemes => ?, a_source_files => ?, a_test_files => ?, " +
                             "a_include_objects => ?, a_exclude_objects => ?); " +
                     "END;");
             callableStatement.setArray(1, pathArray);

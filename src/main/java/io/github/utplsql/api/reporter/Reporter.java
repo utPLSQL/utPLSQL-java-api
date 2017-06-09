@@ -17,6 +17,7 @@ public abstract class Reporter implements SQLData {
     public Reporter() {}
 
     public Reporter init(Connection conn) throws SQLException {
+        setSelfType(getSQLTypeName());
         setStartDate(new java.sql.Date(Calendar.getInstance().getTimeInMillis()));
         setReporterId(DBHelper.newSysGuid(conn));
         return this;
