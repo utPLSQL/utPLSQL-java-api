@@ -8,11 +8,15 @@ import java.sql.SQLOutput;
 
 public class CoverageHTMLReporter extends Reporter {
 
+    // Could override Reporter.init and call ut_coverage_report_html_helper.get_default_html_assets_path from database,
+    // but had permissions issues.
+    public static final String DEFAULT_ASSETS_PATH = "https://utplsql.github.io/utPLSQL-coverage-html/assets/";
+
     private String projectName;
     private String assetsPath;
 
     public CoverageHTMLReporter() {
-
+        this(null, DEFAULT_ASSETS_PATH);
     }
 
     public CoverageHTMLReporter(String projectName, String assetsPath) {
