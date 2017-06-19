@@ -28,7 +28,7 @@ public class TestRunner {
     }
 
     public TestRunner addPathList(List<String> paths) {
-        this.pathList.addAll(paths);
+        if (pathList != null) this.pathList.addAll(paths);
         return this;
     }
 
@@ -43,7 +43,7 @@ public class TestRunner {
     }
 
     public TestRunner addReporterList(List<Reporter> reporterList) {
-        this.reporterList.addAll(reporterList);
+        if (reporterList != null) this.reporterList.addAll(reporterList);
         return this;
     }
 
@@ -53,12 +53,12 @@ public class TestRunner {
     }
 
     public TestRunner withSourceFiles(List<String> sourceFiles) {
-        this.sourceFiles.addAll(sourceFiles);
+        if (sourceFiles != null) this.sourceFiles.addAll(sourceFiles);
         return this;
     }
 
     public TestRunner withTestFiles(List<String> testFiles) {
-        this.testFiles.addAll(testFiles);
+        if (testFiles != null) this.testFiles.addAll(testFiles);
         return this;
     }
 
@@ -84,34 +84,63 @@ public class TestRunner {
             this.reporterList.add(new DocumentationReporter().init(conn));
         }
 
-        OracleConnection oraConn = conn.unwrap(OracleConnection.class);
-        Array pathArray = oraConn.createARRAY(CustomTypes.UT_VARCHAR2_LIST, this.pathList.toArray());
-        Array reporterArray = oraConn.createARRAY(CustomTypes.UT_REPORTERS, this.reporterList.toArray());
-        Array coverageSchemesArray = oraConn.createARRAY(CustomTypes.UT_VARCHAR2_LIST, this.coverageSchemes.toArray());
-        Array sourceFilesArray = oraConn.createARRAY(CustomTypes.UT_VARCHAR2_LIST, this.sourceFiles.toArray());
-        Array testFilesArray = oraConn.createARRAY(CustomTypes.UT_VARCHAR2_LIST, this.testFiles.toArray());
-        Array includeObjectsArray = oraConn.createARRAY(CustomTypes.UT_VARCHAR2_LIST, this.includeObjects.toArray());
-        Array excludeObjectsArray = oraConn.createARRAY(CustomTypes.UT_VARCHAR2_LIST, this.excludeObjects.toArray());
-
         // Workaround because Oracle JDBC doesn't support passing boolean to stored procedures.
         String colorConsoleStr = Boolean.toString(this.colorConsole);
 
+        OracleConnection oraConn = conn.unwrap(OracleConnection.class);
         CallableStatement callableStatement = null;
         try {
             callableStatement = conn.prepareCall(
                     "BEGIN " +
-                        "ut_runner.run(" +
+                            "ut_runner.run(" +
                             "a_paths => ?, a_reporters => ?, a_color_console => " + colorConsoleStr + ", " +
                             "a_coverage_schemes => ?, a_source_files => ?, a_test_files => ?, " +
                             "a_include_objects => ?, a_exclude_objects => ?); " +
-                    "END;");
-            callableStatement.setArray(1, pathArray);
-            callableStatement.setArray(2, reporterArray);
-            callableStatement.setArray(3, coverageSchemesArray);
-            callableStatement.setArray(4, sourceFilesArray);
-            callableStatement.setArray(5, testFilesArray);
-            callableStatement.setArray(6, includeObjectsArray);
-            callableStatement.setArray(7, excludeObjectsArray);
+                            "END;");
+
+            int paramIdx = 0;
+
+            callableStatement.setArray(
+                    ++paramIdx, oraConn.createARRAY(CustomTypes.UT_VARCHAR2_LIST, this.pathList.toArray()));
+
+            callableStatement.setArray(
+                    ++paramIdx, oraConn.createARRAY(CustomTypes.UT_REPORTERS, this.reporterList.toArray()));
+
+            if (this.coverageSchemes.isEmpty()) {
+                callableStatement.setNull(++paramIdx, Types.ARRAY, CustomTypes.UT_VARCHAR2_LIST);
+            } else {
+                callableStatement.setArray(
+                        ++paramIdx, oraConn.createARRAY(CustomTypes.UT_VARCHAR2_LIST, this.coverageSchemes.toArray()));
+            }
+
+            if (this.sourceFiles.isEmpty()) {
+                callableStatement.setNull(++paramIdx, Types.ARRAY, CustomTypes.UT_VARCHAR2_LIST);
+            } else {
+                callableStatement.setArray(
+                        ++paramIdx, oraConn.createARRAY(CustomTypes.UT_VARCHAR2_LIST, this.sourceFiles.toArray()));
+            }
+
+            if (this.testFiles.isEmpty()) {
+                callableStatement.setNull(++paramIdx, Types.ARRAY, CustomTypes.UT_VARCHAR2_LIST);
+            } else {
+                callableStatement.setArray(
+                        ++paramIdx, oraConn.createARRAY(CustomTypes.UT_VARCHAR2_LIST, this.testFiles.toArray()));
+            }
+
+            if (this.includeObjects.isEmpty()) {
+                callableStatement.setNull(++paramIdx, Types.ARRAY, CustomTypes.UT_VARCHAR2_LIST);
+            } else {
+                callableStatement.setArray(
+                        ++paramIdx, oraConn.createARRAY(CustomTypes.UT_VARCHAR2_LIST, this.includeObjects.toArray()));
+            }
+
+            if (this.excludeObjects.isEmpty()) {
+                callableStatement.setNull(++paramIdx, Types.ARRAY, CustomTypes.UT_VARCHAR2_LIST);
+            } else {
+                callableStatement.setArray(
+                        ++paramIdx, oraConn.createARRAY(CustomTypes.UT_VARCHAR2_LIST, this.excludeObjects.toArray()));
+            }
+
             callableStatement.execute();
         } finally {
             if (callableStatement != null)
