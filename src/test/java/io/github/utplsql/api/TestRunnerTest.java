@@ -1,5 +1,6 @@
 package io.github.utplsql.api;
 
+import io.github.utplsql.api.exception.SomeTestsFailedException;
 import io.github.utplsql.api.reporter.*;
 import io.github.utplsql.api.rules.DatabaseRule;
 import org.junit.Assert;
@@ -32,7 +33,6 @@ public class TestRunnerTest {
         try {
             Connection conn = db.newConnection();
             new TestRunner()
-                    .addPath("ut3")
                     .addPath(db.getUser())
                     .addReporter(new DocumentationReporter().init(conn))
                     .addReporter(new CoverageHTMLReporter().init(conn))
@@ -44,6 +44,21 @@ public class TestRunnerTest {
                     .run(conn);
         } catch (SQLException e) {
             Assert.fail(e.getMessage());
+        }
+    }
+
+    @Test
+    public void failOnErrors() {
+        try {
+            Connection conn = db.newConnection();
+            new TestRunner()
+                    .failOnErrors(true)
+                    .run(conn);
+            Assert.fail();
+        } catch (SomeTestsFailedException ignored) {
+            System.out.println("Expected exception object thrown.");
+        } catch (SQLException e) {
+            Assert.fail("Wrong exception object thrown.");
         }
     }
 
