@@ -17,7 +17,7 @@ git clone -b develop --single-branch https://github.com/utPLSQL/utPLSQL.git
 cat > install.sh.tmp <<EOF
 # tar -xzf $UTPLSQL_FILE.tar.gz && rm $UTPLSQL_FILE.tar.gz
 cd /$UTPLSQL_FILE/source
-sqlplus -S -L sys/oracle@//127.0.0.1:1521/xe AS SYSDBA @install_headless.sql
+sqlplus -S -L sys/oracle@//127.0.0.1:1521/xe AS SYSDBA @install_headless.sql ut3 ut3 users
 EOF
 
 # Copy utPLSQL files to the container and install it.
