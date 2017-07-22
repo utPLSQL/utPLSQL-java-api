@@ -15,9 +15,9 @@ env:
     - CACHE_DIR=$HOME/.cache
     - MAVEN_HOME=/usr/local/maven
     - MAVEN_CFG=$HOME/.m2
-    - API_DB_URL="127.0.0.1:1521:XE"
-    - API_DB_USER=api
-    - API_DB_PASS=api
+    - DB_URL="127.0.0.1:1521:XE"
+    - DB_USER=app
+    - DB_PASS=app
   matrix:
     - ORACLE_VERSION="11g-xe-r2" DOCKER_OPTIONS="--shm-size=1g"
 

@@ -28,6 +28,7 @@ docker cp ./create_api_user.sh $ORACLE_VERSION:/create_api_user.sh
 
 # Remove temporary files.
 # rm $UTPLSQL_FILE.tar.gz
+rm -rf $UTPLSQL_FILE
 rm install.sh.tmp
 
 # Execute the utPLSQL installation inside the container.
