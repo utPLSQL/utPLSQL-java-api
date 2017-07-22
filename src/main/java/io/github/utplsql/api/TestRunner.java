@@ -1,5 +1,6 @@
 package io.github.utplsql.api;
 
+import io.github.utplsql.api.exception.SomeTestsFailedException;
 import io.github.utplsql.api.reporter.DocumentationReporter;
 import io.github.utplsql.api.reporter.Reporter;
 import oracle.jdbc.OracleConnection;
@@ -21,6 +22,7 @@ public class TestRunner {
     private List<String> testFiles = new ArrayList<>();
     private List<String> includeObjects = new ArrayList<>();
     private List<String> excludeObjects = new ArrayList<>();
+    private boolean failOnErrors = false;
 
     public TestRunner addPath(String path) {
         this.pathList.add(path);
@@ -72,7 +74,12 @@ public class TestRunner {
         return this;
     }
 
-    public void run(Connection conn) throws SQLException {
+    public TestRunner failOnErrors(boolean failOnErrors) {
+        this.failOnErrors = failOnErrors;
+        return this;
+    }
+
+    public void run(Connection conn) throws SomeTestsFailedException, SQLException {
         for (Reporter r : this.reporterList)
             validateReporter(conn, r);
 
@@ -86,6 +93,7 @@ public class TestRunner {
 
         // Workaround because Oracle JDBC doesn't support passing boolean to stored procedures.
         String colorConsoleStr = Boolean.toString(this.colorConsole);
+        String failOnErrors = Boolean.toString(this.failOnErrors);
 
         OracleConnection oraConn = conn.unwrap(OracleConnection.class);
         CallableStatement callableStatement = null;
@@ -93,9 +101,15 @@ public class TestRunner {
             callableStatement = conn.prepareCall(
                     "BEGIN " +
                             "ut_runner.run(" +
-                            "a_paths => ?, a_reporters => ?, a_color_console => " + colorConsoleStr + ", " +
-                            "a_coverage_schemes => ?, a_source_files => ?, a_test_files => ?, " +
-                            "a_include_objects => ?, a_exclude_objects => ?); " +
+                            "a_paths            => ?, " +
+                            "a_reporters        => ?, " +
+                            "a_color_console    => " + colorConsoleStr + ", " +
+                            "a_coverage_schemes => ?, " +
+                            "a_source_files     => ?, " +
+                            "a_test_files       => ?, " +
+                            "a_include_objects  => ?, " +
+                            "a_exclude_objects  => ?, " +
+                            "a_fail_on_errors   => " + failOnErrors + "); " +
                             "END;");
 
             int paramIdx = 0;
@@ -142,6 +156,12 @@ public class TestRunner {
             }
 
             callableStatement.execute();
+        } catch (SQLException e) {
+            if (e.getErrorCode() == SomeTestsFailedException.ERROR_CODE) {
+                throw new SomeTestsFailedException(e.getMessage(), e);
+            } else {
+                throw e;
+            }
         } finally {
             if (callableStatement != null)
                 callableStatement.close();

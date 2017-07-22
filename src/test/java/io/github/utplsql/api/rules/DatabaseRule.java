@@ -18,9 +18,9 @@ public class DatabaseRule extends ExternalResource {
     private static String sPass;
 
     static {
-        sUrl  = System.getenv("API_DB_URL")  != null ? System.getenv("API_DB_URL")  : "127.0.0.1:1521:XE";
-        sUser = System.getenv("API_DB_USER") != null ? System.getenv("API_DB_USER") : "app";
-        sPass = System.getenv("API_DB_PASS") != null ? System.getenv("API_DB_PASS") : "app";
+        sUrl  = System.getenv("DB_URL")  != null ? System.getenv("DB_URL")  : "192.168.99.100:1521:XE";
+        sUser = System.getenv("DB_USER") != null ? System.getenv("DB_USER") : "app";
+        sPass = System.getenv("DB_PASS") != null ? System.getenv("DB_PASS") : "app";
     }
 
     private List<Connection> connectionList;
