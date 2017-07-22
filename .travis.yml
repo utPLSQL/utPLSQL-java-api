@@ -31,6 +31,7 @@ install:
   - bash .travis/maven_cfg.sh
   - bash .travis/start_db.sh
   - bash .travis/install_utplsql.sh
+  - bash .travis/install_demo_project.sh
 
 script:
   - mvn test -B
