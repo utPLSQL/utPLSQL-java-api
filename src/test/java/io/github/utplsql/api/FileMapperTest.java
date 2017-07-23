@@ -24,7 +24,7 @@ public class FileMapperTest {
                 "sources/app/procedures/award_bonus.sql",
                 "sources/app/functions/betwnstr.sql");
 
-        FileMapperOptions mapperOptions = new FileMapperOptions();
+        FileMapperOptions mapperOptions = new FileMapperOptions(filePaths);
         mapperOptions.setObjectOwner("APP");
         mapperOptions.setTypeMappings(typeMappings);
         mapperOptions.setRegexPattern("\\w+[\\\\\\/](\\w+)[\\\\\\/](\\w+)[\\\\\\/](\\w+)[.](\\w{3})");
@@ -32,7 +32,7 @@ public class FileMapperTest {
         mapperOptions.setTypeSubExpression(2);
         mapperOptions.setNameSubExpression(3);
 
-        List<FileMapping> fileMappings = FileMapper.buildFileMappingList(db.newConnection(), filePaths, mapperOptions);
+        List<FileMapping> fileMappings = FileMapper.buildFileMappingList(db.newConnection(), mapperOptions);
 
         if (fileMappings.size() != 2)
             Assert.fail("Wrong mapping list size.");

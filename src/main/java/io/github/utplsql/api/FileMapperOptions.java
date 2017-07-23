@@ -1,19 +1,27 @@
 package io.github.utplsql.api;
 
-import java.util.ArrayList;
 import java.util.List;
 
 public class FileMapperOptions {
 
+    private List<String> filePaths;
     private String objectOwner;
     private List<KeyValuePair> typeMappings;
     private String regexPattern;
-    private int ownerSubExpression;
-    private int typeSubExpression;
-    private int nameSubExpression;
+    private Integer ownerSubExpression;
+    private Integer typeSubExpression;
+    private Integer nameSubExpression;
 
-    public FileMapperOptions() {
-        this.typeMappings = new ArrayList<>();
+    public FileMapperOptions(List<String> filePaths) {
+        this.setFilePaths(filePaths);
+    }
+
+    public List<String> getFilePaths() {
+        return filePaths;
+    }
+
+    public void setFilePaths(List<String> filePaths) {
+        this.filePaths = filePaths;
     }
 
     public String getObjectOwner() {
@@ -40,27 +48,27 @@ public class FileMapperOptions {
         this.regexPattern = regexPattern;
     }
 
-    public int getOwnerSubExpression() {
+    public Integer getOwnerSubExpression() {
         return ownerSubExpression;
     }
 
-    public void setOwnerSubExpression(int ownerSubExpression) {
+    public void setOwnerSubExpression(Integer ownerSubExpression) {
         this.ownerSubExpression = ownerSubExpression;
     }
 
-    public int getTypeSubExpression() {
+    public Integer getTypeSubExpression() {
         return typeSubExpression;
     }
 
-    public void setTypeSubExpression(int typeSubExpression) {
+    public void setTypeSubExpression(Integer typeSubExpression) {
         this.typeSubExpression = typeSubExpression;
     }
 
-    public int getNameSubExpression() {
+    public Integer getNameSubExpression() {
         return nameSubExpression;
     }
 
-    public void setNameSubExpression(int nameSubExpression) {
+    public void setNameSubExpression(Integer nameSubExpression) {
         this.nameSubExpression = nameSubExpression;
     }
 
