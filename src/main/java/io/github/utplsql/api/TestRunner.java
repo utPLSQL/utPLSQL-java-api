@@ -22,6 +22,8 @@ public class TestRunner {
     private List<String> testFiles = new ArrayList<>();
     private List<String> includeObjects = new ArrayList<>();
     private List<String> excludeObjects = new ArrayList<>();
+    private FileMapperOptions sourceMappingOptions;
+    private FileMapperOptions testMappingOptions;
     private boolean failOnErrors = false;
 
     public TestRunner addPath(String path) {
@@ -74,6 +76,16 @@ public class TestRunner {
         return this;
     }
 
+    public TestRunner sourceMappingOptions(FileMapperOptions mapperOptions) {
+        this.sourceMappingOptions = mapperOptions;
+        return this;
+    }
+
+    public TestRunner testMappingOptions(FileMapperOptions mapperOptions) {
+        this.testMappingOptions = mapperOptions;
+        return this;
+    }
+
     public TestRunner failOnErrors(boolean failOnErrors) {
         this.failOnErrors = failOnErrors;
         return this;
@@ -95,21 +107,29 @@ public class TestRunner {
         String colorConsoleStr = Boolean.toString(this.colorConsole);
         String failOnErrors = Boolean.toString(this.failOnErrors);
 
+        String sourceFilesParam = "a_source_files";
+        if (this.sourceMappingOptions != null && !this.sourceFiles.isEmpty())
+            sourceFilesParam = "a_source_file_mappings";
+
+        String testFilesParam = "a_test_files";
+        if (this.testMappingOptions != null && !this.testFiles.isEmpty())
+            sourceFilesParam = "a_test_file_mappings";
+
         OracleConnection oraConn = conn.unwrap(OracleConnection.class);
         CallableStatement callableStatement = null;
         try {
             callableStatement = conn.prepareCall(
                     "BEGIN " +
                         "ut_runner.run(" +
-                            "a_paths            => ?, " +
-                            "a_reporters        => ?, " +
-                            "a_color_console    => " + colorConsoleStr + ", " +
-                            "a_coverage_schemes => ?, " +
-                            "a_source_files     => ?, " +
-                            "a_test_files       => ?, " +
-                            "a_include_objects  => ?, " +
-                            "a_exclude_objects  => ?, " +
-                            "a_fail_on_errors   => " + failOnErrors + "); " +
+                            "a_paths             => ?, " +
+                            "a_reporters         => ?, " +
+                            "a_color_console     => " + colorConsoleStr + ", " +
+                            "a_coverage_schemes  => ?, " +
+                            sourceFilesParam + " => ?, " +
+                            testFilesParam + "   => ?, " +
+                            "a_include_objects   => ?, " +
+                            "a_exclude_objects   => ?, " +
+                            "a_fail_on_errors    => " + failOnErrors + "); " +
                     "END;");
 
             int paramIdx = 0;
@@ -129,6 +149,12 @@ public class TestRunner {
 
             if (this.sourceFiles.isEmpty()) {
                 callableStatement.setNull(++paramIdx, Types.ARRAY, CustomTypes.UT_VARCHAR2_LIST);
+            } else if (this.sourceMappingOptions != null) {
+                Array sourceMappings = FileMapper.buildFileMappingArray(
+                        conn, this.sourceFiles, this.sourceMappingOptions);
+
+                callableStatement.setArray(
+                        ++paramIdx, oraConn.createOracleArray(CustomTypes.UT_FILE_MAPPINGS, sourceMappings));
             } else {
                 callableStatement.setArray(
                         ++paramIdx, oraConn.createOracleArray(CustomTypes.UT_VARCHAR2_LIST, this.sourceFiles.toArray()));
@@ -136,6 +162,12 @@ public class TestRunner {
 
             if (this.testFiles.isEmpty()) {
                 callableStatement.setNull(++paramIdx, Types.ARRAY, CustomTypes.UT_VARCHAR2_LIST);
+            } else if (this.testMappingOptions != null) {
+                Array sourceMappings = FileMapper.buildFileMappingArray(
+                        conn, this.testFiles, this.testMappingOptions);
+
+                callableStatement.setArray(
+                        ++paramIdx, oraConn.createOracleArray(CustomTypes.UT_FILE_MAPPINGS, sourceMappings));
             } else {
                 callableStatement.setArray(
                         ++paramIdx, oraConn.createOracleArray(CustomTypes.UT_VARCHAR2_LIST, this.testFiles.toArray()));

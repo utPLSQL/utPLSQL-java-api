@@ -20,18 +20,19 @@ public class FileMapperTest {
         typeMappings.add(new KeyValuePair("procedures", "PROCEDURE"));
         typeMappings.add(new KeyValuePair("functions", "FUNCTION"));
 
-        FileMapperOptions mapperOptions = new FileMapperOptions();
-        mapperOptions.setOwner("APP");
-        mapperOptions.setFilePaths(java.util.Arrays.asList(
+        List<String> filePaths = java.util.Arrays.asList(
                 "sources/app/procedures/award_bonus.sql",
-                "sources/app/functions/betwnstr.sql"));
+                "sources/app/functions/betwnstr.sql");
+
+        FileMapperOptions mapperOptions = new FileMapperOptions(filePaths);
+        mapperOptions.setOwner("APP");
         mapperOptions.setTypeMappings(typeMappings);
         mapperOptions.setRegexPattern("\\w+[\\\\\\/](\\w+)[\\\\\\/](\\w+)[\\\\\\/](\\w+)[.](\\w{3})");
         mapperOptions.setOwnerSubExpression(1);
         mapperOptions.setTypeSubExpression(2);
         mapperOptions.setNameSubExpression(3);
 
-        List<FileMapping> fileMappings = FileMapper.buildFileMappingList(db.newConnection(), mapperOptions);
+        List<FileMapping> fileMappings = FileMapper.buildFileMappingList(db.newConnection(), filePaths, mapperOptions);
 
         if (fileMappings.size() != 2)
             Assert.fail("Wrong mapping list size.");

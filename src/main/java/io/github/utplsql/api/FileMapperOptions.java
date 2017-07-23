@@ -6,15 +6,13 @@ import java.util.List;
 public class FileMapperOptions {
 
     private String owner;
-    private List<String> filePaths;
     private List<KeyValuePair> typeMappings;
     private String regexPattern;
     private int ownerSubExpression;
     private int typeSubExpression;
     private int nameSubExpression;
 
-    public FileMapperOptions() {
-        this.filePaths = new ArrayList<>();
+    public FileMapperOptions(List<String> filePaths) {
         this.typeMappings = new ArrayList<>();
     }
 
@@ -24,14 +22,6 @@ public class FileMapperOptions {
 
     public void setOwner(String owner) {
         this.owner = owner;
-    }
-
-    public List<String> getFilePaths() {
-        return filePaths;
-    }
-
-    public void setFilePaths(List<String> filePaths) {
-        this.filePaths = filePaths;
     }
 
     public List<KeyValuePair> getTypeMappings() {

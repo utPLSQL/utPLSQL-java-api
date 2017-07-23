@@ -19,7 +19,8 @@ public final class FileMapper {
     /**
      * Call the database api to build the custom file mappings.
      */
-    public static Array buildFileMappingArray(Connection conn, FileMapperOptions mapperOptions) throws SQLException {
+    public static Array buildFileMappingArray(
+            Connection conn, List<String> filePaths, FileMapperOptions mapperOptions) throws SQLException {
         OracleConnection oraConn = conn.unwrap(OracleConnection.class);
 
         Map typeMap = conn.getTypeMap();
@@ -44,7 +45,7 @@ public final class FileMapper {
 
         callableStatement.setString(++paramIdx, mapperOptions.getOwner());
         callableStatement.setArray(
-                ++paramIdx, oraConn.createOracleArray(CustomTypes.UT_VARCHAR2_LIST, mapperOptions.getFilePaths().toArray()));
+                ++paramIdx, oraConn.createOracleArray(CustomTypes.UT_VARCHAR2_LIST, filePaths.toArray()));
         callableStatement.setArray(
                 ++paramIdx, oraConn.createOracleArray(CustomTypes.UT_KEY_VALUE_PAIRS, mapperOptions.getTypeMappings().toArray()));
         callableStatement.setString(++paramIdx, mapperOptions.getRegexPattern());
@@ -56,8 +57,9 @@ public final class FileMapper {
         return callableStatement.getArray(1);
     }
 
-    public static List<FileMapping> buildFileMappingList(Connection conn, FileMapperOptions mapperOptions) throws SQLException {
-        java.sql.Array fileMappings = buildFileMappingArray(conn, mapperOptions);
+    public static List<FileMapping> buildFileMappingList(
+            Connection conn, List<String> filePaths, FileMapperOptions mapperOptions) throws SQLException {
+        java.sql.Array fileMappings = buildFileMappingArray(conn, filePaths, mapperOptions);
 
         List<FileMapping> mappingList = new ArrayList<>();
         for (Object obj : (Object[]) fileMappings.getArray()) {
