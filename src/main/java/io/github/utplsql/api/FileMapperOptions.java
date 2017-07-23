@@ -5,23 +5,23 @@ import java.util.List;
 
 public class FileMapperOptions {
 
-    private String owner;
+    private String objectOwner;
     private List<KeyValuePair> typeMappings;
     private String regexPattern;
     private int ownerSubExpression;
     private int typeSubExpression;
     private int nameSubExpression;
 
-    public FileMapperOptions(List<String> filePaths) {
+    public FileMapperOptions() {
         this.typeMappings = new ArrayList<>();
     }
 
-    public String getOwner() {
-        return owner;
+    public String getObjectOwner() {
+        return objectOwner;
     }
 
-    public void setOwner(String owner) {
-        this.owner = owner;
+    public void setObjectOwner(String owner) {
+        this.objectOwner = owner;
     }
 
     public List<KeyValuePair> getTypeMappings() {

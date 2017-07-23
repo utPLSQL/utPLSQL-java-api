@@ -24,8 +24,8 @@ public class FileMapperTest {
                 "sources/app/procedures/award_bonus.sql",
                 "sources/app/functions/betwnstr.sql");
 
-        FileMapperOptions mapperOptions = new FileMapperOptions(filePaths);
-        mapperOptions.setOwner("APP");
+        FileMapperOptions mapperOptions = new FileMapperOptions();
+        mapperOptions.setObjectOwner("APP");
         mapperOptions.setTypeMappings(typeMappings);
         mapperOptions.setRegexPattern("\\w+[\\\\\\/](\\w+)[\\\\\\/](\\w+)[\\\\\\/](\\w+)[.](\\w{3})");
         mapperOptions.setOwnerSubExpression(1);

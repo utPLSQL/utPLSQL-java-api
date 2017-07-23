@@ -43,7 +43,7 @@ public final class FileMapper {
         int paramIdx = 0;
         callableStatement.registerOutParameter(++paramIdx, OracleTypes.ARRAY, CustomTypes.UT_FILE_MAPPINGS);
 
-        callableStatement.setString(++paramIdx, mapperOptions.getOwner());
+        callableStatement.setString(++paramIdx, mapperOptions.getObjectOwner());
         callableStatement.setArray(
                 ++paramIdx, oraConn.createOracleArray(CustomTypes.UT_VARCHAR2_LIST, filePaths.toArray()));
         callableStatement.setArray(
