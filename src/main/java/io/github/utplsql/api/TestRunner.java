@@ -5,7 +5,10 @@ import io.github.utplsql.api.reporter.DocumentationReporter;
 import io.github.utplsql.api.reporter.Reporter;
 import oracle.jdbc.OracleConnection;
 
-import java.sql.*;
+import java.sql.CallableStatement;
+import java.sql.Connection;
+import java.sql.SQLException;
+import java.sql.Types;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -22,6 +25,8 @@ public class TestRunner {
     private List<String> testFiles = new ArrayList<>();
     private List<String> includeObjects = new ArrayList<>();
     private List<String> excludeObjects = new ArrayList<>();
+    private FileMapperOptions sourceMappingOptions;
+    private FileMapperOptions testMappingOptions;
     private boolean failOnErrors = false;
 
     public TestRunner addPath(String path) {
@@ -74,6 +79,16 @@ public class TestRunner {
         return this;
     }
 
+    public TestRunner sourceMappingOptions(FileMapperOptions mapperOptions) {
+        this.sourceMappingOptions = mapperOptions;
+        return this;
+    }
+
+    public TestRunner testMappingOptions(FileMapperOptions mapperOptions) {
+        this.testMappingOptions = mapperOptions;
+        return this;
+    }
+
     public TestRunner failOnErrors(boolean failOnErrors) {
         this.failOnErrors = failOnErrors;
         return this;
@@ -95,64 +110,94 @@ public class TestRunner {
         String colorConsoleStr = Boolean.toString(this.colorConsole);
         String failOnErrors = Boolean.toString(this.failOnErrors);
 
+        String sourceFilesParam = "a_source_files";
+        String testFilesParam = "a_test_files";
+
+        if (this.sourceMappingOptions != null || this.testMappingOptions != null) {
+            sourceFilesParam = "a_source_file_mappings";
+            testFilesParam = "a_test_file_mappings";
+        }
+
         OracleConnection oraConn = conn.unwrap(OracleConnection.class);
         CallableStatement callableStatement = null;
         try {
             callableStatement = conn.prepareCall(
                     "BEGIN " +
-                            "ut_runner.run(" +
-                            "a_paths            => ?, " +
-                            "a_reporters        => ?, " +
-                            "a_color_console    => " + colorConsoleStr + ", " +
-                            "a_coverage_schemes => ?, " +
-                            "a_source_files     => ?, " +
-                            "a_test_files       => ?, " +
-                            "a_include_objects  => ?, " +
-                            "a_exclude_objects  => ?, " +
-                            "a_fail_on_errors   => " + failOnErrors + "); " +
-                            "END;");
+                        "ut_runner.run(" +
+                            "a_paths             => ?, " +
+                            "a_reporters         => ?, " +
+                            "a_color_console     => " + colorConsoleStr + ", " +
+                            "a_coverage_schemes  => ?, " +
+                            sourceFilesParam + " => ?, " +
+                            testFilesParam + "   => ?, " +
+                            "a_include_objects   => ?, " +
+                            "a_exclude_objects   => ?, " +
+                            "a_fail_on_errors    => " + failOnErrors + "); " +
+                    "END;");
 
             int paramIdx = 0;
 
             callableStatement.setArray(
-                    ++paramIdx, oraConn.createARRAY(CustomTypes.UT_VARCHAR2_LIST, this.pathList.toArray()));
+                    ++paramIdx, oraConn.createOracleArray(CustomTypes.UT_VARCHAR2_LIST, this.pathList.toArray()));
 
             callableStatement.setArray(
-                    ++paramIdx, oraConn.createARRAY(CustomTypes.UT_REPORTERS, this.reporterList.toArray()));
+                    ++paramIdx, oraConn.createOracleArray(CustomTypes.UT_REPORTERS, this.reporterList.toArray()));
 
             if (this.coverageSchemes.isEmpty()) {
                 callableStatement.setNull(++paramIdx, Types.ARRAY, CustomTypes.UT_VARCHAR2_LIST);
             } else {
                 callableStatement.setArray(
-                        ++paramIdx, oraConn.createARRAY(CustomTypes.UT_VARCHAR2_LIST, this.coverageSchemes.toArray()));
+                        ++paramIdx, oraConn.createOracleArray(CustomTypes.UT_VARCHAR2_LIST, this.coverageSchemes.toArray()));
             }
 
-            if (this.sourceFiles.isEmpty()) {
-                callableStatement.setNull(++paramIdx, Types.ARRAY, CustomTypes.UT_VARCHAR2_LIST);
-            } else {
-                callableStatement.setArray(
-                        ++paramIdx, oraConn.createARRAY(CustomTypes.UT_VARCHAR2_LIST, this.sourceFiles.toArray()));
-            }
+            if (this.sourceMappingOptions != null || this.testMappingOptions != null) {
+                if (this.sourceMappingOptions != null) {
+                    List<FileMapping> sourceMappings = FileMapper.buildFileMappingList(
+                            conn, this.sourceFiles, this.sourceMappingOptions);
 
-            if (this.testFiles.isEmpty()) {
-                callableStatement.setNull(++paramIdx, Types.ARRAY, CustomTypes.UT_VARCHAR2_LIST);
+                    callableStatement.setArray(
+                            ++paramIdx, oraConn.createOracleArray(CustomTypes.UT_FILE_MAPPINGS, sourceMappings.toArray()));
+                } else {
+                    callableStatement.setNull(++paramIdx, Types.ARRAY, CustomTypes.UT_FILE_MAPPINGS);
+                }
+
+                if (this.testMappingOptions != null) {
+                    List<FileMapping> sourceMappings = FileMapper.buildFileMappingList(
+                            conn, this.testFiles, this.testMappingOptions);
+
+                    callableStatement.setArray(
+                            ++paramIdx, oraConn.createOracleArray(CustomTypes.UT_FILE_MAPPINGS, sourceMappings.toArray()));
+                } else {
+                    callableStatement.setNull(++paramIdx, Types.ARRAY, CustomTypes.UT_FILE_MAPPINGS);
+                }
             } else {
-                callableStatement.setArray(
-                        ++paramIdx, oraConn.createARRAY(CustomTypes.UT_VARCHAR2_LIST, this.testFiles.toArray()));
+                if (this.sourceFiles.isEmpty()) {
+                    callableStatement.setNull(++paramIdx, Types.ARRAY, CustomTypes.UT_VARCHAR2_LIST);
+                } else {
+                    callableStatement.setArray(
+                            ++paramIdx, oraConn.createOracleArray(CustomTypes.UT_VARCHAR2_LIST, this.sourceFiles.toArray()));
+                }
+
+                if (this.testFiles.isEmpty()) {
+                    callableStatement.setNull(++paramIdx, Types.ARRAY, CustomTypes.UT_VARCHAR2_LIST);
+                } else {
+                    callableStatement.setArray(
+                            ++paramIdx, oraConn.createOracleArray(CustomTypes.UT_VARCHAR2_LIST, this.testFiles.toArray()));
+                }
             }
 
             if (this.includeObjects.isEmpty()) {
                 callableStatement.setNull(++paramIdx, Types.ARRAY, CustomTypes.UT_VARCHAR2_LIST);
             } else {
                 callableStatement.setArray(
-                        ++paramIdx, oraConn.createARRAY(CustomTypes.UT_VARCHAR2_LIST, this.includeObjects.toArray()));
+                        ++paramIdx, oraConn.createOracleArray(CustomTypes.UT_VARCHAR2_LIST, this.includeObjects.toArray()));
             }
 
             if (this.excludeObjects.isEmpty()) {
                 callableStatement.setNull(++paramIdx, Types.ARRAY, CustomTypes.UT_VARCHAR2_LIST);
             } else {
                 callableStatement.setArray(
-                        ++paramIdx, oraConn.createARRAY(CustomTypes.UT_VARCHAR2_LIST, this.excludeObjects.toArray()));
+                        ++paramIdx, oraConn.createOracleArray(CustomTypes.UT_VARCHAR2_LIST, this.excludeObjects.toArray()));
             }
 
             callableStatement.execute();
