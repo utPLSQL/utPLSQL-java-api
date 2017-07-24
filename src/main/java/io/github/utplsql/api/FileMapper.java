@@ -4,10 +4,7 @@ package io.github.utplsql.api;
 import oracle.jdbc.OracleConnection;
 import oracle.jdbc.OracleTypes;
 
-import java.sql.Array;
-import java.sql.CallableStatement;
-import java.sql.Connection;
-import java.sql.SQLException;
+import java.sql.*;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Map;
@@ -20,7 +17,7 @@ public final class FileMapper {
      * Call the database api to build the custom file mappings.
      */
     public static Array buildFileMappingArray(
-            Connection conn, List<String> filePaths, FileMapperOptions mapperOptions) throws SQLException {
+            Connection conn, FileMapperOptions mapperOptions) throws SQLException {
         OracleConnection oraConn = conn.unwrap(OracleConnection.class);
 
         Map typeMap = conn.getTypeMap();
@@ -43,23 +40,53 @@ public final class FileMapper {
         int paramIdx = 0;
         callableStatement.registerOutParameter(++paramIdx, OracleTypes.ARRAY, CustomTypes.UT_FILE_MAPPINGS);
 
-        callableStatement.setString(++paramIdx, mapperOptions.getObjectOwner());
+        if (mapperOptions.getRegexPattern() == null) {
+            callableStatement.setNull(++paramIdx, Types.VARCHAR);
+        } else {
+            callableStatement.setString(++paramIdx, mapperOptions.getObjectOwner());
+        }
+
         callableStatement.setArray(
-                ++paramIdx, oraConn.createOracleArray(CustomTypes.UT_VARCHAR2_LIST, filePaths.toArray()));
-        callableStatement.setArray(
-                ++paramIdx, oraConn.createOracleArray(CustomTypes.UT_KEY_VALUE_PAIRS, mapperOptions.getTypeMappings().toArray()));
-        callableStatement.setString(++paramIdx, mapperOptions.getRegexPattern());
-        callableStatement.setInt(++paramIdx, mapperOptions.getOwnerSubExpression());
-        callableStatement.setInt(++paramIdx, mapperOptions.getNameSubExpression());
-        callableStatement.setInt(++paramIdx, mapperOptions.getTypeSubExpression());
+                ++paramIdx, oraConn.createOracleArray(CustomTypes.UT_VARCHAR2_LIST, mapperOptions.getFilePaths().toArray()));
+
+        if (mapperOptions.getTypeMappings() == null) {
+            callableStatement.setNull(++paramIdx, Types.ARRAY, CustomTypes.UT_KEY_VALUE_PAIR);
+        } else {
+            callableStatement.setArray(
+                    ++paramIdx, oraConn.createOracleArray(CustomTypes.UT_KEY_VALUE_PAIRS, mapperOptions.getTypeMappings().toArray()));
+        }
+
+        if (mapperOptions.getRegexPattern() == null) {
+            callableStatement.setNull(++paramIdx, Types.VARCHAR);
+        } else {
+            callableStatement.setString(++paramIdx, mapperOptions.getRegexPattern());
+        }
+
+        if (mapperOptions.getOwnerSubExpression() == null) {
+            callableStatement.setNull(++paramIdx, Types.INTEGER);
+        } else {
+            callableStatement.setInt(++paramIdx, mapperOptions.getOwnerSubExpression());
+        }
+
+        if (mapperOptions.getNameSubExpression() == null) {
+            callableStatement.setNull(++paramIdx, Types.INTEGER);
+        } else {
+            callableStatement.setInt(++paramIdx, mapperOptions.getNameSubExpression());
+        }
+
+        if (mapperOptions.getTypeSubExpression() == null) {
+            callableStatement.setNull(++paramIdx, Types.INTEGER);
+        } else {
+            callableStatement.setInt(++paramIdx, mapperOptions.getTypeSubExpression());
+        }
 
         callableStatement.execute();
         return callableStatement.getArray(1);
     }
 
     public static List<FileMapping> buildFileMappingList(
-            Connection conn, List<String> filePaths, FileMapperOptions mapperOptions) throws SQLException {
-        java.sql.Array fileMappings = buildFileMappingArray(conn, filePaths, mapperOptions);
+            Connection conn, FileMapperOptions mapperOptions) throws SQLException {
+        java.sql.Array fileMappings = buildFileMappingArray(conn, mapperOptions);
 
         List<FileMapping> mappingList = new ArrayList<>();
         for (Object obj : (Object[]) fileMappings.getArray()) {
