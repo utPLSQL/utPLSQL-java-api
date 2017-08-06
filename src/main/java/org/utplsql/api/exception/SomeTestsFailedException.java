@@ -1,4 +1,4 @@
-package io.github.utplsql.api.exception;
+package org.utplsql.api.exception;
 
 import java.sql.SQLException;
 

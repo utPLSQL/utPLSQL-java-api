@@ -1,4 +1,4 @@
-package io.github.utplsql.api.rules;
+package org.utplsql.api.rules;
 
 import org.junit.rules.ExternalResource;
 

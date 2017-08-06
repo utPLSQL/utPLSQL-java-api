@@ -1,8 +1,8 @@
-package io.github.utplsql.api;
+package org.utplsql.api;
 
-import io.github.utplsql.api.reporter.*;
 import org.junit.Assert;
 import org.junit.Test;
+import org.utplsql.api.reporter.*;
 
 import java.sql.SQLException;
 

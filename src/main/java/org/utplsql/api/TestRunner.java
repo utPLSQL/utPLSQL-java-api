@@ -1,8 +1,8 @@
-package io.github.utplsql.api;
+package org.utplsql.api;
 
-import io.github.utplsql.api.exception.SomeTestsFailedException;
-import io.github.utplsql.api.reporter.DocumentationReporter;
-import io.github.utplsql.api.reporter.Reporter;
+import org.utplsql.api.exception.SomeTestsFailedException;
+import org.utplsql.api.reporter.DocumentationReporter;
+import org.utplsql.api.reporter.Reporter;
 import oracle.jdbc.OracleConnection;
 
 import java.sql.CallableStatement;

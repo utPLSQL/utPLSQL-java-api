@@ -1,4 +1,4 @@
-package io.github.utplsql.api;
+package org.utplsql.api;
 
 import oracle.jdbc.OracleTypes;
 

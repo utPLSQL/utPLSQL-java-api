@@ -1,6 +1,6 @@
-package io.github.utplsql.api;
+package org.utplsql.api;
 
-import io.github.utplsql.api.rules.DatabaseRule;
+import org.utplsql.api.rules.DatabaseRule;
 import org.junit.Assert;
 import org.junit.Rule;
 import org.junit.Test;

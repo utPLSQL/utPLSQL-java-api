@@ -1,6 +1,6 @@
-package io.github.utplsql.api.reporter;
+package org.utplsql.api.reporter;
 
-import io.github.utplsql.api.DBHelper;
+import org.utplsql.api.DBHelper;
 
 import java.sql.*;
 import java.util.Calendar;

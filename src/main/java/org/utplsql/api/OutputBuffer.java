@@ -1,6 +1,6 @@
-package io.github.utplsql.api;
+package org.utplsql.api;
 
-import io.github.utplsql.api.reporter.Reporter;
+import org.utplsql.api.reporter.Reporter;
 import oracle.jdbc.OracleTypes;
 
 import java.io.PrintStream;

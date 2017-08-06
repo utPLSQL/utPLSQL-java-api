@@ -1,11 +1,11 @@
-package io.github.utplsql.api;
+package org.utplsql.api;
 
-import io.github.utplsql.api.exception.SomeTestsFailedException;
-import io.github.utplsql.api.reporter.*;
-import io.github.utplsql.api.rules.DatabaseRule;
 import org.junit.Assert;
 import org.junit.Rule;
 import org.junit.Test;
+import org.utplsql.api.exception.SomeTestsFailedException;
+import org.utplsql.api.reporter.*;
+import org.utplsql.api.rules.DatabaseRule;
 
 import java.sql.Connection;
 import java.sql.SQLException;

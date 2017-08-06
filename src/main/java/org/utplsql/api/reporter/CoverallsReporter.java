@@ -1,6 +1,6 @@
-package io.github.utplsql.api.reporter;
+package org.utplsql.api.reporter;
 
-import io.github.utplsql.api.CustomTypes;
+import org.utplsql.api.CustomTypes;
 
 import java.sql.SQLException;
 

@@ -1,8 +1,8 @@
-package io.github.utplsql.api;
+package org.utplsql.api;
 
-import io.github.utplsql.api.reporter.DocumentationReporter;
-import io.github.utplsql.api.reporter.Reporter;
-import io.github.utplsql.api.rules.DatabaseRule;
+import org.utplsql.api.reporter.DocumentationReporter;
+import org.utplsql.api.reporter.Reporter;
+import org.utplsql.api.rules.DatabaseRule;
 import org.junit.Assert;
 import org.junit.Rule;
 import org.junit.Test;
