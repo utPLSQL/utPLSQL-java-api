@@ -40,7 +40,7 @@ public final class FileMapper {
         int paramIdx = 0;
         callableStatement.registerOutParameter(++paramIdx, OracleTypes.ARRAY, CustomTypes.UT_FILE_MAPPINGS);
 
-        if (mapperOptions.getRegexPattern() == null) {
+        if (mapperOptions.getObjectOwner() == null) {
             callableStatement.setNull(++paramIdx, Types.VARCHAR);
         } else {
             callableStatement.setString(++paramIdx, mapperOptions.getObjectOwner());
