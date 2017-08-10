@@ -6,7 +6,7 @@ import java.sql.SQLException;
 import java.sql.SQLInput;
 import java.sql.SQLOutput;
 
-public class CoverageHTMLReporter extends Reporter {
+public class CoverageHTMLReporter extends OutputReporter {
 
     // Could override Reporter.init and call ut_coverage_report_html_helper.get_default_html_assets_path from database,
     // but had permissions issues.

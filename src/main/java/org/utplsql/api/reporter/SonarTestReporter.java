@@ -4,7 +4,7 @@ import org.utplsql.api.CustomTypes;
 
 import java.sql.SQLException;
 
-public class SonarTestReporter extends Reporter {
+public class SonarTestReporter extends OutputReporter {
 
     @Override
     public String getSQLTypeName() throws SQLException {

@@ -18,6 +18,9 @@ public final class CustomTypes {
     public static final String UT_COVERAGE_SONAR_REPORTER = "UT_COVERAGE_SONAR_REPORTER";
     public static final String UT_SONAR_TEST_REPORTER = "UT_SONAR_TEST_REPORTER";
 
+    public static final String UT_OUTPUT_BUFFER_BASE = "UT_OUTPUT_BUFFER_BASE";
+    public static final String UT_OUTPUT_TABLE_BUFFER = "UT_OUTPUT_TABLE_BUFFER";
+
     public static final String UT_FILE_MAPPING = "UT_FILE_MAPPING";
     public static final String UT_FILE_MAPPINGS = "UT_FILE_MAPPINGS";
 

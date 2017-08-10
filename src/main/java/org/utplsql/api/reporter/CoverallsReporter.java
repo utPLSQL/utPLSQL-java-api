@@ -4,7 +4,7 @@ import org.utplsql.api.CustomTypes;
 
 import java.sql.SQLException;
 
-public class CoverallsReporter extends Reporter {
+public class CoverallsReporter extends OutputReporter {
 
     @Override
     public String getSQLTypeName() throws SQLException {

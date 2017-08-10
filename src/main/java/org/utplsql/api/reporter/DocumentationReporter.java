@@ -6,7 +6,7 @@ import java.sql.SQLException;
 import java.sql.SQLInput;
 import java.sql.SQLOutput;
 
-public class DocumentationReporter extends Reporter {
+public class DocumentationReporter extends OutputReporter {
 
     private int lvl;
     private int failed;
