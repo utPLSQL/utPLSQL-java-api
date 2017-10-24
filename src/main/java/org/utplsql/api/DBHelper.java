@@ -97,13 +97,11 @@ public final class DBHelper {
     }
 
     /**
-     * Enables the dbms_output buffer.
+     * Enable the dbms_output buffer with unlimited size.
      * @param conn the connection
-     * @param bufferLen the buffer length
      */
-    public static void enableDBMSOutput(Connection conn, int bufferLen) {
-        try (CallableStatement call = conn.prepareCall("BEGIN dbms_output.enable(?); END;")) {
-            call.setInt(1, bufferLen);
+    public static void enableDBMSOutput(Connection conn) {
+        try (CallableStatement call = conn.prepareCall("BEGIN dbms_output.enable(NULL); END;")) {
             call.execute();
         } catch (SQLException e) {
             System.out.println("Failed to enable dbms_output.");
@@ -111,15 +109,7 @@ public final class DBHelper {
     }
 
     /**
-     * Enables the dbms_output buffer.
-     * @param conn the connection
-     */
-    public static void enableDBMSOutput(Connection conn) {
-        enableDBMSOutput(conn, Integer.MAX_VALUE);
-    }
-
-    /**
-     * Disables the dbms_output buffer.
+     * Disable the dbms_output buffer.
      * @param conn the connection
      */
     public static void disableDBMSOutput(Connection conn) {
