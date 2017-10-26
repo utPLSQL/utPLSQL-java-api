@@ -12,6 +12,8 @@ import java.sql.Types;
  */
 public final class DBHelper {
 
+    public static final String UTPLSQL_COMPATIBILITY_VERSION = "3.0.3";
+
     private DBHelper() {}
 
     /**
@@ -49,6 +51,72 @@ public final class DBHelper {
         } finally {
             if (callableStatement != null)
                 callableStatement.close();
+        }
+    }
+
+    /**
+     * Check the utPLSQL version compatibility.
+     * @param conn the connection
+     * @return true if the requested utPLSQL version is compatible with the one installed on database
+     * @throws SQLException any database error
+     */
+    public static boolean versionCompatibilityCheck(Connection conn, String requested, String current)
+            throws SQLException {
+        CallableStatement callableStatement = null;
+        try {
+            callableStatement = conn.prepareCall("BEGIN ? := ut_runner.version_compatibility_check(?, ?); END;");
+            callableStatement.registerOutParameter(1, Types.SMALLINT);
+            callableStatement.setString(2, requested);
+
+            if (current == null)
+                callableStatement.setNull(3, Types.VARCHAR);
+            else
+                callableStatement.setString(3, current);
+
+            callableStatement.executeUpdate();
+            return callableStatement.getInt(1) == 1;
+        } catch (SQLException e) {
+            if (e.getErrorCode() == 6550)
+                return false;
+            else
+                throw e;
+        } finally {
+            if (callableStatement != null)
+                callableStatement.close();
+        }
+    }
+
+    public static boolean versionCompatibilityCheck(Connection conn, String requested)
+            throws SQLException {
+        return versionCompatibilityCheck(conn, requested, null);
+    }
+
+    public static boolean versionCompatibilityCheck(Connection conn)
+            throws SQLException {
+        return versionCompatibilityCheck(conn, UTPLSQL_COMPATIBILITY_VERSION);
+    }
+
+    /**
+     * Enable the dbms_output buffer with unlimited size.
+     * @param conn the connection
+     */
+    public static void enableDBMSOutput(Connection conn) {
+        try (CallableStatement call = conn.prepareCall("BEGIN dbms_output.enable(NULL); END;")) {
+            call.execute();
+        } catch (SQLException e) {
+            System.out.println("Failed to enable dbms_output.");
+        }
+    }
+
+    /**
+     * Disable the dbms_output buffer.
+     * @param conn the connection
+     */
+    public static void disableDBMSOutput(Connection conn) {
+        try (CallableStatement call = conn.prepareCall("BEGIN dbms_output.disable(); END;")) {
+            call.execute();
+        } catch (SQLException e) {
+            System.out.println("Failed to disable dbms_output.");
         }
     }
 
