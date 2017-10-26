@@ -12,7 +12,7 @@ import java.sql.Types;
  */
 public final class DBHelper {
 
-    public static final String UTPLSQL_VERSION = "3.0.3";
+    public static final String UTPLSQL_COMPATIBILITY_VERSION = "3.0.3";
 
     private DBHelper() {}
 
@@ -93,7 +93,7 @@ public final class DBHelper {
 
     public static boolean versionCompatibilityCheck(Connection conn)
             throws SQLException {
-        return versionCompatibilityCheck(conn, UTPLSQL_VERSION);
+        return versionCompatibilityCheck(conn, UTPLSQL_COMPATIBILITY_VERSION);
     }
 
     /**
