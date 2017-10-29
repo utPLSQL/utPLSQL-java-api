@@ -96,4 +96,20 @@ public final class DBHelper {
         return versionCompatibilityCheck(conn, UTPLSQL_VERSION);
     }
 
+    /** Checks if actual API-version is compatible with utPLSQL database version and throws a RuntimeException if not
+     * Throws a RuntimeException if version compatibility can not be checked.
+     *
+     * @param conn
+     */
+    public static void failOnVersionCompatibilityCheckFailed( Connection conn )
+    {
+        try {
+            if (!versionCompatibilityCheck(conn))
+                throw new RuntimeException("API-Version " + UTPLSQL_VERSION + " not compatible with database. Aborting.");
+        }
+        catch ( SQLException e )
+        {
+            throw new RuntimeException("Compatibility-check failed with error. Aborting.", e);
+        }
+    }
 }

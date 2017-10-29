@@ -85,6 +85,10 @@ public class TestRunner {
     }
 
     public void run(Connection conn) throws SomeTestsFailedException, SQLException {
+
+        // First of all check version compatibility
+        DBHelper.failOnVersionCompatibilityCheckFailed(conn);
+
         for (Reporter r : this.reporterList)
             validateReporter(conn, r);
 
