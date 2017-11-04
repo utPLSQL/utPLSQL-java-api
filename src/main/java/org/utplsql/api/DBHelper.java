@@ -12,7 +12,7 @@ import java.sql.Types;
  */
 public final class DBHelper {
 
-    public static final String UTPLSQL_VERSION = "3.0.3";
+    public static final String UTPLSQL_COMPATIBILITY_VERSION = "3.0.3";
 
     private DBHelper() {}
 
@@ -93,7 +93,31 @@ public final class DBHelper {
 
     public static boolean versionCompatibilityCheck(Connection conn)
             throws SQLException {
-        return versionCompatibilityCheck(conn, UTPLSQL_VERSION);
+        return versionCompatibilityCheck(conn, UTPLSQL_COMPATIBILITY_VERSION);
+    }
+
+    /**
+     * Enable the dbms_output buffer with unlimited size.
+     * @param conn the connection
+     */
+    public static void enableDBMSOutput(Connection conn) {
+        try (CallableStatement call = conn.prepareCall("BEGIN dbms_output.enable(NULL); END;")) {
+            call.execute();
+        } catch (SQLException e) {
+            System.out.println("Failed to enable dbms_output.");
+        }
+    }
+
+    /**
+     * Disable the dbms_output buffer.
+     * @param conn the connection
+     */
+    public static void disableDBMSOutput(Connection conn) {
+        try (CallableStatement call = conn.prepareCall("BEGIN dbms_output.disable(); END;")) {
+            call.execute();
+        } catch (SQLException e) {
+            System.out.println("Failed to disable dbms_output.");
+        }
     }
 
     /** Checks if actual API-version is compatible with utPLSQL database version and throws a RuntimeException if not

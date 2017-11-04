@@ -107,6 +107,8 @@ public class TestRunner {
         OracleConnection oraConn = conn.unwrap(OracleConnection.class);
         CallableStatement callableStatement = null;
         try {
+            DBHelper.enableDBMSOutput(conn);
+
             callableStatement = conn.prepareCall(
                     "BEGIN " +
                         "ut_runner.run(" +
@@ -176,8 +178,11 @@ public class TestRunner {
                 throw e;
             }
         } finally {
-            if (callableStatement != null)
+            if (callableStatement != null) {
                 callableStatement.close();
+            }
+
+            DBHelper.disableDBMSOutput(conn);
         }
     }
 
