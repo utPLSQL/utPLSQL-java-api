@@ -32,7 +32,7 @@ public class DatabaseNotCompatibleException extends Exception {
 
     public DatabaseNotCompatibleException( String databaseVersion, Throwable cause )
     {
-        this(DBHelper.UTPLSQL_VERSION, databaseVersion, cause );
+        this(DBHelper.UTPLSQL_COMPATIBILITY_VERSION, databaseVersion, cause );
     }
 
     public String getClientVersion() {

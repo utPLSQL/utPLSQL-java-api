@@ -12,7 +12,7 @@ import java.sql.Types;
  */
 public final class DBHelper {
 
-    public static final String UTPLSQL_COMPATIBILITY_VERSION = "3.0.3";
+    public static final String UTPLSQL_COMPATIBILITY_VERSION = "3";
 
     private DBHelper() {}
 
@@ -96,6 +96,24 @@ public final class DBHelper {
         return versionCompatibilityCheck(conn, UTPLSQL_COMPATIBILITY_VERSION);
     }
 
+
+    /** Checks if actual API-version is compatible with utPLSQL database version and throws a RuntimeException if not
+     * Throws a RuntimeException if version compatibility can not be checked.
+     *
+     * @param conn Active db connection
+     */
+    public static void failOnVersionCompatibilityCheckFailed( Connection conn )
+    {
+        try {
+            if (!versionCompatibilityCheck(conn))
+                throw new RuntimeException("API-Version " + UTPLSQL_COMPATIBILITY_VERSION + " not compatible with database. Aborting.");
+        }
+        catch ( SQLException e )
+        {
+            throw new RuntimeException("Compatibility-check failed with error. Aborting.", e);
+        }
+    }
+
     /**
      * Enable the dbms_output buffer with unlimited size.
      * @param conn the connection
@@ -117,23 +135,6 @@ public final class DBHelper {
             call.execute();
         } catch (SQLException e) {
             System.out.println("Failed to disable dbms_output.");
-        }
-    }
-
-    /** Checks if actual API-version is compatible with utPLSQL database version and throws a RuntimeException if not
-     * Throws a RuntimeException if version compatibility can not be checked.
-     *
-     * @param conn
-     */
-    public static void failOnVersionCompatibilityCheckFailed( Connection conn )
-    {
-        try {
-            if (!versionCompatibilityCheck(conn))
-                throw new RuntimeException("API-Version " + UTPLSQL_VERSION + " not compatible with database. Aborting.");
-        }
-        catch ( SQLException e )
-        {
-            throw new RuntimeException("Compatibility-check failed with error. Aborting.", e);
         }
     }
 }
