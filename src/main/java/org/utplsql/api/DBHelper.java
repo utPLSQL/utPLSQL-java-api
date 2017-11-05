@@ -2,10 +2,7 @@ package org.utplsql.api;
 
 import oracle.jdbc.OracleTypes;
 
-import java.sql.CallableStatement;
-import java.sql.Connection;
-import java.sql.SQLException;
-import java.sql.Types;
+import java.sql.*;
 
 /**
  * Database utility functions.
@@ -112,6 +109,28 @@ public final class DBHelper {
         {
             throw new RuntimeException("Compatibility-check failed with error. Aborting.", e);
         }
+    }
+
+    /** Returns the Frameworks version string of the given connection
+     *
+     * @param conn Active db connection
+     * @return
+     * @throws SQLException
+     */
+    public static Version getDatabaseFrameworkVersion( Connection conn )
+            throws SQLException {
+        Version result = new Version("");
+        try (Statement stmt = conn.prepareStatement("select ut_runner.version() from dual"))
+        {
+            ResultSet rs = stmt.getResultSet();
+
+            if ( rs.next() )
+                result = new Version(rs.getString(1));
+
+            rs.close();
+        }
+
+        return result;
     }
 
     /**
