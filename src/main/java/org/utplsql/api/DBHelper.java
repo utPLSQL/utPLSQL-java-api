@@ -1,6 +1,7 @@
 package org.utplsql.api;
 
 import oracle.jdbc.OracleTypes;
+import org.utplsql.api.exception.DatabaseNotCompatibleException;
 
 import java.sql.*;
 
@@ -94,20 +95,25 @@ public final class DBHelper {
     }
 
 
-    /** Checks if actual API-version is compatible with utPLSQL database version and throws a RuntimeException if not
-     * Throws a RuntimeException if version compatibility can not be checked.
+    /** Checks if actual API-version is compatible with utPLSQL database version and throws a DatabaseNotCompatibleException if not
+     * Throws a DatabaseNotCompatibleException if version compatibility can not be checked.
      *
      * @param conn Active db connection
      */
-    public static void failOnVersionCompatibilityCheckFailed( Connection conn )
+    public static void failOnVersionCompatibilityCheckFailed( Connection conn ) throws DatabaseNotCompatibleException
     {
         try {
             if (!versionCompatibilityCheck(conn))
-                throw new RuntimeException("API-Version " + UTPLSQL_COMPATIBILITY_VERSION + " not compatible with database. Aborting.");
+            {
+                // Try to find out Framework Version
+                Version v = DBHelper.getDatabaseFrameworkVersion(conn);
+
+                throw new DatabaseNotCompatibleException( v.getVersionString() );
+            }
         }
         catch ( SQLException e )
         {
-            throw new RuntimeException("Compatibility-check failed with error. Aborting.", e);
+            throw new DatabaseNotCompatibleException("Compatibility-check failed with error. Aborting.", UTPLSQL_COMPATIBILITY_VERSION, "Unknown", e);
         }
     }
 
@@ -120,9 +126,9 @@ public final class DBHelper {
     public static Version getDatabaseFrameworkVersion( Connection conn )
             throws SQLException {
         Version result = new Version("");
-        try (Statement stmt = conn.prepareStatement("select ut_runner.version() from dual"))
+        try (PreparedStatement stmt = conn.prepareStatement("select ut_runner.version() from dual"))
         {
-            ResultSet rs = stmt.getResultSet();
+            ResultSet rs = stmt.executeQuery();
 
             if ( rs.next() )
                 result = new Version(rs.getString(1));

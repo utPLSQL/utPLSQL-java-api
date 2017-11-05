@@ -1,5 +1,6 @@
 package org.utplsql.api;
 
+import org.utplsql.api.exception.DatabaseNotCompatibleException;
 import org.utplsql.api.exception.SomeTestsFailedException;
 import org.utplsql.api.reporter.DocumentationReporter;
 import org.utplsql.api.reporter.Reporter;
@@ -84,7 +85,7 @@ public class TestRunner {
         return this;
     }
 
-    public void run(Connection conn) throws SomeTestsFailedException, SQLException {
+    public void run(Connection conn) throws SomeTestsFailedException, SQLException, DatabaseNotCompatibleException {
 
         // First of all check version compatibility
         DBHelper.failOnVersionCompatibilityCheckFailed(conn);

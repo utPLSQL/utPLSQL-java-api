@@ -2,12 +2,14 @@ package org.utplsql.api.exception;
 
 import org.utplsql.api.DBHelper;
 
+import java.sql.SQLException;
+
 /** Custom exception to indicate API is not compatible with database framework
  *
  * @author pesse
  *
  */
-public class DatabaseNotCompatibleException extends Exception {
+public class DatabaseNotCompatibleException extends SQLException {
 
     private String clientVersion;
     private String databaseVersion;
@@ -33,6 +35,11 @@ public class DatabaseNotCompatibleException extends Exception {
     public DatabaseNotCompatibleException( String databaseVersion, Throwable cause )
     {
         this(DBHelper.UTPLSQL_COMPATIBILITY_VERSION, databaseVersion, cause );
+    }
+
+    public DatabaseNotCompatibleException( String databaseVersion )
+    {
+        this(DBHelper.UTPLSQL_COMPATIBILITY_VERSION, databaseVersion, null );
     }
 
     public String getClientVersion() {
