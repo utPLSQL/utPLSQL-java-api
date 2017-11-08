@@ -1,22 +1,22 @@
 package org.utplsql.api;
 
+import org.utplsql.api.compatibility.CompatibilityProvider;
 import org.utplsql.api.exception.DatabaseNotCompatibleException;
 import org.utplsql.api.exception.SomeTestsFailedException;
 import org.utplsql.api.reporter.DocumentationReporter;
 import org.utplsql.api.reporter.Reporter;
-import oracle.jdbc.OracleConnection;
 import org.utplsql.api.testRunner.AbstractTestRunnerStatement;
 import org.utplsql.api.testRunner.TestRunnerStatement;
 
-import java.sql.CallableStatement;
 import java.sql.Connection;
 import java.sql.SQLException;
-import java.sql.Types;
-import java.util.ArrayList;
 import java.util.List;
 
 /**
  * Created by Vinicius Avellar on 12/04/2017.
+ *
+ * @author Vinicius Avellar
+ * @author pesse
  */
 public class TestRunner {
 
@@ -93,12 +93,12 @@ public class TestRunner {
             options.reporterList.add(new DocumentationReporter().init(conn));
         }
 
-        AbstractTestRunnerStatement testRunnerStatement = null;
+        TestRunnerStatement testRunnerStatement = null;
 
         try {
             DBHelper.enableDBMSOutput(conn);
 
-            testRunnerStatement = new TestRunnerStatement(options, conn);
+            testRunnerStatement = CompatibilityProvider.getTestRunnerStatement(options, conn);
 
             testRunnerStatement.execute();
         } catch (SQLException e) {

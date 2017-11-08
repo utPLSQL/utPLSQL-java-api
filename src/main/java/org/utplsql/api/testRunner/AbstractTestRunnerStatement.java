@@ -10,7 +10,12 @@ import java.sql.SQLException;
 import java.sql.Types;
 import java.util.List;
 
-public abstract class AbstractTestRunnerStatement {
+/** Abstract class which creates a callable statement for running tests
+ * The SQL to be used has to be implemented for there are differences between the Framework-versions
+ *
+ * @author pesse
+ */
+public abstract class AbstractTestRunnerStatement implements TestRunnerStatement {
 
     protected TestRunnerOptions options;
     protected Connection conn;

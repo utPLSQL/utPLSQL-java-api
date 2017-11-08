@@ -5,6 +5,10 @@ import org.utplsql.api.reporter.Reporter;
 import java.util.ArrayList;
 import java.util.List;
 
+/** Holds the various possible options of TestRunner
+ *
+ * @author pesse
+ */
 public class TestRunnerOptions {
     public List<String> pathList = new ArrayList<>();
     public List<Reporter> reporterList = new ArrayList<>();

@@ -5,6 +5,11 @@ import org.utplsql.api.TestRunnerOptions;
 import java.sql.Connection;
 import java.sql.SQLException;
 
+/** TestRunner-Statement for Framework version before 3.0.3
+ * Does not know about failOnErrors option
+ *
+ * @author pesse
+ */
 public class Pre303TestRunnerStatement extends AbstractTestRunnerStatement {
 
     public Pre303TestRunnerStatement(TestRunnerOptions options, Connection conn) throws SQLException {
