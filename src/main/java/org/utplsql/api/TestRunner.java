@@ -171,6 +171,13 @@ public class TestRunner {
             if (e.getErrorCode() == SomeTestsFailedException.ERROR_CODE) {
                 throw new SomeTestsFailedException(e.getMessage(), e);
             } else {
+                // If the execution failed by unexpected reasons finishes all reporters,
+                // this way the users don't need to care about reporters' sessions hanging.
+                try (CallableStatement closeBufferStmt = conn.prepareCall("BEGIN ut_output_buffer.close(?); END;")) {
+                    closeBufferStmt.setArray(1, oraConn.createOracleArray(CustomTypes.UT_REPORTERS, this.reporterList.toArray()));
+                    closeBufferStmt.execute();
+                } catch (SQLException ignored) {}
+
                 throw e;
             }
         } finally {
