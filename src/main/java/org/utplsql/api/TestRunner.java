@@ -1,5 +1,6 @@
 package org.utplsql.api;
 
+import oracle.jdbc.OracleConnection;
 import org.utplsql.api.compatibility.CompatibilityProvider;
 import org.utplsql.api.exception.DatabaseNotCompatibleException;
 import org.utplsql.api.exception.SomeTestsFailedException;
@@ -8,6 +9,7 @@ import org.utplsql.api.reporter.Reporter;
 import org.utplsql.api.testRunner.AbstractTestRunnerStatement;
 import org.utplsql.api.testRunner.TestRunnerStatement;
 
+import java.sql.CallableStatement;
 import java.sql.Connection;
 import java.sql.SQLException;
 import java.util.List;
@@ -107,8 +109,10 @@ public class TestRunner {
             } else {
                 // If the execution failed by unexpected reasons finishes all reporters,
                 // this way the users don't need to care about reporters' sessions hanging.
+                OracleConnection oraConn = conn.unwrap(OracleConnection.class);
+
                 try (CallableStatement closeBufferStmt = conn.prepareCall("BEGIN ut_output_buffer.close(?); END;")) {
-                    closeBufferStmt.setArray(1, oraConn.createOracleArray(CustomTypes.UT_REPORTERS, this.reporterList.toArray()));
+                    closeBufferStmt.setArray(1, oraConn.createOracleArray(CustomTypes.UT_REPORTERS, options.reporterList.toArray()));
                     closeBufferStmt.execute();
                 } catch (SQLException ignored) {}
 
