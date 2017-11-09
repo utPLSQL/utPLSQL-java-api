@@ -79,10 +79,17 @@ public class TestRunner {
         return this;
     }
 
+    public TestRunner skipCompatibilityCheck( boolean skipCompatibilityCheck )
+    {
+        options.skipCompatibilityCheck = skipCompatibilityCheck;
+        return this;
+    }
+
     public void run(Connection conn) throws SomeTestsFailedException, SQLException, DatabaseNotCompatibleException {
 
         // First of all check version compatibility
-        DBHelper.failOnVersionCompatibilityCheckFailed(conn);
+        if ( !options.skipCompatibilityCheck )
+            DBHelper.failOnVersionCompatibilityCheckFailed(conn);
 
         for (Reporter r : options.reporterList)
             validateReporter(conn, r);

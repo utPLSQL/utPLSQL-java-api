@@ -21,4 +21,5 @@ public class TestRunnerOptions {
     public FileMapperOptions sourceMappingOptions;
     public FileMapperOptions testMappingOptions;
     public boolean failOnErrors = false;
+    public boolean skipCompatibilityCheck = false;
 }
