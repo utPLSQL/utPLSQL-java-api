@@ -113,7 +113,7 @@ public final class DBHelper {
         }
         catch ( SQLException e )
         {
-            throw new DatabaseNotCompatibleException("Compatibility-check failed with error. Aborting.", UTPLSQL_COMPATIBILITY_VERSION, "Unknown", e);
+            throw new DatabaseNotCompatibleException("Compatibility-check failed with error. Aborting. Reason: " + e.getMessage(), UTPLSQL_COMPATIBILITY_VERSION, "Unknown", e);
         }
     }
 
