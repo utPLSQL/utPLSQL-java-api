@@ -108,12 +108,12 @@ public final class DBHelper {
                 // Try to find out Framework Version
                 Version v = DBHelper.getDatabaseFrameworkVersion(conn);
 
-                throw new DatabaseNotCompatibleException( v.getVersionString() );
+                throw new DatabaseNotCompatibleException( v );
             }
         }
         catch ( SQLException e )
         {
-            throw new DatabaseNotCompatibleException("Compatibility-check failed with error. Aborting. Reason: " + e.getMessage(), UTPLSQL_COMPATIBILITY_VERSION, "Unknown", e);
+            throw new DatabaseNotCompatibleException("Compatibility-check failed with error. Aborting. Reason: " + e.getMessage(), new Version(UTPLSQL_COMPATIBILITY_VERSION), new Version("Unknown"), e);
         }
     }
 

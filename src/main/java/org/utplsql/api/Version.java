@@ -48,7 +48,8 @@ public class Version {
         }
     }
 
-    public String getOrigString() {
+    @Override
+    public String toString() {
         return origString;
     }
 
@@ -76,7 +77,7 @@ public class Version {
      *
      * @return
      */
-    public String getVersionString()
+    public String getNormalizedString()
     {
         if ( isValid() ) {
             StringBuilder sb = new StringBuilder();

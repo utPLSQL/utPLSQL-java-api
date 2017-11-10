@@ -1,6 +1,7 @@
 package org.utplsql.api.exception;
 
 import org.utplsql.api.DBHelper;
+import org.utplsql.api.Version;
 
 import java.sql.SQLException;
 
@@ -11,10 +12,10 @@ import java.sql.SQLException;
  */
 public class DatabaseNotCompatibleException extends SQLException {
 
-    private String clientVersion;
-    private String databaseVersion;
+    private Version clientVersion;
+    private Version databaseVersion;
 
-    public DatabaseNotCompatibleException( String message, String clientVersion, String databaseVersion, Throwable cause )
+    public DatabaseNotCompatibleException( String message, Version clientVersion, Version databaseVersion, Throwable cause )
     {
         super(message, cause);
 
@@ -22,31 +23,31 @@ public class DatabaseNotCompatibleException extends SQLException {
         this.databaseVersion = databaseVersion;
     }
 
-    public DatabaseNotCompatibleException( String clientVersion, String databaseVersion, Throwable cause )
+    public DatabaseNotCompatibleException( Version clientVersion, Version databaseVersion, Throwable cause )
     {
         this("utPLSQL API (" + String.valueOf(clientVersion) + ") not compatible with database (" + String.valueOf(databaseVersion) + ")", clientVersion, databaseVersion, cause);
     }
 
-    public DatabaseNotCompatibleException( String clientVersion, String databaseVersion )
+    public DatabaseNotCompatibleException( Version clientVersion, Version databaseVersion )
     {
         this(clientVersion, databaseVersion, null);
     }
 
-    public DatabaseNotCompatibleException( String databaseVersion, Throwable cause )
+    public DatabaseNotCompatibleException( Version databaseVersion, Throwable cause )
     {
-        this(DBHelper.UTPLSQL_COMPATIBILITY_VERSION, databaseVersion, cause );
+        this(new Version(DBHelper.UTPLSQL_COMPATIBILITY_VERSION), databaseVersion, cause );
     }
 
-    public DatabaseNotCompatibleException( String databaseVersion )
+    public DatabaseNotCompatibleException( Version databaseVersion )
     {
-        this(DBHelper.UTPLSQL_COMPATIBILITY_VERSION, databaseVersion, null );
+        this(new Version(DBHelper.UTPLSQL_COMPATIBILITY_VERSION), databaseVersion, null );
     }
 
-    public String getClientVersion() {
+    public Version getClientVersion() {
         return clientVersion;
     }
 
-    public String getDatabaseVersion()
+    public Version getDatabaseVersion()
     {
         return databaseVersion;
     }

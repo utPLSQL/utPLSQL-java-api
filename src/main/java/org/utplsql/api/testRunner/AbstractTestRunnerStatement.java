@@ -15,7 +15,7 @@ import java.util.List;
  *
  * @author pesse
  */
-public abstract class AbstractTestRunnerStatement implements TestRunnerStatement {
+abstract class AbstractTestRunnerStatement implements TestRunnerStatement {
 
     protected TestRunnerOptions options;
     protected Connection conn;

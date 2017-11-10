@@ -10,7 +10,7 @@ import java.sql.SQLException;
  *
  * @author  pesse
  */
-public class ActualTestRunnerStatement extends AbstractTestRunnerStatement {
+class ActualTestRunnerStatement extends AbstractTestRunnerStatement {
 
     public ActualTestRunnerStatement(TestRunnerOptions options, Connection connection ) throws SQLException {
         super( options, connection);

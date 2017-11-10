@@ -14,7 +14,7 @@ public class VersionObjectTest {
         Assert.assertEquals(3, (long)v.getBugfix());
         Assert.assertEquals(1234, (long)v.getBuild());
         Assert.assertEquals(true, v.isValid());
-        Assert.assertEquals("3.1.3.1234", v.getVersionString());
+        Assert.assertEquals("3.1.3.1234", v.getNormalizedString());
     }
 
     @Test
@@ -26,7 +26,7 @@ public class VersionObjectTest {
         Assert.assertNull(v.getBugfix());
         Assert.assertNull(v.getBuild());
         Assert.assertEquals(true, v.isValid());
-        Assert.assertEquals("3.1", v.getVersionString());
+        Assert.assertEquals("3.1", v.getNormalizedString());
     }
 
     @Test
@@ -38,6 +38,6 @@ public class VersionObjectTest {
         Assert.assertNull(v.getBugfix());
         Assert.assertNull(v.getBuild());
         Assert.assertEquals(false, v.isValid());
-        Assert.assertEquals("invalid", v.getVersionString());
+        Assert.assertEquals("invalid", v.getNormalizedString());
     }
 }

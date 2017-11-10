@@ -6,7 +6,6 @@ import org.utplsql.api.exception.DatabaseNotCompatibleException;
 import org.utplsql.api.exception.SomeTestsFailedException;
 import org.utplsql.api.reporter.DocumentationReporter;
 import org.utplsql.api.reporter.Reporter;
-import org.utplsql.api.testRunner.AbstractTestRunnerStatement;
 import org.utplsql.api.testRunner.TestRunnerStatement;
 
 import java.sql.CallableStatement;
