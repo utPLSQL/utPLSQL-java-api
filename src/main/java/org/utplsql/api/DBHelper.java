@@ -1,18 +1,16 @@
 package org.utplsql.api;
 
 import oracle.jdbc.OracleTypes;
+import org.utplsql.api.exception.DatabaseNotCompatibleException;
 
-import java.sql.CallableStatement;
-import java.sql.Connection;
-import java.sql.SQLException;
-import java.sql.Types;
+import java.sql.*;
 
 /**
  * Database utility functions.
  */
 public final class DBHelper {
 
-    public static final String UTPLSQL_COMPATIBILITY_VERSION = "3.0.3";
+    public static final String UTPLSQL_COMPATIBILITY_VERSION = "3";
 
     private DBHelper() {}
 
@@ -96,6 +94,51 @@ public final class DBHelper {
         return versionCompatibilityCheck(conn, UTPLSQL_COMPATIBILITY_VERSION);
     }
 
+
+    /** Checks if actual API-version is compatible with utPLSQL database version and throws a DatabaseNotCompatibleException if not
+     * Throws a DatabaseNotCompatibleException if version compatibility can not be checked.
+     *
+     * @param conn Active db connection
+     */
+    public static void failOnVersionCompatibilityCheckFailed( Connection conn ) throws DatabaseNotCompatibleException
+    {
+        try {
+            if (!versionCompatibilityCheck(conn))
+            {
+                // Try to find out Framework Version
+                Version v = DBHelper.getDatabaseFrameworkVersion(conn);
+
+                throw new DatabaseNotCompatibleException( v );
+            }
+        }
+        catch ( SQLException e )
+        {
+            throw new DatabaseNotCompatibleException("Compatibility-check failed with error. Aborting. Reason: " + e.getMessage(), new Version(UTPLSQL_COMPATIBILITY_VERSION), new Version("Unknown"), e);
+        }
+    }
+
+    /** Returns the Frameworks version string of the given connection
+     *
+     * @param conn Active db connection
+     * @return
+     * @throws SQLException
+     */
+    public static Version getDatabaseFrameworkVersion( Connection conn )
+            throws SQLException {
+        Version result = new Version("");
+        try (PreparedStatement stmt = conn.prepareStatement("select ut_runner.version() from dual"))
+        {
+            ResultSet rs = stmt.executeQuery();
+
+            if ( rs.next() )
+                result = new Version(rs.getString(1));
+
+            rs.close();
+        }
+
+        return result;
+    }
+
     /**
      * Enable the dbms_output buffer with unlimited size.
      * @param conn the connection
@@ -119,5 +162,4 @@ public final class DBHelper {
             System.out.println("Failed to disable dbms_output.");
         }
     }
-
 }

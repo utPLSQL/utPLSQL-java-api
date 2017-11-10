@@ -29,6 +29,18 @@ public class TestRunnerTest {
     }
 
     @Test
+    public void runWithoutCompatibilityCheck() {
+        try {
+            Connection conn = db.newConnection();
+            new TestRunner()
+                    .skipCompatibilityCheck(true)
+                    .run(conn);
+        } catch (SQLException e) {
+            Assert.fail(e.getMessage());
+        }
+    }
+
+    @Test
     public void runWithManyReporters() {
         try {
             Connection conn = db.newConnection();
