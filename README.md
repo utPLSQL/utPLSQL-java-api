@@ -14,10 +14,14 @@ This is a Maven Library project, you can add on your Java project as a dependenc
 <dependency>
     <groupId>org.utplsql</groupId>
     <artifactId>java-api</artifactId>
-    <version>1.0-SNAPSHOT</version>
+    <version>3.0.4-SNAPSHOT</version>
     <scope>compile</scope>
 </dependency>
 ```
+
+## Compatibility
+The latest Java-API is always compatible with all database frameworks of the same major version.
+For example API-3.0.4 is compatible with database framework 3.0.0-3.0.4 but not with database framework 2.x.
 
 ## Usage
 
