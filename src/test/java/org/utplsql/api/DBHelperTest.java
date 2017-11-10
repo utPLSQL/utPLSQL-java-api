@@ -34,4 +34,17 @@ public class DBHelperTest {
         }
     }
 
+    @Test
+    public void getFrameworkVersion()
+    {
+        try {
+            Version v = DBHelper.getDatabaseFrameworkVersion(db.newConnection());
+            Assert.assertEquals(true, v.isValid());
+        } catch (SQLException e)
+        {
+            e.printStackTrace();
+            Assert.fail();
+        }
+    }
+
 }
