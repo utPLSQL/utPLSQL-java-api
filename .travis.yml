@@ -17,8 +17,15 @@ env:
     - DB_URL="127.0.0.1:1521:XE"
     - DB_USER=app
     - DB_PASS=app
+    - ORACLE_VERSION="11g-xe-r2"
+    - DOCKER_OPTIONS="--shm-size=1g"
+    - UTPLSQL_FILE="utPLSQL"
   matrix:
-    - ORACLE_VERSION="11g-xe-r2" DOCKER_OPTIONS="--shm-size=1g"
+    - UTPLSQL_VERSION="v3.0.0"
+    - UTPLSQL_VERSION="v3.0.1"
+    - UTPLSQL_VERSION="v3.0.2"
+    - UTPLSQL_VERSION="v3.0.3"
+    - UTPLSQL_VERSION="v3.0.4"
 
 cache:
   directories:
