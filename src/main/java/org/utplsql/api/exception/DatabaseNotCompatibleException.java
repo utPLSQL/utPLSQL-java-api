@@ -2,6 +2,7 @@ package org.utplsql.api.exception;
 
 import org.utplsql.api.DBHelper;
 import org.utplsql.api.Version;
+import org.utplsql.api.compatibility.CompatibilityProxy;
 
 import java.sql.SQLException;
 
@@ -35,12 +36,12 @@ public class DatabaseNotCompatibleException extends SQLException {
 
     public DatabaseNotCompatibleException( Version databaseVersion, Throwable cause )
     {
-        this(new Version(DBHelper.UTPLSQL_COMPATIBILITY_VERSION), databaseVersion, cause );
+        this(new Version(CompatibilityProxy.UTPLSQL_COMPATIBILITY_VERSION), databaseVersion, cause );
     }
 
     public DatabaseNotCompatibleException( Version databaseVersion )
     {
-        this(new Version(DBHelper.UTPLSQL_COMPATIBILITY_VERSION), databaseVersion, null );
+        this(new Version(CompatibilityProxy.UTPLSQL_COMPATIBILITY_VERSION), databaseVersion, null );
     }
 
     public Version getClientVersion() {
