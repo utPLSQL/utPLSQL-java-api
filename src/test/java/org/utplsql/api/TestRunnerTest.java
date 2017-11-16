@@ -30,13 +30,19 @@ public class TestRunnerTest {
     }
 
     @Test
+    /** This can only be run against versions >= 3.0.3
+     */
     public void runWithoutCompatibilityCheck() {
         try {
             Connection conn = db.newConnection();
-            new TestRunner()
-                    .skipCompatibilityCheck(true)
-                    .run(conn);
-        } catch (SQLException e) {
+            CompatibilityProxy proxy = new CompatibilityProxy(conn);
+
+            if ( proxy.getDatabaseVersion().isGreaterOrEqualThan(new Version("3.0.3"))) {
+                new TestRunner()
+                        .skipCompatibilityCheck(true)
+                        .run(conn);
+            }
+        } catch (Exception e) {
             Assert.fail(e.getMessage());
         }
     }
