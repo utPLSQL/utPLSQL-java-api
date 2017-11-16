@@ -1,7 +1,7 @@
 package org.utplsql.api;
 
 import oracle.jdbc.OracleConnection;
-import org.utplsql.api.compatibility.CompatibilityProvider;
+import org.utplsql.api.compatibility.CompatibilityProxy;
 import org.utplsql.api.exception.DatabaseNotCompatibleException;
 import org.utplsql.api.exception.SomeTestsFailedException;
 import org.utplsql.api.reporter.DocumentationReporter;
@@ -86,9 +86,10 @@ public class TestRunner {
 
     public void run(Connection conn) throws SomeTestsFailedException, SQLException, DatabaseNotCompatibleException {
 
+        CompatibilityProxy compatibilityProxy = new CompatibilityProxy(conn, options.skipCompatibilityCheck);
+
         // First of all check version compatibility
-        if ( !options.skipCompatibilityCheck )
-            DBHelper.failOnVersionCompatibilityCheckFailed(conn);
+        compatibilityProxy.failOnNotCompatible();
 
         for (Reporter r : options.reporterList)
             validateReporter(conn, r);
@@ -106,7 +107,7 @@ public class TestRunner {
         try {
             DBHelper.enableDBMSOutput(conn);
 
-            testRunnerStatement = CompatibilityProvider.getTestRunnerStatement(options, conn);
+            testRunnerStatement = compatibilityProxy.getTestRunnerStatement(options, conn);
 
             testRunnerStatement.execute();
         } catch (SQLException e) {

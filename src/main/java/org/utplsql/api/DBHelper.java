@@ -10,8 +10,6 @@ import java.sql.*;
  */
 public final class DBHelper {
 
-    public static final String UTPLSQL_COMPATIBILITY_VERSION = "3";
-
     private DBHelper() {}
 
     /**
@@ -49,71 +47,6 @@ public final class DBHelper {
         } finally {
             if (callableStatement != null)
                 callableStatement.close();
-        }
-    }
-
-    /**
-     * Check the utPLSQL version compatibility.
-     * @param conn the connection
-     * @return true if the requested utPLSQL version is compatible with the one installed on database
-     * @throws SQLException any database error
-     */
-    public static boolean versionCompatibilityCheck(Connection conn, String requested, String current)
-            throws SQLException {
-        CallableStatement callableStatement = null;
-        try {
-            callableStatement = conn.prepareCall("BEGIN ? := ut_runner.version_compatibility_check(?, ?); END;");
-            callableStatement.registerOutParameter(1, Types.SMALLINT);
-            callableStatement.setString(2, requested);
-
-            if (current == null)
-                callableStatement.setNull(3, Types.VARCHAR);
-            else
-                callableStatement.setString(3, current);
-
-            callableStatement.executeUpdate();
-            return callableStatement.getInt(1) == 1;
-        } catch (SQLException e) {
-            if (e.getErrorCode() == 6550)
-                return false;
-            else
-                throw e;
-        } finally {
-            if (callableStatement != null)
-                callableStatement.close();
-        }
-    }
-
-    public static boolean versionCompatibilityCheck(Connection conn, String requested)
-            throws SQLException {
-        return versionCompatibilityCheck(conn, requested, null);
-    }
-
-    public static boolean versionCompatibilityCheck(Connection conn)
-            throws SQLException {
-        return versionCompatibilityCheck(conn, UTPLSQL_COMPATIBILITY_VERSION);
-    }
-
-
-    /** Checks if actual API-version is compatible with utPLSQL database version and throws a DatabaseNotCompatibleException if not
-     * Throws a DatabaseNotCompatibleException if version compatibility can not be checked.
-     *
-     * @param conn Active db connection
-     */
-    public static void failOnVersionCompatibilityCheckFailed( Connection conn ) throws DatabaseNotCompatibleException
-    {
-        try {
-            if (!versionCompatibilityCheck(conn))
-            {
-                // Try to find out Framework Version
-                Version v = DBHelper.getDatabaseFrameworkVersion(conn);
-
-                throw new DatabaseNotCompatibleException( v );
-            }
-        }
-        catch ( SQLException e )
-        {
-            throw new DatabaseNotCompatibleException("Compatibility-check failed with error. Aborting. Reason: " + e.getMessage(), new Version(UTPLSQL_COMPATIBILITY_VERSION), new Version("Unknown"), e);
         }
     }
 

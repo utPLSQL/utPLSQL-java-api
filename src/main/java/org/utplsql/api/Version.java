@@ -1,5 +1,7 @@
 package org.utplsql.api;
 
+import org.utplsql.api.exception.InvalidVersionException;
+
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
@@ -7,7 +9,7 @@ import java.util.regex.Pattern;
  *
  * @author pesse
  */
-public class Version {
+public class Version implements Comparable<Version> {
     private String origString;
     private Integer major;
     private Integer minor;
@@ -93,5 +95,61 @@ public class Version {
         }
         else
             return "invalid";
+    }
+
+    private int compareToWithNulls( Integer i1, Integer i2 ) {
+        if ( i1 == null && i2 == null )
+            return 0;
+        else if ( i1 == null )
+            return -1;
+        else if ( i2 == null )
+            return 1;
+        else return i1.compareTo(i2);
+    }
+
+    @Override
+    public int compareTo(Version o) {
+        int curResult;
+
+        if ( isValid() && o.isValid() ) {
+
+            curResult = compareToWithNulls(getMajor(), o.getMajor());
+            if ( curResult != 0 )
+                return curResult;
+
+            curResult = compareToWithNulls(getMinor(), o.getMinor());
+            if ( curResult != 0 )
+                return curResult;
+
+            curResult = compareToWithNulls(getBugfix(), o.getBugfix());
+            if ( curResult != 0 )
+                return curResult;
+
+            curResult = compareToWithNulls(getBuild(), o.getBuild());
+            if ( curResult != 0 )
+                return curResult;
+        }
+
+        return 0;
+    }
+
+    /** Compares this version to a given version and returns true if this version is greater or equal than the given one
+     * Throws an InvalidVersionException if either this or the given version are invalid
+     *
+     * @param v Version to compare with
+     * @return
+     * @throws InvalidVersionException
+     */
+    public boolean isGreaterOrEqualThan( Version v ) throws InvalidVersionException {
+        if ( !isValid() )
+            throw new InvalidVersionException(this);
+
+        if ( !v.isValid() )
+            throw new InvalidVersionException(v);
+
+        if ( compareTo(v) >= 0 )
+            return true;
+        else
+            return false;
     }
 }
