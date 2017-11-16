@@ -133,6 +133,14 @@ public class Version implements Comparable<Version> {
         return 0;
     }
 
+    private void versionsAreValid( Version v ) throws InvalidVersionException {
+        if ( !isValid() )
+            throw new InvalidVersionException(this);
+
+        if ( !v.isValid() )
+            throw new InvalidVersionException(v);
+    }
+
     /** Compares this version to a given version and returns true if this version is greater or equal than the given one
      * Throws an InvalidVersionException if either this or the given version are invalid
      *
@@ -141,13 +149,42 @@ public class Version implements Comparable<Version> {
      * @throws InvalidVersionException
      */
     public boolean isGreaterOrEqualThan( Version v ) throws InvalidVersionException {
-        if ( !isValid() )
-            throw new InvalidVersionException(this);
 
-        if ( !v.isValid() )
-            throw new InvalidVersionException(v);
+        versionsAreValid(v);
 
         if ( compareTo(v) >= 0 )
+            return true;
+        else
+            return false;
+    }
+
+
+    public boolean isGreaterThan( Version v) throws InvalidVersionException
+    {
+        versionsAreValid(v);
+
+        if ( compareTo(v) > 0 )
+            return true;
+        else
+            return false;
+    }
+
+    public boolean isLessOrEqualThan( Version v ) throws InvalidVersionException
+    {
+
+        versionsAreValid(v);
+
+        if ( compareTo(v) <= 0 )
+            return true;
+        else
+            return false;
+    }
+
+    public boolean isLessThan( Version v) throws InvalidVersionException
+    {
+        versionsAreValid(v);
+
+        if ( compareTo(v) < 0 )
             return true;
         else
             return false;

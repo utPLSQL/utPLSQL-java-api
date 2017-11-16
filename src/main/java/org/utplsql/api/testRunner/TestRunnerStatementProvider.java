@@ -27,7 +27,7 @@ public class TestRunnerStatementProvider {
         AbstractTestRunnerStatement stmt = null;
 
         try {
-            if (new Version("3.0.2").isGreaterOrEqualThan(databaseVersion))
+            if (databaseVersion.isLessThan(new Version("3.0.3")))
                 stmt = new Pre303TestRunnerStatement(options, conn);
 
         } catch ( InvalidVersionException e ) {}
