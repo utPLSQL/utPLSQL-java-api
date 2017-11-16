@@ -49,7 +49,7 @@ public class CompatibilityProxy {
     {
         databaseVersion = DBHelper.getDatabaseFrameworkVersion(conn);
 
-        if (frameworkHasCompatibilityCheck()) {
+        if (OptionalFeatures.FRAMEWORK_COMPATIBILITY_CHECK.isAvailableFor(databaseVersion)) {
             try {
                 compatible = versionCompatibilityCheck(conn, UTPLSQL_COMPATIBILITY_VERSION, null);
             } catch (SQLException e) {
@@ -110,18 +110,6 @@ public class CompatibilityProxy {
         Version requesteVersion = new Version(requested);
 
         if ( databaseVersion.getMajor() == requesteVersion.getMajor() && (requesteVersion.getMinor() == null || databaseVersion.getMinor() == requesteVersion.getMinor()) )
-            return true;
-        else
-            return false;
-    }
-
-    /** Checks if framework has the compatibility check, which is since 3.0.3
-     *
-     * @return Whether framework is >= 3.0.3 or not
-     */
-    private boolean frameworkHasCompatibilityCheck()
-    {
-        if ( databaseVersion.getMajor() >= 3 && databaseVersion.getMinor() >= 0 && databaseVersion.getBugfix() >= 3 ) // Compatibility check is included since 3.0.3
             return true;
         else
             return false;

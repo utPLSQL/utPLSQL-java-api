@@ -3,6 +3,8 @@ package org.utplsql.api.testRunner;
 import org.utplsql.api.DBHelper;
 import org.utplsql.api.TestRunnerOptions;
 import org.utplsql.api.Version;
+import org.utplsql.api.compatibility.OptionalFeatures;
+import org.utplsql.api.exception.InvalidVersionException;
 
 import java.sql.Connection;
 import java.sql.SQLException;
@@ -21,13 +23,16 @@ public class TestRunnerStatementProvider {
      * @return TestRunnerStatment compatible with the database framework
      * @throws SQLException
      */
-    public static TestRunnerStatement getCompatibleTestRunnerStatement(Version databaseVersion, TestRunnerOptions options, Connection conn ) throws SQLException
-    {
+    public static TestRunnerStatement getCompatibleTestRunnerStatement(Version databaseVersion, TestRunnerOptions options, Connection conn ) throws SQLException {
         AbstractTestRunnerStatement stmt = null;
 
-        if ( databaseVersion.getMajor() == 3 && databaseVersion.getMinor() == 0 && databaseVersion.getBugfix() <= 2 )
-            stmt = new Pre303TestRunnerStatement(options, conn);
-        else
+        try {
+            if (new Version("3.0.2").isGreaterOrEqualThan(databaseVersion))
+                stmt = new Pre303TestRunnerStatement(options, conn);
+
+        } catch ( InvalidVersionException e ) {}
+
+        if ( stmt == null )
             stmt = new ActualTestRunnerStatement(options, conn);
 
         return stmt;
