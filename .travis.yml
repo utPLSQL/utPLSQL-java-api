@@ -10,18 +10,19 @@ jdk:
 env:
   global:
     - DOCKER_CFG=$HOME/.docker
-    - DOCKER_REPO="viniciusam/oracledb"
+    - DOCKER_REPO="utplsqlv3/oracledb"
     - CACHE_DIR=$HOME/.cache
     - MAVEN_HOME=/usr/local/maven
     - MAVEN_CFG=$HOME/.m2
     - DB_URL="127.0.0.1:1521:XE"
     - DB_USER=app
     - DB_PASS=app
-    - ORACLE_VERSION="11g-xe-r2"
+    - ORACLE_VERSION="11g-r2-xe"
     - DOCKER_OPTIONS="--shm-size=1g"
     - UTPLSQL_FILE="utPLSQL"
   matrix:
     - UTPLSQL_VERSION="v3.0.0"
+      UTPLSQL_FILE="utPLSQLv3.0.0"
     - UTPLSQL_VERSION="v3.0.1"
     - UTPLSQL_VERSION="v3.0.2"
     - UTPLSQL_VERSION="v3.0.3"

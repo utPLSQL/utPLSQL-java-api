@@ -27,8 +27,8 @@ class Pre303TestRunnerStatement extends AbstractTestRunnerStatement {
                 "a_reporters        => ?, " +
                 "a_color_console    => " + colorConsoleStr + ", " +
                 "a_coverage_schemes => ?, " +
-                "a_source_files     => ?, " +
-                "a_test_files       => ?, " +
+                "a_source_file_mappings => ?, " +
+                "a_test_file_mappings   => ?, " +
                 "a_include_objects  => ?, " +
                 "a_exclude_objects  => ?); " +
                 "END;";

@@ -3,6 +3,7 @@ package org.utplsql.api;
 import org.junit.Assert;
 import org.junit.Rule;
 import org.junit.Test;
+import org.utplsql.api.compatibility.CompatibilityProxy;
 import org.utplsql.api.exception.SomeTestsFailedException;
 import org.utplsql.api.reporter.*;
 import org.utplsql.api.rules.DatabaseRule;
@@ -29,13 +30,19 @@ public class TestRunnerTest {
     }
 
     @Test
+    /** This can only be run against versions >= 3.0.3
+     */
     public void runWithoutCompatibilityCheck() {
         try {
             Connection conn = db.newConnection();
-            new TestRunner()
-                    .skipCompatibilityCheck(true)
-                    .run(conn);
-        } catch (SQLException e) {
+            CompatibilityProxy proxy = new CompatibilityProxy(conn);
+
+            if ( proxy.getDatabaseVersion().isGreaterOrEqualThan(new Version("3.0.3"))) {
+                new TestRunner()
+                        .skipCompatibilityCheck(true)
+                        .run(conn);
+            }
+        } catch (Exception e) {
             Assert.fail(e.getMessage());
         }
     }
@@ -60,17 +67,24 @@ public class TestRunnerTest {
     }
 
     @Test
+    /** This can only be tested on frameworks >= 3.0.3
+     */
     public void failOnErrors() {
         try {
             Connection conn = db.newConnection();
-            new TestRunner()
-                    .failOnErrors(true)
-                    .run(conn);
-            Assert.fail();
+
+            CompatibilityProxy proxy = new CompatibilityProxy(conn);
+
+            if ( proxy.getDatabaseVersion().isGreaterOrEqualThan(new Version("3.0.3"))) {
+                new TestRunner()
+                        .failOnErrors(true)
+                        .run(conn);
+                Assert.fail();
+            }
         } catch (SomeTestsFailedException ignored) {
             System.out.println("Expected exception object thrown.");
-        } catch (SQLException e) {
-            Assert.fail("Wrong exception object thrown.");
+        } catch (Exception e) {
+            Assert.fail("Wrong exception object thrown: " + e.getMessage());
         }
     }
 

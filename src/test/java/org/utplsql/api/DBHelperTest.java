@@ -13,28 +13,6 @@ public class DBHelperTest {
     public final DatabaseRule db = new DatabaseRule();
 
     @Test
-    public void compatibleVersion() {
-        try {
-            boolean isCompatible = DBHelper.versionCompatibilityCheck(db.newConnection(), "3.0.0", "3.0.0");
-            Assert.assertTrue(isCompatible);
-        } catch (SQLException e) {
-            e.printStackTrace();
-            Assert.fail();
-        }
-    }
-
-    @Test
-    public void incompatibleVersion() {
-        try {
-            boolean isCompatible = DBHelper.versionCompatibilityCheck(db.newConnection(), "3.1.0", "3.0.0");
-            Assert.assertFalse(isCompatible);
-        } catch (SQLException e) {
-            e.printStackTrace();
-            Assert.fail();
-        }
-    }
-
-    @Test
     public void getFrameworkVersion()
     {
         try {
