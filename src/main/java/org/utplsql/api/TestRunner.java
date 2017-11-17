@@ -4,6 +4,7 @@ import oracle.jdbc.OracleConnection;
 import org.utplsql.api.compatibility.CompatibilityProxy;
 import org.utplsql.api.exception.DatabaseNotCompatibleException;
 import org.utplsql.api.exception.SomeTestsFailedException;
+import org.utplsql.api.exception.UtPLSQLNotInstalledException;
 import org.utplsql.api.reporter.DocumentationReporter;
 import org.utplsql.api.reporter.Reporter;
 import org.utplsql.api.testRunner.TestRunnerStatement;
@@ -84,7 +85,7 @@ public class TestRunner {
         return this;
     }
 
-    public void run(Connection conn) throws SomeTestsFailedException, SQLException, DatabaseNotCompatibleException {
+    public void run(Connection conn) throws SomeTestsFailedException, SQLException, DatabaseNotCompatibleException, UtPLSQLNotInstalledException {
 
         CompatibilityProxy compatibilityProxy = new CompatibilityProxy(conn, options.skipCompatibilityCheck);
 
@@ -113,7 +114,11 @@ public class TestRunner {
         } catch (SQLException e) {
             if (e.getErrorCode() == SomeTestsFailedException.ERROR_CODE) {
                 throw new SomeTestsFailedException(e.getMessage(), e);
-            } else {
+            }
+            else if (e.getErrorCode() == UtPLSQLNotInstalledException.ERROR_CODE) {
+                throw new UtPLSQLNotInstalledException(e);
+            }
+            else {
                 // If the execution failed by unexpected reasons finishes all reporters,
                 // this way the users don't need to care about reporters' sessions hanging.
                 OracleConnection oraConn = conn.unwrap(OracleConnection.class);

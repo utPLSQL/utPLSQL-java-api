@@ -2,6 +2,7 @@ package org.utplsql.api;
 
 import oracle.jdbc.OracleTypes;
 import org.utplsql.api.exception.DatabaseNotCompatibleException;
+import org.utplsql.api.exception.UtPLSQLNotInstalledException;
 
 import java.sql.*;
 
@@ -67,6 +68,11 @@ public final class DBHelper {
                 result = new Version(rs.getString(1));
 
             rs.close();
+        } catch ( SQLException e ) {
+            if ( e.getErrorCode() == UtPLSQLNotInstalledException.ERROR_CODE )
+                throw new UtPLSQLNotInstalledException(e);
+            else
+                throw e;
         }
 
         return result;
