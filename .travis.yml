@@ -40,5 +40,33 @@ install:
   - bash .travis/install_utplsql.sh
   - bash .travis/install_demo_project.sh
 
+before_script:
+  - cp .travis/settings.xml $MAVEN_CFG/settings.xml
+
 script:
   - mvn test -B
+
+before_deploy:
+  - if [ ! -z "$TRAVIS_TAG" ]; then mvn org.codehaus.mojo:versions-maven-plugin:2.1:set -DnewVersion=${TRAVIS_TAG}; fi
+
+deploy:
+  - provider: script
+    script: mvn clean deploy -DskipTests=true -B -U
+    skip_cleanup: true
+    on:
+      repository: utPLSQL/utPLSQL-java-api
+      tags: true
+      # Use only first job "#xxx.1" to publish artifacts
+      condition: "${TRAVIS_JOB_NUMBER} =~ \\.1$"
+
+  - provider: script
+    script: mvn clean deploy -DskipTests=true -B -U
+    skip_cleanup: true
+    on:
+      repository: utPLSQL/utPLSQL-java-api
+      branch: develop
+      # Use only first job "#xxx.1" to publish artifacts
+      condition: "${TRAVIS_JOB_NUMBER} =~ \\.1$"
+
+notifications:
+  slack: $SLACK_API_TOKEN

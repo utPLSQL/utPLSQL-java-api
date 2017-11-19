@@ -8,13 +8,36 @@ This is a collection of classes, that makes easy to access the [utPLSQL v3](http
 * Can gather results asynchronously from multiple reporters.
 
 ## Downloading
-This is a Maven Library project, you can add on your Java project as a dependency. At the moment, it's not available in any public Maven repository, but you can clone it and install as a local dependency (follow the Contributing session).
+This is a Maven Library project, you can add on your Java project as a dependency. 
 
+The library is hosted on ![[packagecloud](https://packagecloud.io/utPLSQL/utPLSQL-java-api)](https://packagecloud.io/images/packagecloud-badge.png)
+
+
+You install this Maven repository by adding it to the <repositories> section of your pom.xml. No special plugins or extensions are required.
+
+```xml
+<repositories>
+  <repository>
+    <id>utplsql-java-api</id>
+    <url>
+      https://packagecloud.io/utplsql/utplsql-java-api/maven2
+    </url>
+    <releases>
+      <enabled>true</enabled>
+    </releases>
+    <snapshots>
+      <enabled>true</enabled>
+    </snapshots>
+  </repository>
+</repositories>
+```
+
+To use the java-api library, add this to the `<dependencies>` section of your `pom.xml`.
 ```xml
 <dependency>
     <groupId>org.utplsql</groupId>
     <artifactId>java-api</artifactId>
-    <version>3.0.4-SNAPSHOT</version>
+    <version>3.0.4</version>
     <scope>compile</scope>
 </dependency>
 ```

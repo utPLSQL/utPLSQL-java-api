@@ -58,4 +58,25 @@
     </pluginRepository>
   </pluginRepositories>
 
+  <build>
+    <extensions>
+      <extension>
+        <groupId>io.packagecloud.maven.wagon</groupId>
+        <artifactId>maven-packagecloud-wagon</artifactId>
+        <version>0.0.6</version>
+      </extension>
+    </extensions>
+  </build>
+
+  <distributionManagement>
+    <repository>
+      <id>packagecloud-utPLSQL</id>
+      <url>packagecloud+https://packagecloud.io/utPLSQL/utPLSQL-java-api</url>
+    </repository>
+    <snapshotRepository>
+      <id>packagecloud-utPLSQL</id>
+      <url>packagecloud+https://packagecloud.io/utPLSQL/utPLSQL-java-api</url>
+    </snapshotRepository>
+  </distributionManagement>
+
 </project>
