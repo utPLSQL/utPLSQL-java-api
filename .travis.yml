@@ -42,3 +42,6 @@ install:
 
 script:
   - mvn test -B
+
+notifications:
+  slack: $SLACK_API_TOKEN
