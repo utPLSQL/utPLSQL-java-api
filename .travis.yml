@@ -47,7 +47,7 @@ script:
   - mvn test -B
 
 before_deploy:
-  - if [ ! -z "$TRAVIS_TAG" ]; then mvn org.codehaus.mojo:versions-maven-plugin:2.1:set -DnewVersion=${TRAVIS_TAG}; fi
+  - if [ ! -z "$TRAVIS_TAG" ]; then VERSION=$(tr -d "/v/" <<<$TRAVIS_TAG); mvn org.codehaus.mojo:versions-maven-plugin:2.1:set -DnewVersion=${VERSION}; fi
 
 deploy:
   - provider: script
