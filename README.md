@@ -10,7 +10,9 @@ This is a collection of classes, that makes easy to access the [utPLSQL v3](http
 ## Downloading
 This is a Maven Library project, you can add on your Java project as a dependency. 
 
-The library is hosted on ![[packagecloud](https://packagecloud.io/utPLSQL/utPLSQL-java-api)](https://packagecloud.io/images/packagecloud-badge.png)
+The project is hosted on [packagecloud.io](https://packagecloud.io/utPLSQL/utPLSQL-java-api)
+
+[![packagecloud](https://packagecloud.io/images/packagecloud-badge.png)](https://packagecloud.io/utPLSQL/utPLSQL-java-api)
 
 
 You install this Maven repository by adding it to the <repositories> section of your pom.xml. No special plugins or extensions are required.
