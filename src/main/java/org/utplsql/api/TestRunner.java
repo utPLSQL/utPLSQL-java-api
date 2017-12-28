@@ -64,6 +64,16 @@ public class TestRunner {
         return this;
     }
 
+    public TestRunner includeObjects(List<String> obj) {
+        options.includeObjects.addAll(obj);
+        return this;
+    }
+
+    public TestRunner excludeObjects(List<String> obj) {
+        options.excludeObjects.addAll(obj);
+        return this;
+    }
+
     public TestRunner sourceMappingOptions(FileMapperOptions mapperOptions) {
         options.sourceMappingOptions = mapperOptions;
         return this;
