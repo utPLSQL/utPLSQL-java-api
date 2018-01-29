@@ -9,7 +9,7 @@ import java.sql.SQLException;
 import java.util.ArrayList;
 import java.util.List;
 
-public class FileMapperTest {
+public class FileMapperIT {
 
     @Rule
     public final DatabaseRule db = new DatabaseRule();

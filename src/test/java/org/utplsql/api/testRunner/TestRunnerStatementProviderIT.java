@@ -9,7 +9,7 @@ import org.utplsql.api.rules.DatabaseRule;
 
 import java.sql.SQLException;
 
-public class TestRunnerStatementProviderTest {
+public class TestRunnerStatementProviderIT {
 
     @Rule
     public final DatabaseRule db = new DatabaseRule();

@@ -1,6 +1,7 @@
 package org.utplsql.api;
 
 import org.junit.Assert;
+import org.junit.Before;
 import org.junit.Rule;
 import org.junit.Test;
 import org.utplsql.api.compatibility.CompatibilityProxy;
@@ -9,7 +10,7 @@ import org.utplsql.api.rules.DatabaseRule;
 import java.sql.Connection;
 import java.sql.SQLException;
 
-public class CompatibilityTest {
+public class CompatibilityIT {
 
     @Rule
     public final DatabaseRule db = new DatabaseRule();

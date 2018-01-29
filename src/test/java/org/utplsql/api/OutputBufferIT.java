@@ -19,7 +19,7 @@ import java.util.concurrent.*;
 /**
  * Created by Vinicius on 13/04/2017.
  */
-public class OutputBufferTest {
+public class OutputBufferIT {
 
     @Rule
     public final DatabaseRule db = new DatabaseRule();

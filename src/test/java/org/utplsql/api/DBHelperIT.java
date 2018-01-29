@@ -7,7 +7,7 @@ import org.utplsql.api.rules.DatabaseRule;
 
 import java.sql.SQLException;
 
-public class DBHelperTest {
+public class DBHelperIT {
 
     @Rule
     public final DatabaseRule db = new DatabaseRule();

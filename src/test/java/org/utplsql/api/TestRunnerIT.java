@@ -14,7 +14,7 @@ import java.sql.SQLException;
 /**
  * Created by Vinicius on 13/04/2017.
  */
-public class TestRunnerTest {
+public class TestRunnerIT {
 
     @Rule
     public final DatabaseRule db = new DatabaseRule();

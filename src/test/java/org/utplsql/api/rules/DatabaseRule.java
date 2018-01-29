@@ -1,6 +1,7 @@
 package org.utplsql.api.rules;
 
 import org.junit.rules.ExternalResource;
+import org.utplsql.api.EnvironmentVariableUtil;
 
 import java.sql.Connection;
 import java.sql.DriverManager;
@@ -18,10 +19,12 @@ public class DatabaseRule extends ExternalResource {
     private static String sPass;
 
     static {
-        sUrl  = System.getenv("DB_URL")  != null ? System.getenv("DB_URL")  : "192.168.99.100:1521:XE";
-        sUser = System.getenv("DB_USER") != null ? System.getenv("DB_USER") : "app";
-        sPass = System.getenv("DB_PASS") != null ? System.getenv("DB_PASS") : "app";
+        sUrl  = EnvironmentVariableUtil.getEnvValue("DB_URL", "192.168.99.100:1521:XE");
+        sUser = EnvironmentVariableUtil.getEnvValue("DB_USER", "app");
+        sPass = EnvironmentVariableUtil.getEnvValue("DB_PASS", "app");
     }
+
+
 
     private List<Connection> connectionList;
 
