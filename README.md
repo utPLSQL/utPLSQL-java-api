@@ -92,11 +92,45 @@ http://docs.oracle.com/middleware/1213/core/MAVEN/config_maven_repo.htm#MAVEN901
 
 *Sections 6.1 and 6.5 are the more important ones, and the only ones you need if you're using the latest Maven version.*
 
+### Local database with utPLSQL and utPLSQL-demo-project
+
+To usefully contribute you'll have to setup a local database with installed [latest utPLSQL v3](https://github.com/utPLSQL/utPLSQL) and [utPLSQL-demo-project](https://github.com/utPLSQL/utPLSQL-demo-project). 
+The demo-project will serve as your test user. See .travis.yml to see an example on how it can be installed. 
+
+### Maven settings for utPLSQL-local profile
+
+utPLSQL-java-api comes with a preconfigured profile "utPLSQL-local". This profile uses properties to set the correct 
+environment variables for DB_URL, DB_USER and DB_PASS which is needed to run the integration tests.
+You can set these properties by adding the following to your Maven settings.xml:
+
+```xml
+<settings>
+    <!-- ... -->
+    <profiles>
+        <profile>
+            <id>utPLSQL-local</id>
+            <properties>
+                <dbUrl>localhost:1521/XE</dbUrl>
+                <dbUser>app</dbUser>
+                <dbPass>app</dbPass>
+            </properties>
+        </profile>
+    </profiles>
+     
+    <activeProfiles>
+        <activeProfile>utPLSQL-local</activeProfile>
+    </activeProfiles>
+</settings>
+```
+
 After configuring your access to Oracle's Maven repository, you will be able to successfully build this API.
 
 ```bash
 cd utPLSQL-java-api
-mvn clean package install -DskipTests
+mvn clean package install
 ```
 
-The cmd above is ignoring unit tests because it needs a database connection with the latest utPLSQL v3 installed. Please take a look on .travis.yml and .travis folder to see how testing was configured.
+### Skip the local database part
+
+If you want to skip the local database part, just run ``mvn clean package install -DskipTests``. 
+You will still be able to run ``mvn test`` because integration tests are run in the ``verify``-phase.
