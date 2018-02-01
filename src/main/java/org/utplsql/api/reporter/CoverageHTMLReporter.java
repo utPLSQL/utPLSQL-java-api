@@ -2,6 +2,10 @@ package org.utplsql.api.reporter;
 
 import org.utplsql.api.CustomTypes;
 
+import java.io.IOException;
+import java.nio.file.Files;
+import java.nio.file.Path;
+import java.nio.file.Paths;
 import java.sql.SQLException;
 import java.sql.SQLInput;
 import java.sql.SQLOutput;
@@ -59,4 +63,9 @@ public class CoverageHTMLReporter extends Reporter {
         stream.writeString(getAssetsPath());
     }
 
+    public static void writeReportAssetsTo(Path targetDirectory) throws IOException {
+
+        Files.createDirectories(targetDirectory);
+
+    }
 }
