@@ -1,13 +1,15 @@
 package org.utplsql.api.testRunner;
 
-import org.junit.Assert;
 import org.junit.Rule;
-import org.junit.Test;
+import org.junit.jupiter.api.Test;
 import org.utplsql.api.TestRunnerOptions;
 import org.utplsql.api.Version;
 import org.utplsql.api.rules.DatabaseRule;
 
 import java.sql.SQLException;
+
+import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.fail;
 
 public class TestRunnerStatementProviderIT {
 
@@ -19,10 +21,9 @@ public class TestRunnerStatementProviderIT {
         try {
             TestRunnerStatement stmt = TestRunnerStatementProvider.getCompatibleTestRunnerStatement(new Version("3.0.2"), new TestRunnerOptions(), db.newConnection());
 
-            Assert.assertEquals(Pre303TestRunnerStatement.class, stmt.getClass());
+            assertEquals(Pre303TestRunnerStatement.class, stmt.getClass());
         } catch (SQLException e) {
-            e.printStackTrace();
-            Assert.fail();
+            fail(e);
         }
     }
 
@@ -32,10 +33,9 @@ public class TestRunnerStatementProviderIT {
         try {
             TestRunnerStatement stmt = TestRunnerStatementProvider.getCompatibleTestRunnerStatement(new Version("3.0.3"), new TestRunnerOptions(), db.newConnection());
 
-            Assert.assertEquals(ActualTestRunnerStatement.class, stmt.getClass());
+            assertEquals(ActualTestRunnerStatement.class, stmt.getClass());
         } catch (SQLException e) {
-            e.printStackTrace();
-            Assert.fail();
+            fail(e);
         }
     }
 }

@@ -1,11 +1,13 @@
 package org.utplsql.api;
 
-import org.junit.Assert;
 import org.junit.Rule;
-import org.junit.Test;
+import org.junit.jupiter.api.Test;
 import org.utplsql.api.rules.DatabaseRule;
 
 import java.sql.SQLException;
+
+import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.fail;
 
 public class DBHelperIT {
 
@@ -17,11 +19,10 @@ public class DBHelperIT {
     {
         try {
             Version v = DBHelper.getDatabaseFrameworkVersion(db.newConnection());
-            Assert.assertEquals(true, v.isValid());
+            assertEquals(true, v.isValid());
         } catch (SQLException e)
         {
-            e.printStackTrace();
-            Assert.fail();
+            fail(e);
         }
     }
 

@@ -1,13 +1,15 @@
 package org.utplsql.api;
 
+import org.junit.jupiter.api.Test;
 import org.utplsql.api.rules.DatabaseRule;
-import org.junit.Assert;
 import org.junit.Rule;
-import org.junit.Test;
 
 import java.sql.SQLException;
 import java.util.ArrayList;
 import java.util.List;
+
+import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.fail;
 
 public class FileMapperIT {
 
@@ -35,16 +37,16 @@ public class FileMapperIT {
         List<FileMapping> fileMappings = FileMapper.buildFileMappingList(db.newConnection(), mapperOptions);
 
         if (fileMappings.size() != 2)
-            Assert.fail("Wrong mapping list size.");
+            fail("Wrong mapping list size.");
 
         assertMapping(fileMappings.get(0), "APP", "AWARD_BONUS", "PROCEDURE");
         assertMapping(fileMappings.get(1), "APP", "BETWNSTR", "FUNCTION");
     }
 
     private void assertMapping(FileMapping fileMapping, String owner, String name, String type) {
-        Assert.assertEquals(owner, fileMapping.getObjectOwner());
-        Assert.assertEquals(name, fileMapping.getObjectName());
-        Assert.assertEquals(type, fileMapping.getObjectType());
+        assertEquals(owner, fileMapping.getObjectOwner());
+        assertEquals(name, fileMapping.getObjectName());
+        assertEquals(type, fileMapping.getObjectType());
     }
 
 }

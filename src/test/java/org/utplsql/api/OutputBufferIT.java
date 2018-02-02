@@ -1,11 +1,10 @@
 package org.utplsql.api;
 
+import org.junit.jupiter.api.Test;
 import org.utplsql.api.reporter.DocumentationReporter;
 import org.utplsql.api.reporter.Reporter;
 import org.utplsql.api.rules.DatabaseRule;
-import org.junit.Assert;
 import org.junit.Rule;
-import org.junit.Test;
 
 import java.io.File;
 import java.io.FileOutputStream;
@@ -15,6 +14,9 @@ import java.sql.SQLException;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.concurrent.*;
+
+import static org.junit.jupiter.api.Assertions.assertTrue;
+import static org.junit.jupiter.api.Assertions.fail;
 
 /**
  * Created by Vinicius on 13/04/2017.
@@ -84,12 +86,12 @@ public class OutputBufferIT {
             Object res2 = task2.get();
 
             if (res1 instanceof Exception)
-                Assert.fail(((Exception) res1).getMessage());
+                fail((Exception) res1);
 
             if (res2 instanceof Exception)
-                Assert.fail(((Exception) res2).getMessage());
+                fail((Exception) res2);
         } catch (SQLException e) {
-            Assert.fail(e.getMessage());
+            fail(e.getMessage());
         } catch (InterruptedException | ExecutionException e) {
             e.printStackTrace();
         }
@@ -108,9 +110,9 @@ public class OutputBufferIT {
             List<String> outputLines = new OutputBuffer(reporter)
                     .fetchAll(conn);
 
-            Assert.assertTrue(outputLines.size() > 0);
+            assertTrue(outputLines.size() > 0);
         } catch (SQLException e) {
-            Assert.fail(e.getMessage());
+            fail(e);
         }
     }
 

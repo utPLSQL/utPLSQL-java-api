@@ -1,11 +1,13 @@
 package org.utplsql.api;
 
-import org.junit.Assert;
-import org.junit.Test;
+import org.junit.jupiter.api.Test;
 
 import java.util.Map;
 import java.util.Optional;
 import java.util.Set;
+
+import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.fail;
 
 
 public class EnvironmentVariableUtilTest {
@@ -19,22 +21,22 @@ public class EnvironmentVariableUtilTest {
                 .findFirst();
 
         if ( !envVariable.isPresent() )
-            Assert.fail("Can't test for there is no environment variable not overridden by property");
+            fail ("Can't test for there is no environment variable not overridden by property");
 
-        Assert.assertEquals(envVariable.get().getValue(), EnvironmentVariableUtil.getEnvValue(envVariable.get().getKey()));
+        assertEquals(envVariable.get().getValue(), EnvironmentVariableUtil.getEnvValue(envVariable.get().getKey()));
     }
 
     @Test
     public void testGetVariableFromProperty() {
         System.setProperty("PATH", "MyPath");
 
-        Assert.assertEquals("MyPath", EnvironmentVariableUtil.getEnvValue("PATH"));
+        assertEquals("MyPath", EnvironmentVariableUtil.getEnvValue("PATH"));
     }
 
     @Test
     public void testGetVariableFromDefault() {
 
-        Assert.assertEquals("defaultValue", EnvironmentVariableUtil.getEnvValue("RANDOM"+String.valueOf(System.currentTimeMillis()), "defaultValue"));
+        assertEquals("defaultValue", EnvironmentVariableUtil.getEnvValue("RANDOM"+String.valueOf(System.currentTimeMillis()), "defaultValue"));
     }
 
 }

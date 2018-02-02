@@ -1,8 +1,7 @@
 package org.utplsql.api;
 
-import org.junit.Assert;
 import org.junit.Rule;
-import org.junit.Test;
+import org.junit.jupiter.api.Test;
 import org.utplsql.api.compatibility.CompatibilityProxy;
 import org.utplsql.api.exception.SomeTestsFailedException;
 import org.utplsql.api.reporter.*;
@@ -10,6 +9,8 @@ import org.utplsql.api.rules.DatabaseRule;
 
 import java.sql.Connection;
 import java.sql.SQLException;
+
+import static org.junit.jupiter.api.Assertions.fail;
 
 /**
  * Created by Vinicius on 13/04/2017.
@@ -25,7 +26,7 @@ public class TestRunnerIT {
             Connection conn = db.newConnection();
             new TestRunner().run(conn);
         } catch (SQLException e) {
-            Assert.fail(e.getMessage());
+            fail(e);
         }
     }
 
@@ -43,7 +44,7 @@ public class TestRunnerIT {
                         .run(conn);
             }
         } catch (Exception e) {
-            Assert.fail(e.getMessage());
+            fail(e);
         }
     }
 
@@ -62,7 +63,7 @@ public class TestRunnerIT {
                     .addReporter(new XUnitReporter().init(conn))
                     .run(conn);
         } catch (SQLException e) {
-            Assert.fail(e.getMessage());
+            fail(e);
         }
     }
 
@@ -79,12 +80,12 @@ public class TestRunnerIT {
                 new TestRunner()
                         .failOnErrors(true)
                         .run(conn);
-                Assert.fail();
+                fail("Test expected to throw exception");
             }
         } catch (SomeTestsFailedException ignored) {
             System.out.println("Expected exception object thrown.");
         } catch (Exception e) {
-            Assert.fail("Wrong exception object thrown: " + e.getMessage());
+            fail("Wrong exception object thrown: " + e.getMessage());
         }
     }
 
