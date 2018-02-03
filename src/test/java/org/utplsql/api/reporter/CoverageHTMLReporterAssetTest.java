@@ -56,7 +56,7 @@ public class CoverageHTMLReporterAssetTest {
             testFileExists(targetPath.resolve(Paths.get("loading.gif")));
             testFileExists(targetPath.resolve(Paths.get("magnify.png")));
         }
-        catch ( IOException e )
+        catch ( RuntimeException e )
         {
             fail(e);
         }
