@@ -16,7 +16,6 @@
     <maven.compiler.target>1.8</maven.compiler.target>
     <junit.platform.version>1.0.3</junit.platform.version>
     <junit.jupiter.version>5.0.3</junit.jupiter.version>
-    <!--<coverage.resources.directory>${project.build.resources[0].directory}/CoverageHTMLReporter</coverage.resources.directory>--> <!--This doesnt work!-->
     <coverage.resources.directory>${basedir}/src/main/resources/CoverageHTMLReporter</coverage.resources.directory>
     <coverage.resources.version>1.0.0</coverage.resources.version>
     <coverage.resources.zip.directory>utPLSQL-coverage-html-${coverage.resources.version}</coverage.resources.zip.directory>
@@ -36,12 +35,6 @@
       <version>12.2.0.1</version>
       <scope>compile</scope>
     </dependency>
-    <!--<dependency>
-      <groupId>junit</groupId>
-      <artifactId>junit</artifactId>
-      <version>4.12</version>
-      <scope>test</scope>
-    </dependency>-->
     <dependency>
       <groupId>org.junit.jupiter</groupId>
       <artifactId>junit-jupiter-api</artifactId>
