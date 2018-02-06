@@ -3,13 +3,10 @@ package org.utplsql.api;
 import org.junit.jupiter.api.Test;
 import org.utplsql.api.reporter.DocumentationReporter;
 import org.utplsql.api.reporter.Reporter;
-import org.utplsql.api.rules.DatabaseRule;
-import org.junit.Rule;
 
 import java.io.File;
 import java.io.FileOutputStream;
 import java.io.PrintStream;
-import java.sql.Connection;
 import java.sql.SQLException;
 import java.util.ArrayList;
 import java.util.List;
@@ -19,22 +16,21 @@ import static org.junit.jupiter.api.Assertions.assertTrue;
 import static org.junit.jupiter.api.Assertions.fail;
 
 /**
- * Created by Vinicius on 13/04/2017.
+ * Integration-test for OutputBuffers
+ *
+ * @author viniciusam
+ * @author pesse
  */
-public class OutputBufferIT {
-
-    @Rule
-    public final DatabaseRule db = new DatabaseRule();
+public class OutputBufferIT extends AbstractDatabaseTest {
 
     public Reporter createReporter() throws SQLException {
-        Connection conn = db.newConnection();
-        Reporter reporter = new DocumentationReporter().init(conn);
+        Reporter reporter = new DocumentationReporter().init(newConnection());
         System.out.println("Reporter ID: " + reporter.getReporterId());
         return reporter;
     }
 
     @Test
-    public void printAvailableLines() {
+    public void printAvailableLines() throws SQLException {
         ExecutorService executorService = Executors.newFixedThreadPool(2);
 
         try {
@@ -42,11 +38,10 @@ public class OutputBufferIT {
 
             Future<Object> task1 = executorService.submit(() -> {
                 try {
-                    Connection conn = db.newConnection();
                     new TestRunner()
-                            .addPath(db.getUser())
+                            .addPath(getUser())
                             .addReporter(reporter)
-                            .run(conn);
+                            .run(getConnection());
 
                     return Boolean.TRUE;
                 } catch (SQLException e) {
@@ -58,7 +53,6 @@ public class OutputBufferIT {
                 FileOutputStream fileOutStream = null;
                 File outFile = new File("output.txt");
                 try {
-                    Connection conn = db.newConnection();
                     fileOutStream = new FileOutputStream(outFile);
 
                     List<PrintStream> printStreams = new ArrayList<>();
@@ -66,7 +60,7 @@ public class OutputBufferIT {
                     printStreams.add(new PrintStream(fileOutStream));
 
                     new OutputBuffer(reporter)
-                        .printAvailable(conn, printStreams);
+                            .printAvailable(newConnection(), printStreams);
 
                     return Boolean.TRUE;
                 } catch (SQLException e) {
@@ -90,30 +84,23 @@ public class OutputBufferIT {
 
             if (res2 instanceof Exception)
                 fail((Exception) res2);
-        } catch (SQLException e) {
-            fail(e.getMessage());
         } catch (InterruptedException | ExecutionException e) {
             e.printStackTrace();
         }
     }
 
     @Test
-    public void fetchAllLines() {
-        try {
-            final Reporter reporter = createReporter();
-            Connection conn = db.newConnection();
-            new TestRunner()
-                    .addPath(db.getUser())
-                    .addReporter(reporter)
-                    .run(conn);
+    public void fetchAllLines() throws SQLException {
+        final Reporter reporter = createReporter();
+        new TestRunner()
+                .addPath(getUser())
+                .addReporter(reporter)
+                .run(getConnection());
 
-            List<String> outputLines = new OutputBuffer(reporter)
-                    .fetchAll(conn);
+        List<String> outputLines = new OutputBuffer(reporter)
+                .fetchAll(getConnection());
 
-            assertTrue(outputLines.size() > 0);
-        } catch (SQLException e) {
-            fail(e);
-        }
+        assertTrue(outputLines.size() > 0);
     }
 
 }

@@ -1,8 +1,6 @@
 package org.utplsql.api;
 
 import org.junit.jupiter.api.Test;
-import org.utplsql.api.rules.DatabaseRule;
-import org.junit.Rule;
 
 import java.sql.SQLException;
 import java.util.ArrayList;
@@ -11,10 +9,7 @@ import java.util.List;
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.fail;
 
-public class FileMapperIT {
-
-    @Rule
-    public final DatabaseRule db = new DatabaseRule();
+public class FileMapperIT extends AbstractDatabaseTest {
 
     @Test
     public void testFileMapper() throws SQLException {
@@ -34,7 +29,7 @@ public class FileMapperIT {
         mapperOptions.setTypeSubExpression(2);
         mapperOptions.setNameSubExpression(3);
 
-        List<FileMapping> fileMappings = FileMapper.buildFileMappingList(db.newConnection(), mapperOptions);
+        List<FileMapping> fileMappings = FileMapper.buildFileMappingList(getConnection(), mapperOptions);
 
         if (fileMappings.size() != 2)
             fail("Wrong mapping list size.");
