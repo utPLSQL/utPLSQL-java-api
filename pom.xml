@@ -121,6 +121,8 @@
                 </move>
                 <echo message="delete unzip directory" />
                 <delete dir="${coverage.resources.directory}/${coverage.resources.zip.directory}" includeEmptyDirs="yes" verbose="false"/>
+                <echo message="delete Resources ZIP" />
+                <delete file="${coverage.resources.directory}/${coverage.resources.zip}" verbose="false"/>
               </target>
             </configuration>
           </execution>
