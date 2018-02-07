@@ -79,7 +79,7 @@ public class CoverageHTMLReporter extends Reporter {
     private static void copyFileFromClasspath( Path assetPath, Path targetDirectory, int filterNumOfFolders ) throws IOException {
 
         Path assetStartPath = assetPath.subpath(filterNumOfFolders, assetPath.getNameCount());
-        Path targetAssetPath = targetDirectory.resolve(assetStartPath);
+        Path targetAssetPath = targetDirectory.resolve(Paths.get(assetStartPath.toString()));
 
         Files.createDirectories(targetAssetPath.getParent());
 
