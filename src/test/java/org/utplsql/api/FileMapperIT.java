@@ -1,18 +1,15 @@
 package org.utplsql.api;
 
-import org.utplsql.api.rules.DatabaseRule;
-import org.junit.Assert;
-import org.junit.Rule;
-import org.junit.Test;
+import org.junit.jupiter.api.Test;
 
 import java.sql.SQLException;
 import java.util.ArrayList;
 import java.util.List;
 
-public class FileMapperTest {
+import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.fail;
 
-    @Rule
-    public final DatabaseRule db = new DatabaseRule();
+public class FileMapperIT extends AbstractDatabaseTest {
 
     @Test
     public void testFileMapper() throws SQLException {
@@ -32,19 +29,19 @@ public class FileMapperTest {
         mapperOptions.setTypeSubExpression(2);
         mapperOptions.setNameSubExpression(3);
 
-        List<FileMapping> fileMappings = FileMapper.buildFileMappingList(db.newConnection(), mapperOptions);
+        List<FileMapping> fileMappings = FileMapper.buildFileMappingList(getConnection(), mapperOptions);
 
         if (fileMappings.size() != 2)
-            Assert.fail("Wrong mapping list size.");
+            fail("Wrong mapping list size.");
 
         assertMapping(fileMappings.get(0), "APP", "AWARD_BONUS", "PROCEDURE");
         assertMapping(fileMappings.get(1), "APP", "BETWNSTR", "FUNCTION");
     }
 
     private void assertMapping(FileMapping fileMapping, String owner, String name, String type) {
-        Assert.assertEquals(owner, fileMapping.getObjectOwner());
-        Assert.assertEquals(name, fileMapping.getObjectName());
-        Assert.assertEquals(type, fileMapping.getObjectType());
+        assertEquals(owner, fileMapping.getObjectOwner());
+        assertEquals(name, fileMapping.getObjectName());
+        assertEquals(type, fileMapping.getObjectType());
     }
 
 }

@@ -14,6 +14,12 @@
     <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
     <maven.compiler.source>1.8</maven.compiler.source>
     <maven.compiler.target>1.8</maven.compiler.target>
+    <junit.platform.version>1.0.3</junit.platform.version>
+    <junit.jupiter.version>5.0.3</junit.jupiter.version>
+    <coverage.resources.directory>${basedir}/src/main/resources/CoverageHTMLReporter</coverage.resources.directory>
+    <coverage.resources.version>1.0.0</coverage.resources.version>
+    <coverage.resources.zip.directory>utPLSQL-coverage-html-${coverage.resources.version}</coverage.resources.zip.directory>
+    <coverage.resources.zip>${coverage.resources.zip.directory}.zip</coverage.resources.zip>
   </properties>
 
   <dependencies>
@@ -30,9 +36,15 @@
       <scope>compile</scope>
     </dependency>
     <dependency>
-      <groupId>junit</groupId>
-      <artifactId>junit</artifactId>
-      <version>4.12</version>
+      <groupId>org.junit.jupiter</groupId>
+      <artifactId>junit-jupiter-api</artifactId>
+      <version>${junit.jupiter.version}</version>
+      <scope>test</scope>
+    </dependency>
+    <dependency>
+      <groupId>org.junit.jupiter</groupId>
+      <artifactId>junit-jupiter-engine</artifactId>
+      <version>${junit.jupiter.version}</version>
       <scope>test</scope>
     </dependency>
   </dependencies>
@@ -66,7 +78,118 @@
         <version>0.0.6</version>
       </extension>
     </extensions>
+    <plugins>
+      <plugin>
+        <groupId>com.googlecode.maven-download-plugin</groupId>
+        <artifactId>download-maven-plugin</artifactId>
+        <version>1.3.0</version>
+        <executions>
+          <execution>
+            <!-- the wget goal actually binds itself to this phase by default -->
+            <phase>process-resources</phase>
+            <goals>
+              <goal>wget</goal>
+            </goals>
+            <configuration>
+              <url>https://codeload.github.com/utPLSQL/utPLSQL-coverage-html/zip/${coverage.resources.version}</url>
+              <outputFileName>${coverage.resources.zip}</outputFileName>
+              <!-- default target location, just to demonstrate the parameter -->
+              <outputDirectory>${coverage.resources.directory}</outputDirectory>
+            </configuration>
+          </execution>
+        </executions>
+      </plugin>
+      <plugin>
+        <artifactId>maven-antrun-plugin</artifactId>
+        <version>1.7</version>
+        <executions>
+          <execution>
+            <phase>process-resources</phase>
+            <goals>
+              <goal>run</goal>
+            </goals>
+            <configuration>
+              <target>
+                <echo message="unzip Resources" />
+                <unzip src="${coverage.resources.directory}/${coverage.resources.zip}" dest="${coverage.resources.directory}" />
+                <echo message="move unzipped assets to target resources directory" />
+                <move toDir="${coverage.resources.directory}" includeEmptyDirs="yes" verbose="false">
+                  <fileset dir="${coverage.resources.directory}/${coverage.resources.zip.directory}/assets">
+                    <include name="**/*" />
+                    <include name="**/*.*" />
+                  </fileset>
+                </move>
+                <echo message="delete unzip directory" />
+                <delete dir="${coverage.resources.directory}/${coverage.resources.zip.directory}" includeEmptyDirs="yes" verbose="false"/>
+                <echo message="delete Resources ZIP" />
+                <delete file="${coverage.resources.directory}/${coverage.resources.zip}" verbose="false"/>
+              </target>
+            </configuration>
+          </execution>
+        </executions>
+      </plugin>
+      <plugin>
+        <groupId>org.apache.maven.plugins</groupId>
+        <artifactId>maven-surefire-plugin</artifactId>
+        <version>2.19.1</version>
+        <configuration>
+          <excludes>
+            <exclude>**/*IT.java</exclude>
+          </excludes>
+        </configuration>
+        <dependencies>
+          <dependency>
+            <groupId>org.junit.platform</groupId>
+            <artifactId>junit-platform-surefire-provider</artifactId>
+            <version>${junit.platform.version}</version>
+          </dependency>
+        </dependencies>
+      </plugin>
+      <plugin>
+        <groupId>org.apache.maven.plugins</groupId>
+        <artifactId>maven-failsafe-plugin</artifactId>
+        <version>2.19.1</version>
+        <executions>
+          <execution>
+            <goals>
+              <goal>integration-test</goal>
+              <goal>verify</goal>
+            </goals>
+          </execution>
+        </executions>
+        <dependencies>
+          <dependency>
+            <groupId>org.junit.platform</groupId>
+            <artifactId>junit-platform-surefire-provider</artifactId>
+            <version>${junit.platform.version}</version>
+          </dependency>
+        </dependencies>
+      </plugin>
+    </plugins>
   </build>
+
+  <profiles>
+    <profile>
+      <id>utPLSQL-local</id>
+      <build>
+        <pluginManagement>
+          <plugins>
+            <plugin>
+              <groupId>org.apache.maven.plugins</groupId>
+              <artifactId>maven-failsafe-plugin</artifactId>
+              <configuration>
+                <environmentVariables>
+                  <DB_URL>${dbUrl}</DB_URL>
+                  <DB_USER>${dbUser}</DB_USER>
+                  <DB_PASS>${dbPass}</DB_PASS>
+                </environmentVariables>
+              </configuration>
+            </plugin>
+          </plugins>
+        </pluginManagement>
+      </build>
+    </profile>
+  </profiles>
 
   <distributionManagement>
     <repository>
