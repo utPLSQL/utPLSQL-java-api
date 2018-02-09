@@ -72,6 +72,7 @@ public class ResourceUtil {
                         result.add(entryPath.subpath(relativeStartIndex, entryPath.getNameCount()));
                 }
             }
+            resourcePath.getFileSystem().close();
         } else {
             Files.walk(resourcePath)
                     .filter(p -> !filesOnly || p.toFile().isFile())
