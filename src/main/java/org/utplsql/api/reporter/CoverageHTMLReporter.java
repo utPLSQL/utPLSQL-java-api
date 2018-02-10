@@ -35,7 +35,7 @@ public class CoverageHTMLReporter extends Reporter {
 
     @Override
     public String getSQLTypeName() throws SQLException {
-        return CustomTypes.UT_COVERAGE_HTML_REPORTER;
+        return DefaultReporters.UT_COVERAGE_HTML_REPORTER.name();
     }
 
     public String getProjectName() {

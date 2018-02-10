@@ -1,7 +1,5 @@
 package org.utplsql.api.reporter;
 
-import org.utplsql.api.CustomTypes;
-
 import java.sql.SQLException;
 import java.sql.SQLInput;
 import java.sql.SQLOutput;
@@ -34,7 +32,7 @@ public class DocumentationReporter extends Reporter {
 
     @Override
     public String getSQLTypeName() throws SQLException {
-        return CustomTypes.UT_DOCUMENTATION_REPORTER;
+        return DefaultReporters.UT_DOCUMENTATION_REPORTER.name();
     }
 
     @Override
