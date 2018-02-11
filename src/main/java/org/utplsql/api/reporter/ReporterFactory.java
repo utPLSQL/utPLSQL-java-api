@@ -15,7 +15,17 @@ import java.util.function.Supplier;
  */
 public final class ReporterFactory {
 
-    private Map<String, Supplier<? extends Reporter>> reportFactoryMethodMap = new HashMap<>();
+
+    public static class ReporterInfo {
+        public ReporterInfo( Supplier<? extends Reporter> factoryMethod, String description) {
+            this.factoryMethod = factoryMethod;
+            this.description = description;
+        }
+        public Supplier<? extends Reporter> factoryMethod;
+        public String description;
+    }
+
+    private Map<String, ReporterInfo> reportFactoryMethodMap = new HashMap<>();
 
     private static ReporterFactory instance;
     
@@ -27,7 +37,7 @@ public final class ReporterFactory {
      */
     private void registerDefaultReporters() {
         Arrays.stream(DefaultReporters.values())
-                .forEach(r -> registerReporterFactoryMethod(r.name(), r.getFactoryMethod()));
+                .forEach(r -> registerReporterFactoryMethod(r.name(), r.getFactoryMethod(), r.getDescription()));
     }
 
     /** Returns the global instance of the ReporterFactory
@@ -44,18 +54,19 @@ public final class ReporterFactory {
      *
      * @param reporterName the reporter's name to register
      * @param factoryMethod the method which will return the reporter
-     * @return the method stored for the registered name
+     * @param description the description of the reporter
+     * @return Object with information about the registered reporter
      */
-    public synchronized Supplier<? extends Reporter> registerReporterFactoryMethod( String reporterName, Supplier<? extends Reporter> factoryMethod) {
-        return reportFactoryMethodMap.put(reporterName, factoryMethod);
+    public synchronized ReporterInfo registerReporterFactoryMethod( String reporterName, Supplier<? extends Reporter> factoryMethod, String description) {
+        return reportFactoryMethodMap.put(reporterName, new ReporterInfo(factoryMethod, description));
     }
 
     /** Unregisters a specified reporter name.
      *
      * @param reporterName the reporter's name to unregister
-     * @return the method which was previously registered or null
+     * @return information about the reporter which was previously registered or null
      */
-    public synchronized Supplier<? extends Reporter> unregisterReporterFactoryMethod( String reporterName ) {
+    public synchronized ReporterInfo unregisterReporterFactoryMethod( String reporterName ) {
         return reportFactoryMethodMap.remove(reporterName);
     }
 
@@ -67,9 +78,17 @@ public final class ReporterFactory {
      * @return A reporter
      */
     public Reporter createReporter(String reporterName) {
-        Supplier<? extends Reporter> supplier = reportFactoryMethodMap.get(reporterName);
-        if ( supplier == null )
+
+        if ( !reportFactoryMethodMap.containsKey(reporterName))
             throw new RuntimeException("Reporter " + reporterName + " not implemented.");
+
+        ReporterInfo ri = reportFactoryMethodMap.get(reporterName);
+        if ( ri == null )
+            throw new RuntimeException("ReporterInfo for " + reporterName + " was null");
+
+        Supplier<? extends Reporter> supplier = ri.factoryMethod;
+        if ( supplier == null )
+            throw new RuntimeException("No factory method for " + reporterName);
         else
             return supplier.get();
     }
@@ -78,7 +97,13 @@ public final class ReporterFactory {
      *
      * @return Set of reporter names
      */
-    public Set<String> getRegisteredReporterNames() {
-        return reportFactoryMethodMap.keySet();
+    public Map<String, String> getRegisteredReporterInfo() {
+        Map<String, String> descMap = new HashMap<>(reportFactoryMethodMap.size());
+
+        for (Map.Entry<String, ReporterInfo> entry : reportFactoryMethodMap.entrySet()) {
+            descMap.put(entry.getKey(), entry.getValue().description);
+        }
+        return descMap;
     }
+
 }

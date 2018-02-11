@@ -8,21 +8,32 @@ import java.util.function.Supplier;
  */
 public enum DefaultReporters {
 
-    UT_COVERAGE_HTML_REPORTER(CoverageHTMLReporter::new),
-    UT_DOCUMENTATION_REPORTER(DocumentationReporter::new),
-    UT_TEAMCITY_REPORTER(TeamCityReporter::new),
-    UT_XUNIT_REPORTER(XUnitReporter::new),
-    UT_COVERALLS_REPORTER(CoverallsReporter::new),
-    UT_COVERAGE_SONAR_REPORTER(CoverageSonarReporter::new),
-    UT_SONAR_TEST_REPORTER(SonarTestReporter::new);
+    UT_COVERAGE_HTML_REPORTER(CoverageHTMLReporter::new, "Generates a HTML coverage report with summary and line by line information on code coverage.\n" +
+            "Based on open-source simplecov-html coverage reporter for Ruby.\n" +
+            "Includes source code in the report."),
+    UT_DOCUMENTATION_REPORTER(DocumentationReporter::new, "A textual pretty-print of unit test results (usually use for console output)"),
+    UT_TEAMCITY_REPORTER(TeamCityReporter::new, "For reporting live progress of test execution with Teamcity CI."),
+    UT_XUNIT_REPORTER(XUnitReporter::new, "Used for reporting test results with CI servers like Jenkins/Hudson/Teamcity."),
+    UT_COVERALLS_REPORTER(CoverallsReporter::new, "Generates a JSON coverage report providing information on code coverage with line numbers.\n" +
+            "Designed for [Coveralls](https://coveralls.io/)."),
+    UT_COVERAGE_SONAR_REPORTER(CoverageSonarReporter::new, "Generates a JSON coverage report providing information on code coverage with line numbers.\n" +
+            "Designed for [SonarQube](https://about.sonarqube.com/) to report coverage."),
+    UT_SONAR_TEST_REPORTER(SonarTestReporter::new, "Generates a JSON report providing detailed information on test execution.\n" +
+            "Designed for [SonarQube](https://about.sonarqube.com/) to report test execution.");
 
     private Supplier<? extends Reporter> factoryMethod;
+    private String description;
 
-    DefaultReporters(Supplier<? extends Reporter> factoryMethod ) {
+    DefaultReporters(Supplier<? extends Reporter> factoryMethod, String description ) {
         this.factoryMethod = factoryMethod;
+        this.description = description;
     }
 
     public Supplier<? extends Reporter> getFactoryMethod() {
         return factoryMethod;
+    }
+
+    public String getDescription() {
+        return description;
     }
 }

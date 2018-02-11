@@ -4,7 +4,7 @@ import org.junit.jupiter.api.Test;
 import org.utplsql.api.reporter.*;
 
 import java.sql.SQLException;
-import java.util.Set;
+import java.util.Map;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertTrue;
@@ -43,10 +43,10 @@ public class ReporterNameTest {
 
     @Test
     public void defaultReporterFactoryNamesList() {
-        Set<String> names = ReporterFactory.getInstance().getRegisteredReporterNames();
+        Map<String, String> reporterDescriptions = ReporterFactory.getInstance().getRegisteredReporterInfo();
 
         for ( DefaultReporters r : DefaultReporters.values() ) {
-            assertTrue(names.contains(r.name()));
+            assertTrue(reporterDescriptions.containsKey(r.name()));
         }
     }
 
