@@ -156,7 +156,7 @@ public class TestRunner {
      * @throws SQLException any sql exception
      */
     private void validateReporter(Connection conn, Reporter reporter) throws SQLException {
-        if (reporter.getReporterId() == null || reporter.getReporterId().isEmpty())
+        if (reporter.getId() == null || reporter.getId().isEmpty())
             reporter.init(conn);
     }
 

@@ -1,5 +1,6 @@
 package org.utplsql.api.reporter;
 
+import java.util.function.BiFunction;
 import java.util.function.Supplier;
 
 /** This enum defines default reporters, added and maintained by the utPLSQL team, and their (default) factory method
@@ -12,24 +13,24 @@ public enum DefaultReporters {
             "Based on open-source simplecov-html coverage reporter for Ruby.\n" +
             "Includes source code in the report."),
     UT_DOCUMENTATION_REPORTER(DocumentationReporter::new, "A textual pretty-print of unit test results (usually use for console output)"),
-    UT_TEAMCITY_REPORTER(TeamCityReporter::new, "For reporting live progress of test execution with Teamcity CI."),
-    UT_XUNIT_REPORTER(XUnitReporter::new, "Used for reporting test results with CI servers like Jenkins/Hudson/Teamcity."),
-    UT_COVERALLS_REPORTER(CoverallsReporter::new, "Generates a JSON coverage report providing information on code coverage with line numbers.\n" +
+    UT_TEAMCITY_REPORTER(ReporterFactory.getDefaultReporterFactoryMethod(), "For reporting live progress of test execution with Teamcity CI."),
+    UT_XUNIT_REPORTER(ReporterFactory.getDefaultReporterFactoryMethod(), "Used for reporting test results with CI servers like Jenkins/Hudson/Teamcity."),
+    UT_COVERALLS_REPORTER(ReporterFactory.getDefaultReporterFactoryMethod(), "Generates a JSON coverage report providing information on code coverage with line numbers.\n" +
             "Designed for [Coveralls](https://coveralls.io/)."),
-    UT_COVERAGE_SONAR_REPORTER(CoverageSonarReporter::new, "Generates a JSON coverage report providing information on code coverage with line numbers.\n" +
+    UT_COVERAGE_SONAR_REPORTER(ReporterFactory.getDefaultReporterFactoryMethod(), "Generates a JSON coverage report providing information on code coverage with line numbers.\n" +
             "Designed for [SonarQube](https://about.sonarqube.com/) to report coverage."),
-    UT_SONAR_TEST_REPORTER(SonarTestReporter::new, "Generates a JSON report providing detailed information on test execution.\n" +
+    UT_SONAR_TEST_REPORTER(ReporterFactory.getDefaultReporterFactoryMethod(), "Generates a JSON report providing detailed information on test execution.\n" +
             "Designed for [SonarQube](https://about.sonarqube.com/) to report test execution.");
 
-    private Supplier<? extends Reporter> factoryMethod;
+    private BiFunction<String, Object[], ? extends Reporter> factoryMethod;
     private String description;
 
-    DefaultReporters(Supplier<? extends Reporter> factoryMethod, String description ) {
+    DefaultReporters(BiFunction<String, Object[], ? extends Reporter> factoryMethod, String description ) {
         this.factoryMethod = factoryMethod;
         this.description = description;
     }
 
-    public Supplier<? extends Reporter> getFactoryMethod() {
+    public BiFunction<String, Object[], ? extends Reporter> getFactoryMethod() {
         return factoryMethod;
     }
 

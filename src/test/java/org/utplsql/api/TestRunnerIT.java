@@ -45,11 +45,11 @@ public class TestRunnerIT extends AbstractDatabaseTest {
                 .addPath(getUser())
                 .addReporter(new DocumentationReporter().init(conn))
                 .addReporter(new CoverageHTMLReporter().init(conn))
-                .addReporter(new CoverageSonarReporter().init(conn))
+                /*.addReporter(new CoverageSonarReporter().init(conn))
                 .addReporter(new CoverallsReporter().init(conn))
                 .addReporter(new SonarTestReporter().init(conn))
                 .addReporter(new TeamCityReporter().init(conn))
-                .addReporter(new XUnitReporter().init(conn))
+                .addReporter(new XUnitReporter().init(conn))*/
                 .run(conn);
     }
 

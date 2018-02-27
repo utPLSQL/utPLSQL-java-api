@@ -10,8 +10,11 @@ public class DocumentationReporter extends Reporter {
     private int failed;
 
     public DocumentationReporter() {
-        this.lvl = 0;
-        this.failed = 0;
+        super( DefaultReporters.UT_DOCUMENTATION_REPORTER.name(), null );
+    }
+
+    public DocumentationReporter(String selfType, Object[] attributes ) {
+        super(selfType, attributes);
     }
 
     public int getLvl() {
@@ -28,25 +31,6 @@ public class DocumentationReporter extends Reporter {
 
     public void setFailed(int failed) {
         this.failed = failed;
-    }
-
-    @Override
-    public String getSQLTypeName() throws SQLException {
-        return DefaultReporters.UT_DOCUMENTATION_REPORTER.name();
-    }
-
-    @Override
-    public void readSQL(SQLInput stream, String typeName) throws SQLException {
-        super.readSQL(stream, typeName);
-        setLvl(stream.readInt());
-        setFailed(stream.readInt());
-    }
-
-    @Override
-    public void writeSQL(SQLOutput stream) throws SQLException {
-        super.writeSQL(stream);
-        stream.writeInt(getLvl());
-        stream.writeInt(getFailed());
     }
 
 }

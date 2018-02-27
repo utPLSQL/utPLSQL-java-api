@@ -67,7 +67,7 @@ public class OutputBuffer {
         ResultSet resultSet = null;
         try {
             preparedStatement = conn.prepareStatement("SELECT * FROM table(ut_output_buffer.get_lines(?))");
-            preparedStatement.setString(1, getReporter().getReporterId());
+            preparedStatement.setString(1, getReporter().getId());
             resultSet = preparedStatement.executeQuery();
 
             while (resultSet.next())
@@ -92,7 +92,7 @@ public class OutputBuffer {
         try {
             callableStatement = conn.prepareCall("BEGIN ? := ut_output_buffer.get_lines_cursor(?); END;");
             callableStatement.registerOutParameter(1, OracleTypes.CURSOR);
-            callableStatement.setString(2, getReporter().getReporterId());
+            callableStatement.setString(2, getReporter().getId());
             callableStatement.execute();
 
             resultSet = (ResultSet) callableStatement.getObject(1);

@@ -1,5 +1,12 @@
 package org.utplsql.api.reporter;
 
+import oracle.jdbc.OracleCallableStatement;
+import oracle.jdbc.OracleConnection;
+import oracle.jdbc.OracleTypes;
+import oracle.sql.Datum;
+import oracle.sql.ORAData;
+import oracle.sql.STRUCT;
+import oracle.sql.StructDescriptor;
 import org.utplsql.api.DBHelper;
 
 import java.sql.*;
@@ -8,57 +15,62 @@ import java.util.Calendar;
 /**
  * Created by Vinicius on 13/04/2017.
  */
-public abstract class Reporter implements SQLData {
+public class Reporter implements ORAData {
 
-    private String selfType;
-    private String reporterId;
-    private java.sql.Date startDate;
+    protected String selfType;
+    protected String id;
+    protected Object[] attributes;
 
-    public Reporter() {}
+    public Reporter( String typeName, Object[] attributes ) {
+        selfType = typeName;
 
-    public Reporter init(Connection conn) throws SQLException {
-        setSelfType(getSQLTypeName());
-        setStartDate(new java.sql.Date(Calendar.getInstance().getTimeInMillis()));
-        setReporterId(DBHelper.newSysGuid(conn));
+        if ( attributes != null ) {
+            this.id = String.valueOf(attributes[1]);
+        }
+        this.attributes = attributes;
+    }
+
+    private void setTypeName( String typeName ) {
+        this.selfType = typeName.replaceAll("[^0-9a-zA-Z_]", "");
+    }
+
+    public void setParameters( Object[] parameters ) {
+        // Empty method
+    }
+
+    public Reporter init( Connection con ) throws SQLException {
+
+        OracleConnection oraConn = con.unwrap(OracleConnection.class);
+
+        OracleCallableStatement callableStatement = (OracleCallableStatement) oraConn.prepareCall("{? = call " + selfType + "()}");
+        callableStatement.registerOutParameter(1, OracleTypes.STRUCT, "UT_REPORTER_BASE");
+        callableStatement.execute();
+
+        Reporter obj = (Reporter) callableStatement.getORAData(1, ReporterFactory.getInstance());
+
+        // TODO: Really override things
+        this.attributes = obj.attributes;
+
+        // Check whether we have output or not
+
+
         return this;
     }
 
-    public String getSelfType() {
+    public String getTypeName() {
         return this.selfType;
     }
 
-    private void setSelfType(String selfType) {
-        this.selfType = selfType;
+    public String getId() {
+        return this.id;
     }
 
-    public String getReporterId() {
-        return this.reporterId;
-    }
 
-    private void setReporterId(String reporterId) {
-        this.reporterId = reporterId;
-    }
-
-    public java.sql.Date getStartDate() {
-        return this.startDate;
-    }
-
-    private void setStartDate(java.sql.Date startDate) {
-        this.startDate = startDate;
-    }
-
-    @Override
-    public void readSQL(SQLInput stream, String typeName) throws SQLException {
-        setSelfType(stream.readString());
-        setReporterId(stream.readString());
-        setStartDate(stream.readDate());
-    }
-
-    @Override
-    public void writeSQL(SQLOutput stream) throws SQLException {
-        stream.writeString(getSelfType());
-        stream.writeString(getReporterId());
-        stream.writeDate(getStartDate());
+    public Datum toDatum(Connection c) throws SQLException
+    {
+        StructDescriptor sd =
+                StructDescriptor.createDescriptor(selfType, c);
+        return new STRUCT(sd, c, attributes);
     }
 
 }
