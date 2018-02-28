@@ -129,15 +129,6 @@ public class TestRunner {
                 throw new UtPLSQLNotInstalledException(e);
             }
             else {
-                // If the execution failed by unexpected reasons finishes all reporters,
-                // this way the users don't need to care about reporters' sessions hanging.
-                OracleConnection oraConn = conn.unwrap(OracleConnection.class);
-
-                try (CallableStatement closeBufferStmt = conn.prepareCall("BEGIN ut_output_buffer.close(?); END;")) {
-                    closeBufferStmt.setArray(1, oraConn.createOracleArray(CustomTypes.UT_REPORTERS, options.reporterList.toArray()));
-                    closeBufferStmt.execute();
-                } catch (SQLException ignored) {}
-
                 throw e;
             }
         } finally {
@@ -156,7 +147,7 @@ public class TestRunner {
      * @throws SQLException any sql exception
      */
     private void validateReporter(Connection conn, Reporter reporter) throws SQLException {
-        if (reporter.getId() == null || reporter.getId().isEmpty())
+        if (!reporter.isInit() || reporter.getId() == null || reporter.getId().isEmpty())
             reporter.init(conn);
     }
 

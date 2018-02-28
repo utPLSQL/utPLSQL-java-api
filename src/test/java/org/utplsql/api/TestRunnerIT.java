@@ -43,13 +43,13 @@ public class TestRunnerIT extends AbstractDatabaseTest {
         Connection conn = getConnection();
         new TestRunner()
                 .addPath(getUser())
-                .addReporter(new DocumentationReporter().init(conn))
-                .addReporter(new CoverageHTMLReporter().init(conn))
-                /*.addReporter(new CoverageSonarReporter().init(conn))
-                .addReporter(new CoverallsReporter().init(conn))
-                .addReporter(new SonarTestReporter().init(conn))
-                .addReporter(new TeamCityReporter().init(conn))
-                .addReporter(new XUnitReporter().init(conn))*/
+                .addReporter(ReporterFactory.create(DefaultReporters.UT_DOCUMENTATION_REPORTER))
+                .addReporter(ReporterFactory.create(DefaultReporters.UT_COVERAGE_HTML_REPORTER))
+                .addReporter(ReporterFactory.create(DefaultReporters.UT_COVERAGE_SONAR_REPORTER))
+                .addReporter(ReporterFactory.create(DefaultReporters.UT_COVERALLS_REPORTER))
+                .addReporter(ReporterFactory.create(DefaultReporters.UT_SONAR_TEST_REPORTER))
+                .addReporter(ReporterFactory.create(DefaultReporters.UT_TEAMCITY_REPORTER))
+                .addReporter(ReporterFactory.create(DefaultReporters.UT_XUNIT_REPORTER))
                 .run(conn);
     }
 

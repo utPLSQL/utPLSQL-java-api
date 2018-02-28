@@ -7,6 +7,9 @@ import oracle.sql.Datum;
 import oracle.sql.ORAData;
 import oracle.sql.STRUCT;
 import oracle.sql.StructDescriptor;
+import org.utplsql.api.outputBuffer.DefaultOutputBuffer;
+import org.utplsql.api.outputBuffer.NonOutputBuffer;
+import org.utplsql.api.outputBuffer.OutputBuffer;
 
 import java.sql.*;
 
@@ -31,10 +34,6 @@ public class Reporter implements ORAData {
         this.selfType = typeName.replaceAll("[^0-9a-zA-Z_]", "");
     }
 
-    public void setParameters( Object[] parameters ) {
-        // Empty method
-    }
-
     public Reporter init( Connection con ) throws SQLException {
 
         OracleConnection oraConn = con.unwrap(OracleConnection.class);
@@ -48,7 +47,7 @@ public class Reporter implements ORAData {
     }
 
     /** Initializes the Reporter from database
-     * This is necessary because we set up OutputBuffer (and maybe other stuff) we don't want to know and care about
+     * This is necessary because we set up DefaultOutputBuffer (and maybe other stuff) we don't want to know and care about
      * in the java API. Let's just do the instantiation of the Reporter in the database and map it into this object.
      *
      * @param oraConn
@@ -70,18 +69,24 @@ public class Reporter implements ORAData {
      * @throws SQLException
      */
     private void initHasOutput( OracleConnection oraConn ) throws SQLException {
-        OracleCallableStatement cstmt = (OracleCallableStatement)oraConn.prepareCall("{? = call ?.has_output()}");
 
-        cstmt.registerOutParameter(1, OracleTypes.INTEGER);
-        cstmt.setORAData(2, this);
-        cstmt.execute();
+        try ( PreparedStatement stmt = oraConn.prepareStatement("select ut_runner.is_output_reporter(?) from dual")) {
+            stmt.setString(1, getTypeName());
 
-        Integer i = cstmt.getInt(1);
-        if ( i != null && i == 1 ) {
-            hasOutput = true;
-        }
-        else {
-            hasOutput = false;
+            try ( ResultSet rs = stmt.executeQuery() ) {
+                if ( rs.next() ) {
+                    String isReporterResult = rs.getString(1);
+
+                    if ( isReporterResult == null )
+                        throw new IllegalArgumentException("The given type " + getTypeName() + " is not a valid Reporter!");
+                    else if (isReporterResult.equalsIgnoreCase("Y") )
+                        hasOutput = true;
+                    else
+                        hasOutput = false;
+                }
+                else
+                    throw new SQLException("Could not check Reporter validity");
+            }
         }
     }
 
@@ -120,4 +125,13 @@ public class Reporter implements ORAData {
         return new STRUCT(sd, c, getAttributes());
     }
 
+    public OutputBuffer getOutputBuffer() {
+
+        if ( hasOutput() ) {
+            return new DefaultOutputBuffer(this);
+        }
+        else {
+            return new NonOutputBuffer(this);
+        }
+    }
 }

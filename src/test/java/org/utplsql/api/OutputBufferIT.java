@@ -1,6 +1,7 @@
 package org.utplsql.api;
 
 import org.junit.jupiter.api.Test;
+import org.utplsql.api.outputBuffer.DefaultOutputBuffer;
 import org.utplsql.api.reporter.DocumentationReporter;
 import org.utplsql.api.reporter.Reporter;
 
@@ -59,8 +60,7 @@ public class OutputBufferIT extends AbstractDatabaseTest {
                     printStreams.add(System.out);
                     printStreams.add(new PrintStream(fileOutStream));
 
-                    new OutputBuffer(reporter)
-                            .printAvailable(newConnection(), printStreams);
+                    reporter.getOutputBuffer().printAvailable(newConnection(), printStreams);
 
                     return Boolean.TRUE;
                 } catch (SQLException e) {
@@ -97,8 +97,7 @@ public class OutputBufferIT extends AbstractDatabaseTest {
                 .addReporter(reporter)
                 .run(getConnection());
 
-        List<String> outputLines = new OutputBuffer(reporter)
-                .fetchAll(getConnection());
+        List<String> outputLines = reporter.getOutputBuffer().fetchAll(getConnection());
 
         assertTrue(outputLines.size() > 0);
     }

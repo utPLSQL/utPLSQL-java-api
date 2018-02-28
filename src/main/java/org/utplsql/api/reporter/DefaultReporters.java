@@ -1,7 +1,6 @@
 package org.utplsql.api.reporter;
 
 import java.util.function.BiFunction;
-import java.util.function.Supplier;
 
 /** This enum defines default reporters, added and maintained by the utPLSQL team, and their (default) factory method
  *

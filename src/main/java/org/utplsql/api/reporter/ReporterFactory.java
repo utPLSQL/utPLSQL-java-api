@@ -19,8 +19,6 @@ import java.util.function.Supplier;
  */
 public final class ReporterFactory implements ORADataFactory {
 
-
-
     public static class ReporterInfo {
         public ReporterInfo(BiFunction<String, Object[], ? extends Reporter> factoryMethod, String description) {
             this.factoryMethod = factoryMethod;
@@ -55,6 +53,14 @@ public final class ReporterFactory implements ORADataFactory {
         return instance;
     }
 
+    public static Reporter create( DefaultReporters reporter ) {
+        return getInstance().createReporter(reporter);
+    }
+
+    public static Reporter create( String reporter ) {
+        return getInstance().createReporter(reporter);
+    }
+
     /** Registers a creation method for a specified reporter name. Overrides eventually existing creation method
      *
      * @param reporterName the reporter's name to register
@@ -84,7 +90,7 @@ public final class ReporterFactory implements ORADataFactory {
      */
     public Reporter createReporter(String reporterName, Object[] attributes) {
 
-        BiFunction<String, Object[], ? extends Reporter> supplier = getDefaultReporterFactoryMethod();
+        BiFunction<String, Object[], ? extends Reporter> supplier = Reporter::new;
 
         if ( reportFactoryMethodMap.containsKey(reporterName)) {
 
@@ -106,6 +112,15 @@ public final class ReporterFactory implements ORADataFactory {
      */
     public Reporter createReporter( String reporterName ) {
         return createReporter(reporterName, null);
+    }
+
+    /** Returns a new reporter of the given DefaultReporter type
+     *
+     * @param reporter
+     * @return
+     */
+    public Reporter createReporter( DefaultReporters reporter ) {
+        return createReporter(reporter.name());
     }
 
     /** Returns a set of all registered reporter's names
