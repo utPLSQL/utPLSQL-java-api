@@ -1,6 +1,5 @@
 package org.utplsql.api.reporter;
 
-import org.utplsql.api.CustomTypes;
 import org.utplsql.api.ResourceUtil;
 
 import java.io.IOException;
@@ -9,9 +8,6 @@ import java.net.URISyntaxException;
 import java.nio.file.Files;
 import java.nio.file.Path;
 import java.nio.file.Paths;
-import java.sql.SQLException;
-import java.sql.SQLInput;
-import java.sql.SQLOutput;
 import java.util.List;
 import java.util.function.Consumer;
 
@@ -30,6 +26,26 @@ public class CoverageHTMLReporter extends Reporter {
 
     public CoverageHTMLReporter(String selfType, Object[] attributes) {
         super(selfType, attributes);
+    }
+
+    @Override
+    protected void setAttributes(Object[] attributes) {
+        super.setAttributes(attributes);
+
+        if ( attributes != null ) {
+            projectName = String.valueOf(attributes[3]);
+            assetsPath = String.valueOf(attributes[4]);
+        }
+    }
+
+    @Override
+    protected Object[] getAttributes() {
+        Object[] attributes = super.getAttributes();
+
+        attributes[3] = projectName;
+        attributes[4] = assetsPath;
+
+        return attributes;
     }
 
     public String getProjectName() {

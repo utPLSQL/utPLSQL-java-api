@@ -7,27 +7,24 @@ import oracle.sql.Datum;
 import oracle.sql.ORAData;
 import oracle.sql.STRUCT;
 import oracle.sql.StructDescriptor;
-import org.utplsql.api.DBHelper;
 
 import java.sql.*;
-import java.util.Calendar;
 
-/**
- * Created by Vinicius on 13/04/2017.
+/** This is a basic Reporter implementation, using ORAData interface
+ *
+ * @author pesse
  */
 public class Reporter implements ORAData {
 
-    protected String selfType;
-    protected String id;
-    protected Object[] attributes;
+    private String selfType;
+    private String id;
+    private Object[] attributes;
+    private boolean hasOutput = false;
+    private boolean init = false;
 
     public Reporter( String typeName, Object[] attributes ) {
-        selfType = typeName;
-
-        if ( attributes != null ) {
-            this.id = String.valueOf(attributes[1]);
-        }
-        this.attributes = attributes;
+        setTypeName(typeName);
+        setAttributes( attributes );
     }
 
     private void setTypeName( String typeName ) {
@@ -42,19 +39,69 @@ public class Reporter implements ORAData {
 
         OracleConnection oraConn = con.unwrap(OracleConnection.class);
 
+        initDbReporter( oraConn );
+        initHasOutput( oraConn );
+
+        init = true;
+
+        return this;
+    }
+
+    /** Initializes the Reporter from database
+     * This is necessary because we set up OutputBuffer (and maybe other stuff) we don't want to know and care about
+     * in the java API. Let's just do the instantiation of the Reporter in the database and map it into this object.
+     *
+     * @param oraConn
+     * @throws SQLException
+     */
+    private void initDbReporter( OracleConnection oraConn ) throws SQLException {
         OracleCallableStatement callableStatement = (OracleCallableStatement) oraConn.prepareCall("{? = call " + selfType + "()}");
         callableStatement.registerOutParameter(1, OracleTypes.STRUCT, "UT_REPORTER_BASE");
         callableStatement.execute();
 
         Reporter obj = (Reporter) callableStatement.getORAData(1, ReporterFactory.getInstance());
 
-        // TODO: Really override things
-        this.attributes = obj.attributes;
+        setAttributes(obj.getAttributes());
+    }
 
-        // Check whether we have output or not
+    /** Checks whether the Reporter has an output or not
+     *
+     * @param oraConn
+     * @throws SQLException
+     */
+    private void initHasOutput( OracleConnection oraConn ) throws SQLException {
+        OracleCallableStatement cstmt = (OracleCallableStatement)oraConn.prepareCall("{? = call ?.has_output()}");
 
+        cstmt.registerOutParameter(1, OracleTypes.INTEGER);
+        cstmt.setORAData(2, this);
+        cstmt.execute();
 
-        return this;
+        Integer i = cstmt.getInt(1);
+        if ( i != null && i == 1 ) {
+            hasOutput = true;
+        }
+        else {
+            hasOutput = false;
+        }
+    }
+
+    protected void setAttributes(Object[] attributes ) {
+        if (attributes != null) {
+            this.id = String.valueOf(attributes[1]);
+        }
+        this.attributes = attributes;
+    }
+
+    protected Object[] getAttributes() {
+        return attributes;
+    }
+
+    public boolean hasOutput() {
+        return hasOutput;
+    }
+
+    public boolean isInit() {
+        return init;
     }
 
     public String getTypeName() {
@@ -69,8 +116,8 @@ public class Reporter implements ORAData {
     public Datum toDatum(Connection c) throws SQLException
     {
         StructDescriptor sd =
-                StructDescriptor.createDescriptor(selfType, c);
-        return new STRUCT(sd, c, attributes);
+                StructDescriptor.createDescriptor(getTypeName(), c);
+        return new STRUCT(sd, c, getAttributes());
     }
 
 }

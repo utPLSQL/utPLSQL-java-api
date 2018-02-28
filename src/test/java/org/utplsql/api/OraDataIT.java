@@ -20,28 +20,7 @@ public class OraDataIT extends AbstractDatabaseTest {
 
         OracleConnection oraConn = getConnection().unwrap(OracleConnection.class);
 
-        /*String sql = "{? = call ut_documentation_reporter()}";
-
-        OracleCallableStatement callableStatement = null;
-
-        callableStatement = (OracleCallableStatement) oraConn.prepareCall(sql);
-        callableStatement.registerOutParameter(1, OracleTypes.STRUCT, "UT_REPORTER_BASE");
-        //callableStatement.registerOutParameter(1, OracleTypes.REF, "UT_REPORTER_BASE");
-        callableStatement.execute();
-
-        Reporter obj = (Reporter) callableStatement.getORAData(1, ReporterFactory.getInstance());
-
-*/
         Reporter obj = new DocumentationReporter().init(oraConn);
-
-        OracleCallableStatement cstmt = (OracleCallableStatement)oraConn.prepareCall("{? = call ?.has_output()}");
-
-        cstmt.registerOutParameter(1, OracleTypes.INTEGER);
-        cstmt.setORAData(2, obj);
-
-        cstmt.execute();
-
-        int hasOutput = cstmt.getInt(1);
 
         String runnerSql = "begin ut_runner.run( a_paths => ut_varchar2_list('app'), a_reporters => ?); end;";
 

@@ -1,8 +1,6 @@
 package org.utplsql.api.reporter;
 
-import java.sql.SQLException;
-import java.sql.SQLInput;
-import java.sql.SQLOutput;
+import java.math.BigDecimal;
 
 public class DocumentationReporter extends Reporter {
 
@@ -15,6 +13,24 @@ public class DocumentationReporter extends Reporter {
 
     public DocumentationReporter(String selfType, Object[] attributes ) {
         super(selfType, attributes);
+    }
+
+    @Override
+    protected void setAttributes(Object[] attributes) {
+        super.setAttributes(attributes);
+
+        if ( attributes != null ) {
+            lvl = ((BigDecimal)attributes[3]).intValue();
+            failed = ((BigDecimal)attributes[4]).intValue();
+        }
+    }
+
+    @Override
+    protected Object[] getAttributes() {
+        Object[] attributes = super.getAttributes();
+        attributes[3] = lvl;
+        attributes[4] = failed;
+        return attributes;
     }
 
     public int getLvl() {
