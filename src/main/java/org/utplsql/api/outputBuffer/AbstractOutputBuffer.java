@@ -1,15 +1,9 @@
 package org.utplsql.api.outputBuffer;
 
-import oracle.jdbc.OracleCallableStatement;
-import oracle.jdbc.OracleConnection;
-import oracle.jdbc.OraclePreparedStatement;
-import oracle.jdbc.OracleTypes;
 import org.utplsql.api.reporter.Reporter;
 
 import java.io.PrintStream;
-import java.sql.Connection;
-import java.sql.ResultSet;
-import java.sql.SQLException;
+import java.sql.*;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.function.Consumer;
@@ -67,5 +61,52 @@ abstract class AbstractOutputBuffer implements OutputBuffer {
                 ps.println(s);
         });
     }
+
+    protected abstract PreparedStatement getLinesStatement( Connection conn ) throws SQLException;
+
+    protected abstract CallableStatement getLinesCursorStatement( Connection conn ) throws SQLException;
+
+    /**
+     * Print the lines as soon as they are produced and call the callback passing the new line.
+     * @param conn DB connection
+     * @param onLineFetched the callback to be called
+     * @throws SQLException any sql errors
+     */
+    public void fetchAvailable(Connection conn, Consumer<String> onLineFetched) throws SQLException {
+
+        try (PreparedStatement pstmt = getLinesStatement(conn)) {
+
+            pstmt.setString(1, getReporter().getId());
+            try (ResultSet resultSet = pstmt.executeQuery() ) {
+                while (resultSet.next())
+                    onLineFetched.accept(resultSet.getString(1));
+            }
+        }
+    }
+
+    /**
+     * Get all lines from output buffer and return it as a list of strings.
+     * @param conn DB connection
+     * @return the lines
+     * @throws SQLException any sql errors
+     */
+    public List<String> fetchAll(Connection conn) throws SQLException {
+
+        try (CallableStatement cstmt = getLinesCursorStatement(conn)) {
+
+            cstmt.execute();
+
+            try ( ResultSet resultSet = (ResultSet) cstmt.getObject(1)) {
+
+                List<String> outputLines = new ArrayList<>();
+                while (resultSet.next()) {
+                    outputLines.add(resultSet.getString("text"));
+                }
+                return outputLines;
+            }
+        }
+    }
+
+
 
 }
