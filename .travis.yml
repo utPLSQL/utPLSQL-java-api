@@ -69,4 +69,8 @@ deploy:
       condition: "${TRAVIS_JOB_NUMBER} =~ \\.1$"
 
 notifications:
-  slack: $SLACK_API_TOKEN
+  slack:
+    rooms:
+      - secure: "RTwZxg50LgiDo8/Z0ZGrYP7+gHFXlDjcAlXu7IGne8/O/79B8UVG3KP5j4PHuRtlt86WBflXB/5nhszgwjleEhNVdciuBPTBv3PHtvoYnqEajtoDsBR4fiqpGk4QJREqYo5UwzBVisEtGS2qvhjOVRy5sgfPqdXfKM4Jl6x6EMoPmuEWKPZW80eO1AXD2lhcT35fxKAuEavKDrY9WKB3P8HycySFm2+IOgEvxk7p3qkukd/AMOPW54A52ry5AkwElj7439DV8MGYOHnrK9f5neMGCi6Q8VzUlTf95WbF7yoPWHNOMPt0LFKtnDOEjljwrRDpf8D/TcbLO5Q03kgOcXOB/KJp8WqgViGT8WO963GPBM7JXD4f5h04QYVn9lab8M6nK1PQZVKuzq6qBcjGW06EmczaseKnc5VW0tc/svw0Qhgot1rh3bRMHe9xX1j2wgfNcqeHFkoRX2AtPBtH5tDsWYVY0148wJ3cLXKZf1hxRd7V6gFfE5fVey/rTRVk8eEpNEhudIZCJ/T/ng3DWC271uPne7B/E2jy3jrgQ5p+VfcjC8dSu65Gmu7hWEON8g2cD8YQxCEryqgaCRn5R77FHWi9Gi3a85Kh951qL6mLxMl44VFil4CGdGi0hJpWPaGvSNNbfXx5eNyzHwjjT5fgk0EDOWVyHaO/Ni6jDFM="
+    on_success: change
+    on_failure: always
