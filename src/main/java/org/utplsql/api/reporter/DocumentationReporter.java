@@ -2,13 +2,13 @@ package org.utplsql.api.reporter;
 
 import java.math.BigDecimal;
 
-public class DocumentationReporter extends Reporter {
+public class DocumentationReporter extends DefaultReporter {
 
     private int lvl;
     private int failed;
 
     public DocumentationReporter() {
-        super( DefaultReporters.UT_DOCUMENTATION_REPORTER.name(), null );
+        super( CoreReporters.UT_DOCUMENTATION_REPORTER.name(), null );
     }
 
     public DocumentationReporter(String selfType, Object[] attributes ) {

@@ -10,7 +10,6 @@ import java.util.Arrays;
 import java.util.HashMap;
 import java.util.Map;
 import java.util.function.BiFunction;
-import java.util.function.Supplier;
 
 /** This singleton-class manages the instantiation of reporters.
  * One can register a supplier method for a specific name which will then be callable via createReporter(name)
@@ -39,7 +38,7 @@ public final class ReporterFactory implements ORADataFactory {
     /** Registers the default reporters, provided with utPLSQL core
      */
     private void registerDefaultReporters() {
-        Arrays.stream(DefaultReporters.values())
+        Arrays.stream(CoreReporters.values())
                 .forEach(r -> registerReporterFactoryMethod(r.name(), r.getFactoryMethod(), r.getDescription()));
     }
 
@@ -53,7 +52,7 @@ public final class ReporterFactory implements ORADataFactory {
         return instance;
     }
 
-    public static Reporter create( DefaultReporters reporter ) {
+    public static Reporter create( CoreReporters reporter ) {
         return getInstance().createReporter(reporter);
     }
 
@@ -90,7 +89,7 @@ public final class ReporterFactory implements ORADataFactory {
      */
     public Reporter createReporter(String reporterName, Object[] attributes) {
 
-        BiFunction<String, Object[], ? extends Reporter> supplier = Reporter::new;
+        BiFunction<String, Object[], ? extends Reporter> supplier = DefaultReporter::new;
 
         if ( reportFactoryMethodMap.containsKey(reporterName)) {
 
@@ -119,7 +118,7 @@ public final class ReporterFactory implements ORADataFactory {
      * @param reporter
      * @return
      */
-    public Reporter createReporter( DefaultReporters reporter ) {
+    public Reporter createReporter( CoreReporters reporter ) {
         return createReporter(reporter.name());
     }
 
@@ -134,14 +133,6 @@ public final class ReporterFactory implements ORADataFactory {
             descMap.put(entry.getKey(), entry.getValue().description);
         }
         return descMap;
-    }
-
-    /** Returns the FactoryMethod for the default Reporter
-     *
-     * @return Factory-Method for Default-Reporter
-     */
-    public static BiFunction<String, Object[], ? extends Reporter> getDefaultReporterFactoryMethod() {
-        return Reporter::new;
     }
 
     @Override

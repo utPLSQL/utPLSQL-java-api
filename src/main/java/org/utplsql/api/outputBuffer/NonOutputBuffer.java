@@ -13,11 +13,11 @@ import java.util.function.Consumer;
  *
  * @author pesse
  */
-public class NonOutputBuffer implements OutputBuffer {
+class NonOutputBuffer implements OutputBuffer {
 
     private Reporter reporter;
 
-    public NonOutputBuffer( Reporter reporter) {
+    NonOutputBuffer( Reporter reporter) {
         this.reporter = reporter;
     }
 

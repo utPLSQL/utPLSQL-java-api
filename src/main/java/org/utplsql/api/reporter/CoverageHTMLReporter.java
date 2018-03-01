@@ -11,7 +11,7 @@ import java.nio.file.Paths;
 import java.util.List;
 import java.util.function.Consumer;
 
-public class CoverageHTMLReporter extends Reporter {
+public class CoverageHTMLReporter extends DefaultReporter {
 
     // Could override Reporter.init and call ut_coverage_report_html_helper.get_default_html_assets_path from database,
     // but had permissions issues.
@@ -21,7 +21,7 @@ public class CoverageHTMLReporter extends Reporter {
     private String assetsPath;
 
     public CoverageHTMLReporter() {
-        super(DefaultReporters.UT_COVERAGE_HTML_REPORTER.name(), null);
+        super(CoreReporters.UT_COVERAGE_HTML_REPORTER.name(), null);
     }
 
     public CoverageHTMLReporter(String selfType, Object[] attributes) {

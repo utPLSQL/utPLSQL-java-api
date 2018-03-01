@@ -1,7 +1,6 @@
 package org.utplsql.api;
 
 import org.junit.jupiter.api.Test;
-import org.utplsql.api.outputBuffer.DefaultOutputBuffer;
 import org.utplsql.api.reporter.DocumentationReporter;
 import org.utplsql.api.reporter.Reporter;
 

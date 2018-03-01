@@ -7,8 +7,7 @@ import oracle.sql.Datum;
 import oracle.sql.ORAData;
 import oracle.sql.STRUCT;
 import oracle.sql.StructDescriptor;
-import org.utplsql.api.outputBuffer.DefaultOutputBuffer;
-import org.utplsql.api.outputBuffer.NonOutputBuffer;
+import org.utplsql.api.compatibility.CompatibilityProxy;
 import org.utplsql.api.outputBuffer.OutputBuffer;
 
 import java.sql.*;
@@ -17,34 +16,45 @@ import java.sql.*;
  *
  * @author pesse
  */
-public class Reporter implements ORAData {
+public abstract class Reporter implements ORAData {
 
     private String selfType;
     private String id;
     private Object[] attributes;
-    private boolean hasOutput = false;
     private boolean init = false;
+    protected OutputBuffer outputBuffer;
 
     public Reporter( String typeName, Object[] attributes ) {
         setTypeName(typeName);
         setAttributes( attributes );
     }
 
-    private void setTypeName( String typeName ) {
+    protected void setTypeName( String typeName ) {
         this.selfType = typeName.replaceAll("[^0-9a-zA-Z_]", "");
     }
 
-    public Reporter init( Connection con ) throws SQLException {
+
+    public Reporter init(Connection con, CompatibilityProxy compatibilityProxy ) throws SQLException {
+
+        if ( compatibilityProxy == null )
+            compatibilityProxy = new CompatibilityProxy(con);
 
         OracleConnection oraConn = con.unwrap(OracleConnection.class);
 
         initDbReporter( oraConn );
-        initHasOutput( oraConn );
 
         init = true;
 
+        initOutputBuffer( oraConn, compatibilityProxy);
+
         return this;
     }
+
+    public Reporter init(Connection con) throws SQLException {
+        return init(con, null);
+    }
+
+    protected abstract void initOutputBuffer( OracleConnection oraConn, CompatibilityProxy compatibilityProxy ) throws SQLException;
 
     /** Initializes the Reporter from database
      * This is necessary because we set up DefaultOutputBuffer (and maybe other stuff) we don't want to know and care about
@@ -63,33 +73,6 @@ public class Reporter implements ORAData {
         setAttributes(obj.getAttributes());
     }
 
-    /** Checks whether the Reporter has an output or not
-     *
-     * @param oraConn
-     * @throws SQLException
-     */
-    private void initHasOutput( OracleConnection oraConn ) throws SQLException {
-
-        try ( PreparedStatement stmt = oraConn.prepareStatement("select ut_runner.is_output_reporter(?) from dual")) {
-            stmt.setString(1, getTypeName());
-
-            try ( ResultSet rs = stmt.executeQuery() ) {
-                if ( rs.next() ) {
-                    String isReporterResult = rs.getString(1);
-
-                    if ( isReporterResult == null )
-                        throw new IllegalArgumentException("The given type " + getTypeName() + " is not a valid Reporter!");
-                    else if (isReporterResult.equalsIgnoreCase("Y") )
-                        hasOutput = true;
-                    else
-                        hasOutput = false;
-                }
-                else
-                    throw new SQLException("Could not check Reporter validity");
-            }
-        }
-    }
-
     protected void setAttributes(Object[] attributes ) {
         if (attributes != null) {
             this.id = String.valueOf(attributes[1]);
@@ -99,10 +82,6 @@ public class Reporter implements ORAData {
 
     protected Object[] getAttributes() {
         return attributes;
-    }
-
-    public boolean hasOutput() {
-        return hasOutput;
     }
 
     public boolean isInit() {
@@ -126,12 +105,6 @@ public class Reporter implements ORAData {
     }
 
     public OutputBuffer getOutputBuffer() {
-
-        if ( hasOutput() ) {
-            return new DefaultOutputBuffer(this);
-        }
-        else {
-            return new NonOutputBuffer(this);
-        }
+        return outputBuffer;
     }
 }
