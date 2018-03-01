@@ -24,7 +24,7 @@ import java.sql.Types;
 public class CompatibilityProxy {
 
     public static final String UTPLSQL_API_VERSION = "3.1.0";
-    public static final String UTPLSQL_COMPATIBILITY_VERSION = "3.0";
+    public static final String UTPLSQL_COMPATIBILITY_VERSION = "3";
 
     private Version databaseVersion;
     private boolean compatible = false;
