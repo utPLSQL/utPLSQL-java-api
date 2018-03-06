@@ -76,7 +76,6 @@ abstract class AbstractOutputBuffer implements OutputBuffer {
 
         try (PreparedStatement pstmt = getLinesStatement(conn)) {
 
-            pstmt.setString(1, getReporter().getId());
             try (ResultSet resultSet = pstmt.executeQuery() ) {
                 while (resultSet.next())
                     onLineFetched.accept(resultSet.getString(1));

@@ -11,7 +11,7 @@ import java.util.HashMap;
 import java.util.Map;
 import java.util.function.BiFunction;
 
-/** This singleton-class manages the instantiation of reporters.
+/** This class manages the instantiation of reporters.
  * One can register a supplier method for a specific name which will then be callable via createReporter(name)
  *
  * @author pesse
@@ -28,10 +28,8 @@ public final class ReporterFactory implements ORADataFactory {
     }
 
     private Map<String, ReporterInfo> reportFactoryMethodMap = new HashMap<>();
-
-    private static ReporterFactory instance;
     
-    private ReporterFactory() {
+    public ReporterFactory() {
         registerDefaultReporters();
     }
 
@@ -42,24 +40,6 @@ public final class ReporterFactory implements ORADataFactory {
                 .forEach(r -> registerReporterFactoryMethod(r.name(), r.getFactoryMethod(), r.getDescription()));
     }
 
-    /** Returns the global instance of the ReporterFactory
-     *
-     * @return ReporterFactory
-     */
-    public static ReporterFactory getInstance() {
-        if ( instance == null ) 
-            instance = new ReporterFactory();
-        return instance;
-    }
-
-    public static Reporter create( CoreReporters reporter ) {
-        return getInstance().createReporter(reporter);
-    }
-
-    public static Reporter create( String reporter ) {
-        return getInstance().createReporter(reporter);
-    }
-
     /** Registers a creation method for a specified reporter name. Overrides eventually existing creation method
      *
      * @param reporterName the reporter's name to register
@@ -68,7 +48,7 @@ public final class ReporterFactory implements ORADataFactory {
      * @return Object with information about the registered reporter
      */
     public synchronized ReporterInfo registerReporterFactoryMethod( String reporterName, BiFunction<String, Object[], ? extends Reporter> factoryMethod, String description) {
-        return reportFactoryMethodMap.put(reporterName, new ReporterInfo(factoryMethod, description));
+        return reportFactoryMethodMap.put(reporterName.toUpperCase(), new ReporterInfo(factoryMethod, description));
     }
 
     /** Unregisters a specified reporter name.
@@ -77,7 +57,7 @@ public final class ReporterFactory implements ORADataFactory {
      * @return information about the reporter which was previously registered or null
      */
     public synchronized ReporterInfo unregisterReporterFactoryMethod( String reporterName ) {
-        return reportFactoryMethodMap.remove(reporterName);
+        return reportFactoryMethodMap.remove(reporterName.toUpperCase());
     }
 
     /** Returns a new reporter of the given name.
@@ -89,6 +69,7 @@ public final class ReporterFactory implements ORADataFactory {
      */
     public Reporter createReporter(String reporterName, Object[] attributes) {
 
+        reporterName = reporterName.toUpperCase();
         BiFunction<String, Object[], ? extends Reporter> supplier = DefaultReporter::new;
 
         if ( reportFactoryMethodMap.containsKey(reporterName)) {

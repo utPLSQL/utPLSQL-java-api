@@ -25,7 +25,7 @@ public class OutputBufferProvider {
        OracleConnection oraConn = conn.unwrap(OracleConnection.class);
 
        try {
-           if (new Version("3.0.4.1610").isGreaterOrEqualThan(databaseVersion)) {
+           if (databaseVersion.isGreaterOrEqualThan(new Version("3.1.0"))) {
                if ( hasOutput(reporter, oraConn) ) {
                    return new DefaultOutputBuffer(reporter);
                }
@@ -42,8 +42,9 @@ public class OutputBufferProvider {
 
     private static boolean hasOutput( Reporter reporter, OracleConnection oraConn ) throws SQLException {
 
-        try ( PreparedStatement stmt = oraConn.prepareStatement("select ut_runner.is_output_reporter(?) from dual")) {
-            stmt.setString(1, reporter.getTypeName());
+        String sql = "select is_output_reporter from table(ut_runner.get_reporters_list) where regexp_like(reporter_object_name, ?)";
+        try ( PreparedStatement stmt = oraConn.prepareStatement(sql)) {
+            stmt.setString(1, "[a-zA-Z0-9_]*\\.?" + reporter.getTypeName());
 
             try ( ResultSet rs = stmt.executeQuery() ) {
                 if ( rs.next() ) {

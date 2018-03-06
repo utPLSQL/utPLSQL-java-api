@@ -7,6 +7,7 @@ import org.utplsql.api.exception.SomeTestsFailedException;
 import org.utplsql.api.exception.UtPLSQLNotInstalledException;
 import org.utplsql.api.reporter.DocumentationReporter;
 import org.utplsql.api.reporter.Reporter;
+import org.utplsql.api.reporter.ReporterFactory;
 import org.utplsql.api.testRunner.TestRunnerStatement;
 
 import java.sql.CallableStatement;
@@ -23,6 +24,8 @@ import java.util.List;
 public class TestRunner {
 
     private TestRunnerOptions options = new TestRunnerOptions();
+    private CompatibilityProxy compatibilityProxy;
+    private ReporterFactory reporterFactory = new ReporterFactory();
 
     public TestRunner addPath(String path) {
         options.pathList.add(path);
@@ -36,6 +39,11 @@ public class TestRunner {
 
     public TestRunner addReporter(Reporter reporter) {
         options.reporterList.add(reporter);
+        return this;
+    }
+
+    public TestRunner addReporter( String reporterName ) {
+        options.reporterList.add(reporterFactory.createReporter(reporterName));
         return this;
     }
 
@@ -95,9 +103,16 @@ public class TestRunner {
         return this;
     }
 
+    public TestRunner setReporterFactory( ReporterFactory reporterFactory ) {
+        this.reporterFactory = reporterFactory;
+        return this;
+    }
+
     public void run(Connection conn) throws SomeTestsFailedException, SQLException, DatabaseNotCompatibleException, UtPLSQLNotInstalledException {
 
-        CompatibilityProxy compatibilityProxy = new CompatibilityProxy(conn, options.skipCompatibilityCheck);
+        compatibilityProxy = new CompatibilityProxy(conn, options.skipCompatibilityCheck);
+        if ( reporterFactory ==  null )
+            reporterFactory = new ReporterFactory();
 
         // First of all check version compatibility
         compatibilityProxy.failOnNotCompatible();
@@ -148,7 +163,7 @@ public class TestRunner {
      */
     private void validateReporter(Connection conn, Reporter reporter) throws SQLException {
         if (!reporter.isInit() || reporter.getId() == null || reporter.getId().isEmpty())
-            reporter.init(conn);
+            reporter.init(conn, compatibilityProxy, reporterFactory);
     }
 
 }

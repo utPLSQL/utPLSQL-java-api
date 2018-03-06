@@ -30,18 +30,20 @@ public abstract class Reporter implements ORAData {
     }
 
     protected void setTypeName( String typeName ) {
-        this.selfType = typeName.replaceAll("[^0-9a-zA-Z_]", "");
+        this.selfType = typeName.replaceAll("[^0-9a-zA-Z_\\.]", "");
     }
 
 
-    public Reporter init(Connection con, CompatibilityProxy compatibilityProxy ) throws SQLException {
+    public Reporter init(Connection con, CompatibilityProxy compatibilityProxy, ReporterFactory reporterFactory ) throws SQLException {
 
         if ( compatibilityProxy == null )
             compatibilityProxy = new CompatibilityProxy(con);
+        if ( reporterFactory == null )
+            reporterFactory = new ReporterFactory();
 
         OracleConnection oraConn = con.unwrap(OracleConnection.class);
 
-        initDbReporter( oraConn );
+        initDbReporter( oraConn, reporterFactory );
 
         init = true;
 
@@ -51,7 +53,7 @@ public abstract class Reporter implements ORAData {
     }
 
     public Reporter init(Connection con) throws SQLException {
-        return init(con, null);
+        return init(con, null, null);
     }
 
     protected abstract void initOutputBuffer( OracleConnection oraConn, CompatibilityProxy compatibilityProxy ) throws SQLException;
@@ -63,12 +65,12 @@ public abstract class Reporter implements ORAData {
      * @param oraConn
      * @throws SQLException
      */
-    private void initDbReporter( OracleConnection oraConn ) throws SQLException {
+    private void initDbReporter( OracleConnection oraConn, ReporterFactory reporterFactory ) throws SQLException {
         OracleCallableStatement callableStatement = (OracleCallableStatement) oraConn.prepareCall("{? = call " + selfType + "()}");
         callableStatement.registerOutParameter(1, OracleTypes.STRUCT, "UT_REPORTER_BASE");
         callableStatement.execute();
 
-        Reporter obj = (Reporter) callableStatement.getORAData(1, ReporterFactory.getInstance());
+        Reporter obj = (Reporter) callableStatement.getORAData(1, reporterFactory);
 
         setAttributes(obj.getAttributes());
     }

@@ -12,7 +12,7 @@ public class ReporterNameTest {
 
     @Test
     public void defaultReporterFactoryNamesList() {
-        Map<String, String> reporterDescriptions = ReporterFactory.getInstance().getRegisteredReporterInfo();
+        Map<String, String> reporterDescriptions = new ReporterFactory().getRegisteredReporterInfo();
 
         for ( CoreReporters r : CoreReporters.values() ) {
             assertTrue(reporterDescriptions.containsKey(r.name()));
