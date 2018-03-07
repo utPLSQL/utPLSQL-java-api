@@ -9,7 +9,7 @@ import java.io.IOException;
 import java.nio.file.*;
 import java.nio.file.attribute.BasicFileAttributes;
 
-public class CoverageHTMLReporterAssetTest {
+public class CoverageHTMLReporterAssetIT {
 
     private static final String TEST_FOLDER = "__testAssets";
 
