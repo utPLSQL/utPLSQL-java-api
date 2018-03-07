@@ -136,6 +136,7 @@
           <excludes>
             <exclude>**/*IT.java</exclude>
           </excludes>
+          <trimStackTrace>false</trimStackTrace>
         </configuration>
         <dependencies>
           <dependency>

@@ -1,10 +1,8 @@
 package org.utplsql.api;
 
-import com.sun.nio.zipfs.ZipFileSystem;
 import com.sun.nio.zipfs.ZipPath;
 import org.utplsql.api.reporter.CoverageHTMLReporter;
 
-import java.io.File;
 import java.io.IOException;
 import java.net.URI;
 import java.net.URISyntaxException;
