@@ -13,6 +13,7 @@ import org.utplsql.api.testRunner.TestRunnerStatement;
 import java.sql.CallableStatement;
 import java.sql.Connection;
 import java.sql.SQLException;
+import java.util.ArrayList;
 import java.util.List;
 
 /**
@@ -25,7 +26,8 @@ public class TestRunner {
 
     private TestRunnerOptions options = new TestRunnerOptions();
     private CompatibilityProxy compatibilityProxy;
-    private ReporterFactory reporterFactory = new ReporterFactory();
+    private ReporterFactory reporterFactory;
+    private List<String> reporterNames = new ArrayList<>();
 
     public TestRunner addPath(String path) {
         options.pathList.add(path);
@@ -43,7 +45,10 @@ public class TestRunner {
     }
 
     public TestRunner addReporter( String reporterName ) {
-        options.reporterList.add(reporterFactory.createReporter(reporterName));
+        if ( reporterFactory != null )
+            options.reporterList.add(reporterFactory.createReporter(reporterName));
+        else
+            reporterNames.add(reporterName);
         return this;
     }
 
@@ -108,11 +113,20 @@ public class TestRunner {
         return this;
     }
 
+    private void delayedAddReporters() {
+        if ( reporterFactory != null )
+            reporterNames.stream().forEach( this::addReporter );
+        else
+            throw new IllegalStateException("ReporterFactory must be set to add delayed Reporters!");
+    }
+
     public void run(Connection conn) throws SomeTestsFailedException, SQLException, DatabaseNotCompatibleException, UtPLSQLNotInstalledException {
 
         compatibilityProxy = new CompatibilityProxy(conn, options.skipCompatibilityCheck);
         if ( reporterFactory ==  null )
-            reporterFactory = new ReporterFactory();
+            reporterFactory = ReporterFactory.createDefault(compatibilityProxy);
+
+        delayedAddReporters();
 
         // First of all check version compatibility
         compatibilityProxy.failOnNotCompatible();

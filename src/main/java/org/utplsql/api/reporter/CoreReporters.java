@@ -1,39 +1,53 @@
 package org.utplsql.api.reporter;
 
-import java.util.function.BiFunction;
+import org.utplsql.api.Version;
+import org.utplsql.api.exception.InvalidVersionException;
 
-/** This enum defines default reporters, added and maintained by the utPLSQL team, and their (default) factory method
+/** This enum defines default reporters, added and maintained by the utPLSQL team,
+ * and information since (and maybe until) which version they exist
  *
  * @author pesse
  */
 public enum CoreReporters {
 
-    UT_COVERAGE_HTML_REPORTER(CoverageHTMLReporter::new, "Generates a HTML coverage report with summary and line by line information on code coverage.\n" +
-            "Based on open-source simplecov-html coverage reporter for Ruby.\n" +
-            "Includes source code in the report."),
-    UT_DOCUMENTATION_REPORTER(DocumentationReporter::new, "A textual pretty-print of unit test results (usually use for console output)"),
-    UT_TEAMCITY_REPORTER(DefaultReporter::new, "For reporting live progress of test execution with Teamcity CI."),
-    UT_XUNIT_REPORTER(DefaultReporter::new, "Used for reporting test results with CI servers like Jenkins/Hudson/Teamcity."),
-    UT_COVERALLS_REPORTER(DefaultReporter::new, "Generates a JSON coverage report providing information on code coverage with line numbers.\n" +
-            "Designed for [Coveralls](https://coveralls.io/)."),
-    UT_COVERAGE_SONAR_REPORTER(DefaultReporter::new, "Generates a JSON coverage report providing information on code coverage with line numbers.\n" +
-            "Designed for [SonarQube](https://about.sonarqube.com/) to report coverage."),
-    UT_SONAR_TEST_REPORTER(DefaultReporter::new, "Generates a JSON report providing detailed information on test execution.\n" +
-            "Designed for [SonarQube](https://about.sonarqube.com/) to report test execution.");
+    UT_COVERAGE_HTML_REPORTER(new Version("3.0.0"), null),
+    UT_DOCUMENTATION_REPORTER(new Version("3.0.0"), null),
+    UT_TEAMCITY_REPORTER(new Version("3.0.0"), null),
+    UT_XUNIT_REPORTER(new Version("3.0.0"), null),
+    UT_COVERALLS_REPORTER(new Version("3.0.0"), null),
+    UT_COVERAGE_SONAR_REPORTER(new Version("3.0.0"), null),
+    UT_SONAR_TEST_REPORTER(new Version("3.0.0"), null),
+    UT_COVERAGE_COBERTURA_REPORTER(new Version("3.1.0"), null);
 
-    private BiFunction<String, Object[], ? extends Reporter> factoryMethod;
-    private String description;
+    private Version since;
+    private Version until;
 
-    CoreReporters(BiFunction<String, Object[], ? extends Reporter> factoryMethod, String description ) {
-        this.factoryMethod = factoryMethod;
-        this.description = description;
+    CoreReporters(Version since, Version until ) {
+        this.since = since;
+        this.until = until;
     }
 
-    public BiFunction<String, Object[], ? extends Reporter> getFactoryMethod() {
-        return factoryMethod;
+    public Version getSince() {
+        return since;
     }
 
-    public String getDescription() {
-        return description;
+    public Version getUntil() {
+        return until;
+    }
+
+    /** Checks whether a CoreReporter is valid for the given databaseVersion
+     *
+     * @param databaseVersion Database-Version
+     * @return true or false
+     */
+    public boolean isAvailableFor( Version databaseVersion ) {
+        try {
+            if ((since == null || databaseVersion.isGreaterOrEqualThan(since))
+                    && (until == null || databaseVersion.isLessOrEqualThan(until)))
+                return true;
+        }
+        catch ( InvalidVersionException e ) { }
+
+        return false;
     }
 }

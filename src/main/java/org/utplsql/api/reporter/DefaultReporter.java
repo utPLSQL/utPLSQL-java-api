@@ -1,16 +1,8 @@
 package org.utplsql.api.reporter;
 
-import oracle.jdbc.OracleCallableStatement;
 import oracle.jdbc.OracleConnection;
-import oracle.jdbc.OracleTypes;
-import oracle.sql.Datum;
-import oracle.sql.ORAData;
-import oracle.sql.STRUCT;
-import oracle.sql.StructDescriptor;
 import org.utplsql.api.compatibility.CompatibilityProxy;
-import org.utplsql.api.outputBuffer.OutputBuffer;
 
-import java.sql.Connection;
 import java.sql.SQLException;
 
 /** This is a basic Reporter implementation, using ORAData interface

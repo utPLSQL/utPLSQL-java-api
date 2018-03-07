@@ -4,7 +4,9 @@ import oracle.sql.Datum;
 import oracle.sql.ORAData;
 import oracle.sql.ORADataFactory;
 import oracle.sql.STRUCT;
+import org.utplsql.api.compatibility.CompatibilityProxy;
 
+import java.sql.Connection;
 import java.sql.SQLException;
 import java.util.Arrays;
 import java.util.HashMap;
@@ -29,15 +31,8 @@ public final class ReporterFactory implements ORADataFactory {
 
     private Map<String, ReporterInfo> reportFactoryMethodMap = new HashMap<>();
     
-    public ReporterFactory() {
-        registerDefaultReporters();
-    }
+    ReporterFactory() {
 
-    /** Registers the default reporters, provided with utPLSQL core
-     */
-    private void registerDefaultReporters() {
-        Arrays.stream(CoreReporters.values())
-                .forEach(r -> registerReporterFactoryMethod(r.name(), r.getFactoryMethod(), r.getDescription()));
     }
 
     /** Registers a creation method for a specified reporter name. Overrides eventually existing creation method
@@ -125,5 +120,26 @@ public final class ReporterFactory implements ORADataFactory {
         }
 
         return null;
+    }
+
+    /** Returns a new instance of an empty ReporterFactory with no registered ReporterFactoryMethods
+     * Normally, you should be using createDefault-method instead.
+     *
+     * @return a new ReporterFactory instance
+     */
+    public static ReporterFactory createEmpty() {
+       return new ReporterFactory();
+    }
+
+    /** Returns a new instance of a ReporterFactory with the default ReporterFactoryMethods registered.
+     * This can depend upon the version of utPLSQL, therefore you have to provide a CompatibilityProxy
+     *
+     * @param proxy Compatibility proxy
+     * @return a new ReporterFactory instance with all default ReporterFactoryMethods registered
+     */
+    public static ReporterFactory createDefault(CompatibilityProxy proxy) {
+        ReporterFactory reporterFactory = new ReporterFactory();
+        DefaultReporterFactoryMethodRegistrator.registerDefaultReporters(reporterFactory, proxy);
+        return reporterFactory;
     }
 }
