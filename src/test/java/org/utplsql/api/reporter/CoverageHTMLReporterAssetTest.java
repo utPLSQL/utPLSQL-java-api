@@ -23,43 +23,37 @@ public class CoverageHTMLReporterAssetTest {
     @Test
     public void writeReporterAssetsTo() throws RuntimeException {
 
-        try {
-            Path targetPath = Paths.get(TEST_FOLDER);
+        Path targetPath = Paths.get(TEST_FOLDER);
 
-            // Act
-            CoverageHTMLReporter.writeReportAssetsTo(targetPath);
+        // Act
+        CoverageHTMLReporter.writeReportAssetsTo(targetPath);
 
-            testFileExists(targetPath.resolve(Paths.get("colorbox", "border.png")));
-            testFileExists(targetPath.resolve(Paths.get("colorbox", "controls.png")));
-            testFileExists(targetPath.resolve(Paths.get("colorbox", "loading.gif")));
-            testFileExists(targetPath.resolve(Paths.get("colorbox", "loading_background.png")));
+        testFileExists(targetPath.resolve(Paths.get("colorbox", "border.png")));
+        testFileExists(targetPath.resolve(Paths.get("colorbox", "controls.png")));
+        testFileExists(targetPath.resolve(Paths.get("colorbox", "loading.gif")));
+        testFileExists(targetPath.resolve(Paths.get("colorbox", "loading_background.png")));
 
-            testFileExists(targetPath.resolve(Paths.get("images", "ui-bg_flat_0_aaaaaa_40x100.png")));
-            testFileExists(targetPath.resolve(Paths.get("images", "ui-bg_flat_75_ffffff_40x100.png")));
-            testFileExists(targetPath.resolve(Paths.get("images", "ui-bg_glass_55_fbf9ee_1x400.png")));
-            testFileExists(targetPath.resolve(Paths.get("images", "ui-bg_glass_65_ffffff_1x400.png")));
-            testFileExists(targetPath.resolve(Paths.get("images", "ui-bg_glass_75_dadada_1x400.png")));
-            testFileExists(targetPath.resolve(Paths.get("images", "ui-bg_glass_75_e6e6e6_1x400.png")));
-            testFileExists(targetPath.resolve(Paths.get("images", "ui-bg_glass_95_fef1ec_1x400.png")));
-            testFileExists(targetPath.resolve(Paths.get("images", "ui-bg_highlight-soft_75_cccccc_1x100.png")));
-            testFileExists(targetPath.resolve(Paths.get("images", "ui-icons_2e83ff_256x240.png")));
-            testFileExists(targetPath.resolve(Paths.get("images", "ui-icons_222222_256x240.png")));
-            testFileExists(targetPath.resolve(Paths.get("images", "ui-icons_454545_256x240.png")));
-            testFileExists(targetPath.resolve(Paths.get("images", "ui-icons_888888_256x240.png")));
-            testFileExists(targetPath.resolve(Paths.get("images", "ui-icons_cd0a0a_256x240.png")));
+        testFileExists(targetPath.resolve(Paths.get("images", "ui-bg_flat_0_aaaaaa_40x100.png")));
+        testFileExists(targetPath.resolve(Paths.get("images", "ui-bg_flat_75_ffffff_40x100.png")));
+        testFileExists(targetPath.resolve(Paths.get("images", "ui-bg_glass_55_fbf9ee_1x400.png")));
+        testFileExists(targetPath.resolve(Paths.get("images", "ui-bg_glass_65_ffffff_1x400.png")));
+        testFileExists(targetPath.resolve(Paths.get("images", "ui-bg_glass_75_dadada_1x400.png")));
+        testFileExists(targetPath.resolve(Paths.get("images", "ui-bg_glass_75_e6e6e6_1x400.png")));
+        testFileExists(targetPath.resolve(Paths.get("images", "ui-bg_glass_95_fef1ec_1x400.png")));
+        testFileExists(targetPath.resolve(Paths.get("images", "ui-bg_highlight-soft_75_cccccc_1x100.png")));
+        testFileExists(targetPath.resolve(Paths.get("images", "ui-icons_2e83ff_256x240.png")));
+        testFileExists(targetPath.resolve(Paths.get("images", "ui-icons_222222_256x240.png")));
+        testFileExists(targetPath.resolve(Paths.get("images", "ui-icons_454545_256x240.png")));
+        testFileExists(targetPath.resolve(Paths.get("images", "ui-icons_888888_256x240.png")));
+        testFileExists(targetPath.resolve(Paths.get("images", "ui-icons_cd0a0a_256x240.png")));
 
-            testFileExists(targetPath.resolve(Paths.get("application.css")));
-            testFileExists(targetPath.resolve(Paths.get("application.js")));
-            testFileExists(targetPath.resolve(Paths.get("favicon_green.png")));
-            testFileExists(targetPath.resolve(Paths.get("favicon_red.png")));
-            testFileExists(targetPath.resolve(Paths.get("favicon_yellow.png")));
-            testFileExists(targetPath.resolve(Paths.get("loading.gif")));
-            testFileExists(targetPath.resolve(Paths.get("magnify.png")));
-        }
-        catch ( Exception e ) {
-            e.printStackTrace();
-            throw e;
-        }
+        testFileExists(targetPath.resolve(Paths.get("application.css")));
+        testFileExists(targetPath.resolve(Paths.get("application.js")));
+        testFileExists(targetPath.resolve(Paths.get("favicon_green.png")));
+        testFileExists(targetPath.resolve(Paths.get("favicon_red.png")));
+        testFileExists(targetPath.resolve(Paths.get("favicon_yellow.png")));
+        testFileExists(targetPath.resolve(Paths.get("loading.gif")));
+        testFileExists(targetPath.resolve(Paths.get("magnify.png")));
 
     }
 
