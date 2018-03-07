@@ -10,7 +10,9 @@ import oracle.sql.StructDescriptor;
 import org.utplsql.api.compatibility.CompatibilityProxy;
 import org.utplsql.api.outputBuffer.OutputBuffer;
 
-import java.sql.*;
+import javax.xml.bind.DatatypeConverter;
+import java.sql.Connection;
+import java.sql.SQLException;
 
 /** This is a basic Reporter implementation, using ORAData interface
  *
@@ -77,7 +79,7 @@ public abstract class Reporter implements ORAData {
 
     protected void setAttributes(Object[] attributes ) {
         if (attributes != null) {
-            this.id = String.valueOf(attributes[1]);
+            this.id = DatatypeConverter.printHexBinary((byte[])attributes[1]);
         }
         this.attributes = attributes;
     }
