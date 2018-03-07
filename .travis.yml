@@ -44,7 +44,7 @@ before_script:
   - cp .travis/settings.xml $MAVEN_CFG/settings.xml
 
 script:
-  - mvn verify -B
+  - mvn verify -B -e
 
 before_deploy:
   - if [ ! -z "$TRAVIS_TAG" ]; then VERSION=$(tr -d "/v/" <<<$TRAVIS_TAG); mvn org.codehaus.mojo:versions-maven-plugin:2.1:set -DnewVersion=${VERSION}; fi
