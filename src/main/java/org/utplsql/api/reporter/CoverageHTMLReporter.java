@@ -96,6 +96,7 @@ public class CoverageHTMLReporter extends DefaultReporter {
         try {
             Files.createDirectories(targetDirectory);
 
+            System.out.println("Getting list of children");
             List<Path> paths = ResourceUtil.getListOfChildren(Paths.get("CoverageHTMLReporter"), true);
 
             paths.forEach((ThrowingConsumer<Path>) p -> copyFileFromClasspath(p, targetDirectory, 1) );

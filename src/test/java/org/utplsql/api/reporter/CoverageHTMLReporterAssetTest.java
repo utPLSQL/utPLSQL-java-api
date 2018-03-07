@@ -24,6 +24,7 @@ public class CoverageHTMLReporterAssetTest {
     public void writeReporterAssetsTo() throws RuntimeException {
         Path targetPath = Paths.get(TEST_FOLDER);
 
+        System.out.println("targetPath: " + targetPath.toString());
         // Act
         CoverageHTMLReporter.writeReportAssetsTo(targetPath);
 
