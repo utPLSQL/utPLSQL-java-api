@@ -27,6 +27,7 @@ env:
     - UTPLSQL_VERSION="v3.0.2"
     - UTPLSQL_VERSION="v3.0.3"
     - UTPLSQL_VERSION="v3.0.4"
+    - UTPLSQL_VERSION="v3.1.0"
 
 cache:
   directories:
@@ -44,7 +45,7 @@ before_script:
   - cp .travis/settings.xml $MAVEN_CFG/settings.xml
 
 script:
-  - mvn verify -B -e
+  - mvn verify -B
 
 before_deploy:
   - if [ ! -z "$TRAVIS_TAG" ]; then VERSION=$(tr -d "/v/" <<<$TRAVIS_TAG); mvn org.codehaus.mojo:versions-maven-plugin:2.1:set -DnewVersion=${VERSION}; fi
