@@ -28,7 +28,7 @@ env:
     - UTPLSQL_VERSION="v3.0.3"
     - UTPLSQL_VERSION="v3.0.4"
     - UTPLSQL_VERSION="develop"
-      UTPLSQL_FILE="utPLSQL-develop"
+      UTPLSQL_FILE="utPLSQL"
 
 cache:
   directories:
