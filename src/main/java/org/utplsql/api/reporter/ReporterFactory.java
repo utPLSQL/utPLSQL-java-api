@@ -6,9 +6,7 @@ import oracle.sql.ORADataFactory;
 import oracle.sql.STRUCT;
 import org.utplsql.api.compatibility.CompatibilityProxy;
 
-import java.sql.Connection;
 import java.sql.SQLException;
-import java.util.Arrays;
 import java.util.HashMap;
 import java.util.Map;
 import java.util.function.BiFunction;
@@ -16,12 +14,19 @@ import java.util.function.BiFunction;
 /** This class manages the instantiation of reporters.
  * One can register a supplier method for a specific name which will then be callable via createReporter(name)
  *
+ * Use the static createEmpty or createDefault methods to get a new instance.
+ * We don't allow direct instantiation because we want
+ * <ul>
+ *     <li>Register default ReporterFactoryMethods for Core-Reporters</li>
+ *     <li>Be able to add more than one ReporterFactory implementation due to backwards-compatibility in future</li>
+ * </ul>
+ *
  * @author pesse
  */
 public final class ReporterFactory implements ORADataFactory {
 
-    public static class ReporterInfo {
-        public ReporterInfo(BiFunction<String, Object[], ? extends Reporter> factoryMethod, String description) {
+    public static class ReporterFactoryMethodInfo {
+        public ReporterFactoryMethodInfo(BiFunction<String, Object[], ? extends Reporter> factoryMethod, String description) {
             this.factoryMethod = factoryMethod;
             this.description = description;
         }
@@ -29,11 +34,9 @@ public final class ReporterFactory implements ORADataFactory {
         public String description;
     }
 
-    private Map<String, ReporterInfo> reportFactoryMethodMap = new HashMap<>();
-    
-    ReporterFactory() {
+    private Map<String, ReporterFactoryMethodInfo> reportFactoryMethodMap = new HashMap<>();
 
-    }
+    ReporterFactory() { }
 
     /** Registers a creation method for a specified reporter name. Overrides eventually existing creation method
      *
@@ -42,8 +45,8 @@ public final class ReporterFactory implements ORADataFactory {
      * @param description the description of the reporter
      * @return Object with information about the registered reporter
      */
-    public synchronized ReporterInfo registerReporterFactoryMethod( String reporterName, BiFunction<String, Object[], ? extends Reporter> factoryMethod, String description) {
-        return reportFactoryMethodMap.put(reporterName.toUpperCase(), new ReporterInfo(factoryMethod, description));
+    public synchronized ReporterFactoryMethodInfo registerReporterFactoryMethod(String reporterName, BiFunction<String, Object[], ? extends Reporter> factoryMethod, String description) {
+        return reportFactoryMethodMap.put(reporterName.toUpperCase(), new ReporterFactoryMethodInfo(factoryMethod, description));
     }
 
     /** Unregisters a specified reporter name.
@@ -51,8 +54,17 @@ public final class ReporterFactory implements ORADataFactory {
      * @param reporterName the reporter's name to unregister
      * @return information about the reporter which was previously registered or null
      */
-    public synchronized ReporterInfo unregisterReporterFactoryMethod( String reporterName ) {
+    public synchronized ReporterFactoryMethodInfo unregisterReporterFactoryMethod(String reporterName ) {
         return reportFactoryMethodMap.remove(reporterName.toUpperCase());
+    }
+
+    /** Checks whether a given reporter has a registered FactoryMethod or not
+     *
+     * @param reporterName the reporter's name
+     * @return true or false
+     */
+    public synchronized boolean hasRegisteredFactoryMethodFor( String reporterName ) {
+        return reportFactoryMethodMap.containsKey(reporterName.toUpperCase());
     }
 
     /** Returns a new reporter of the given name.
@@ -69,9 +81,9 @@ public final class ReporterFactory implements ORADataFactory {
 
         if ( reportFactoryMethodMap.containsKey(reporterName)) {
 
-            ReporterInfo ri = reportFactoryMethodMap.get(reporterName);
+            ReporterFactoryMethodInfo ri = reportFactoryMethodMap.get(reporterName);
             if (ri == null)
-                throw new RuntimeException("ReporterInfo for " + reporterName + " was null");
+                throw new RuntimeException("ReporterFactoryMethodInfo for " + reporterName + " was null");
 
             supplier = ri.factoryMethod;
         }
@@ -89,15 +101,6 @@ public final class ReporterFactory implements ORADataFactory {
         return createReporter(reporterName, null);
     }
 
-    /** Returns a new reporter of the given DefaultReporter type
-     *
-     * @param reporter
-     * @return
-     */
-    public Reporter createReporter( CoreReporters reporter ) {
-        return createReporter(reporter.name());
-    }
-
     /** Returns a set of all registered reporter's names
      *
      * @return Set of reporter names
@@ -105,7 +108,7 @@ public final class ReporterFactory implements ORADataFactory {
     public Map<String, String> getRegisteredReporterInfo() {
         Map<String, String> descMap = new HashMap<>(reportFactoryMethodMap.size());
 
-        for (Map.Entry<String, ReporterInfo> entry : reportFactoryMethodMap.entrySet()) {
+        for (Map.Entry<String, ReporterFactoryMethodInfo> entry : reportFactoryMethodMap.entrySet()) {
             descMap.put(entry.getKey(), entry.getValue().description);
         }
         return descMap;
@@ -132,7 +135,7 @@ public final class ReporterFactory implements ORADataFactory {
     }
 
     /** Returns a new instance of a ReporterFactory with the default ReporterFactoryMethods registered.
-     * This can depend upon the version of utPLSQL, therefore you have to provide a CompatibilityProxy
+     * This can depend on the version of utPLSQL, therefore you have to provide a CompatibilityProxy
      *
      * @param proxy Compatibility proxy
      * @return a new ReporterFactory instance with all default ReporterFactoryMethods registered
