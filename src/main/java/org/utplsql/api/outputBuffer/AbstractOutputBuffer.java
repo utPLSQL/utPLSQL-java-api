@@ -1,25 +1,31 @@
-package org.utplsql.api;
+package org.utplsql.api.outputBuffer;
 
 import org.utplsql.api.reporter.Reporter;
-import oracle.jdbc.OracleTypes;
 
 import java.io.PrintStream;
 import java.sql.*;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.function.Consumer;
 
 /**
  * Fetches the lines produced by a reporter.
+ *
+ * @author vinicius
+ * @author pesse
  */
-public class OutputBuffer {
+abstract class AbstractOutputBuffer implements OutputBuffer {
 
     private Reporter reporter;
 
     /**
-     * Creates a new OutputBuffer.
+     * Creates a new DefaultOutputBuffer.
      * @param reporter the reporter to be used
      */
-    public OutputBuffer(Reporter reporter) {
+    AbstractOutputBuffer(Reporter reporter) {
+
+        assert reporter.isInit() : "Reporter is not initialized! You can only create OutputBuffers for initialized Reporters";
+
         this.reporter = reporter;
     }
 
@@ -56,27 +62,24 @@ public class OutputBuffer {
         });
     }
 
+    protected abstract PreparedStatement getLinesStatement( Connection conn ) throws SQLException;
+
+    protected abstract CallableStatement getLinesCursorStatement( Connection conn ) throws SQLException;
+
     /**
      * Print the lines as soon as they are produced and call the callback passing the new line.
      * @param conn DB connection
-     * @param cb the callback to be called
+     * @param onLineFetched the callback to be called
      * @throws SQLException any sql errors
      */
-    public void fetchAvailable(Connection conn, Callback cb) throws SQLException {
-        PreparedStatement preparedStatement = null;
-        ResultSet resultSet = null;
-        try {
-            preparedStatement = conn.prepareStatement("SELECT * FROM table(ut_output_buffer.get_lines(?))");
-            preparedStatement.setString(1, getReporter().getReporterId());
-            resultSet = preparedStatement.executeQuery();
+    public void fetchAvailable(Connection conn, Consumer<String> onLineFetched) throws SQLException {
 
-            while (resultSet.next())
-                cb.onLineFetched(resultSet.getString(1));
-        } finally {
-            if (resultSet != null)
-                resultSet.close();
-            if (preparedStatement != null)
-                preparedStatement.close();
+        try (PreparedStatement pstmt = getLinesStatement(conn)) {
+
+            try (ResultSet resultSet = pstmt.executeQuery() ) {
+                while (resultSet.next())
+                    onLineFetched.accept(resultSet.getString(1));
+            }
         }
     }
 
@@ -87,34 +90,22 @@ public class OutputBuffer {
      * @throws SQLException any sql errors
      */
     public List<String> fetchAll(Connection conn) throws SQLException {
-        CallableStatement callableStatement = null;
-        ResultSet resultSet = null;
-        try {
-            callableStatement = conn.prepareCall("BEGIN ? := ut_output_buffer.get_lines_cursor(?); END;");
-            callableStatement.registerOutParameter(1, OracleTypes.CURSOR);
-            callableStatement.setString(2, getReporter().getReporterId());
-            callableStatement.execute();
 
-            resultSet = (ResultSet) callableStatement.getObject(1);
+        try (CallableStatement cstmt = getLinesCursorStatement(conn)) {
 
-            List<String> outputLines = new ArrayList<>();
-            while (resultSet.next()) {
-                outputLines.add(resultSet.getString("text"));
+            cstmt.execute();
+
+            try ( ResultSet resultSet = (ResultSet) cstmt.getObject(1)) {
+
+                List<String> outputLines = new ArrayList<>();
+                while (resultSet.next()) {
+                    outputLines.add(resultSet.getString("text"));
+                }
+                return outputLines;
             }
-            return outputLines;
-        } finally {
-            if (resultSet != null)
-                resultSet.close();
-            if (callableStatement != null)
-                callableStatement.close();
         }
     }
 
-    /**
-     * Callback to be called when a new line is available from the output buffer.
-     */
-    public interface Callback {
-        void onLineFetched(String s);
-    }
+
 
 }

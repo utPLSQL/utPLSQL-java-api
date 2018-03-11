@@ -7,11 +7,13 @@ import org.utplsql.api.exception.SomeTestsFailedException;
 import org.utplsql.api.exception.UtPLSQLNotInstalledException;
 import org.utplsql.api.reporter.DocumentationReporter;
 import org.utplsql.api.reporter.Reporter;
+import org.utplsql.api.reporter.ReporterFactory;
 import org.utplsql.api.testRunner.TestRunnerStatement;
 
 import java.sql.CallableStatement;
 import java.sql.Connection;
 import java.sql.SQLException;
+import java.util.ArrayList;
 import java.util.List;
 
 /**
@@ -23,6 +25,9 @@ import java.util.List;
 public class TestRunner {
 
     private TestRunnerOptions options = new TestRunnerOptions();
+    private CompatibilityProxy compatibilityProxy;
+    private ReporterFactory reporterFactory;
+    private List<String> reporterNames = new ArrayList<>();
 
     public TestRunner addPath(String path) {
         options.pathList.add(path);
@@ -36,6 +41,14 @@ public class TestRunner {
 
     public TestRunner addReporter(Reporter reporter) {
         options.reporterList.add(reporter);
+        return this;
+    }
+
+    public TestRunner addReporter( String reporterName ) {
+        if ( reporterFactory != null )
+            options.reporterList.add(reporterFactory.createReporter(reporterName));
+        else
+            reporterNames.add(reporterName);
         return this;
     }
 
@@ -95,9 +108,25 @@ public class TestRunner {
         return this;
     }
 
+    public TestRunner setReporterFactory( ReporterFactory reporterFactory ) {
+        this.reporterFactory = reporterFactory;
+        return this;
+    }
+
+    private void delayedAddReporters() {
+        if ( reporterFactory != null )
+            reporterNames.stream().forEach( this::addReporter );
+        else
+            throw new IllegalStateException("ReporterFactory must be set to add delayed Reporters!");
+    }
+
     public void run(Connection conn) throws SomeTestsFailedException, SQLException, DatabaseNotCompatibleException, UtPLSQLNotInstalledException {
 
-        CompatibilityProxy compatibilityProxy = new CompatibilityProxy(conn, options.skipCompatibilityCheck);
+        compatibilityProxy = new CompatibilityProxy(conn, options.skipCompatibilityCheck);
+        if ( reporterFactory ==  null )
+            reporterFactory = ReporterFactory.createDefault(compatibilityProxy);
+
+        delayedAddReporters();
 
         // First of all check version compatibility
         compatibilityProxy.failOnNotCompatible();
@@ -129,15 +158,6 @@ public class TestRunner {
                 throw new UtPLSQLNotInstalledException(e);
             }
             else {
-                // If the execution failed by unexpected reasons finishes all reporters,
-                // this way the users don't need to care about reporters' sessions hanging.
-                OracleConnection oraConn = conn.unwrap(OracleConnection.class);
-
-                try (CallableStatement closeBufferStmt = conn.prepareCall("BEGIN ut_output_buffer.close(?); END;")) {
-                    closeBufferStmt.setArray(1, oraConn.createOracleArray(CustomTypes.UT_REPORTERS, options.reporterList.toArray()));
-                    closeBufferStmt.execute();
-                } catch (SQLException ignored) {}
-
                 throw e;
             }
         } finally {
@@ -156,8 +176,8 @@ public class TestRunner {
      * @throws SQLException any sql exception
      */
     private void validateReporter(Connection conn, Reporter reporter) throws SQLException {
-        if (reporter.getReporterId() == null || reporter.getReporterId().isEmpty())
-            reporter.init(conn);
+        if (!reporter.isInit() || reporter.getId() == null || reporter.getId().isEmpty())
+            reporter.init(conn, compatibilityProxy, reporterFactory);
     }
 
 }

@@ -1,6 +1,5 @@
 package org.utplsql.api.reporter;
 
-import org.utplsql.api.CustomTypes;
 import org.utplsql.api.ResourceUtil;
 
 import java.io.IOException;
@@ -9,13 +8,10 @@ import java.net.URISyntaxException;
 import java.nio.file.Files;
 import java.nio.file.Path;
 import java.nio.file.Paths;
-import java.sql.SQLException;
-import java.sql.SQLInput;
-import java.sql.SQLOutput;
 import java.util.List;
 import java.util.function.Consumer;
 
-public class CoverageHTMLReporter extends Reporter {
+public class CoverageHTMLReporter extends DefaultReporter {
 
     // Could override Reporter.init and call ut_coverage_report_html_helper.get_default_html_assets_path from database,
     // but had permissions issues.
@@ -25,17 +21,31 @@ public class CoverageHTMLReporter extends Reporter {
     private String assetsPath;
 
     public CoverageHTMLReporter() {
-        this(null, DEFAULT_ASSETS_PATH);
+        super(CoreReporters.UT_COVERAGE_HTML_REPORTER.name(), null);
     }
 
-    public CoverageHTMLReporter(String projectName, String assetsPath) {
-        this.projectName = projectName;
-        this.assetsPath = assetsPath;
+    public CoverageHTMLReporter(String selfType, Object[] attributes) {
+        super(selfType, attributes);
     }
 
     @Override
-    public String getSQLTypeName() throws SQLException {
-        return CustomTypes.UT_COVERAGE_HTML_REPORTER;
+    protected void setAttributes(Object[] attributes) {
+        super.setAttributes(attributes);
+
+        if ( attributes != null ) {
+            projectName = String.valueOf(attributes[3]);
+            assetsPath = String.valueOf(attributes[4]);
+        }
+    }
+
+    @Override
+    protected Object[] getAttributes() {
+        Object[] attributes = super.getAttributes();
+
+        attributes[3] = projectName;
+        attributes[4] = assetsPath;
+
+        return attributes;
     }
 
     public String getProjectName() {
@@ -52,20 +62,6 @@ public class CoverageHTMLReporter extends Reporter {
 
     public void setAssetsPath(String assetsPath) {
         this.assetsPath = assetsPath;
-    }
-
-    @Override
-    public void readSQL(SQLInput stream, String typeName) throws SQLException {
-        super.readSQL(stream, typeName);
-        setProjectName(stream.readString());
-        setAssetsPath(stream.readString());
-    }
-
-    @Override
-    public void writeSQL(SQLOutput stream) throws SQLException {
-        super.writeSQL(stream);
-        stream.writeString(getProjectName());
-        stream.writeString(getAssetsPath());
     }
 
     /** Copies files from Classpath to a target directory.

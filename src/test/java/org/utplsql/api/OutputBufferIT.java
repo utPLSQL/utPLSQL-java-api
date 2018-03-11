@@ -25,7 +25,7 @@ public class OutputBufferIT extends AbstractDatabaseTest {
 
     public Reporter createReporter() throws SQLException {
         Reporter reporter = new DocumentationReporter().init(newConnection());
-        System.out.println("Reporter ID: " + reporter.getReporterId());
+        System.out.println("Reporter ID: " + reporter.getId());
         return reporter;
     }
 
@@ -59,8 +59,7 @@ public class OutputBufferIT extends AbstractDatabaseTest {
                     printStreams.add(System.out);
                     printStreams.add(new PrintStream(fileOutStream));
 
-                    new OutputBuffer(reporter)
-                            .printAvailable(newConnection(), printStreams);
+                    reporter.getOutputBuffer().printAvailable(newConnection(), printStreams);
 
                     return Boolean.TRUE;
                 } catch (SQLException e) {
@@ -97,8 +96,7 @@ public class OutputBufferIT extends AbstractDatabaseTest {
                 .addReporter(reporter)
                 .run(getConnection());
 
-        List<String> outputLines = new OutputBuffer(reporter)
-                .fetchAll(getConnection());
+        List<String> outputLines = reporter.getOutputBuffer().fetchAll(getConnection());
 
         assertTrue(outputLines.size() > 0);
     }

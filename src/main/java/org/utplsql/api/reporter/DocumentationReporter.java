@@ -1,19 +1,36 @@
 package org.utplsql.api.reporter;
 
-import org.utplsql.api.CustomTypes;
+import java.math.BigDecimal;
 
-import java.sql.SQLException;
-import java.sql.SQLInput;
-import java.sql.SQLOutput;
-
-public class DocumentationReporter extends Reporter {
+public class DocumentationReporter extends DefaultReporter {
 
     private int lvl;
     private int failed;
 
     public DocumentationReporter() {
-        this.lvl = 0;
-        this.failed = 0;
+        super( CoreReporters.UT_DOCUMENTATION_REPORTER.name(), null );
+    }
+
+    public DocumentationReporter(String selfType, Object[] attributes ) {
+        super(selfType, attributes);
+    }
+
+    @Override
+    protected void setAttributes(Object[] attributes) {
+        super.setAttributes(attributes);
+
+        if ( attributes != null ) {
+            lvl = ((BigDecimal)attributes[3]).intValue();
+            failed = ((BigDecimal)attributes[4]).intValue();
+        }
+    }
+
+    @Override
+    protected Object[] getAttributes() {
+        Object[] attributes = super.getAttributes();
+        attributes[3] = lvl;
+        attributes[4] = failed;
+        return attributes;
     }
 
     public int getLvl() {
@@ -30,25 +47,6 @@ public class DocumentationReporter extends Reporter {
 
     public void setFailed(int failed) {
         this.failed = failed;
-    }
-
-    @Override
-    public String getSQLTypeName() throws SQLException {
-        return CustomTypes.UT_DOCUMENTATION_REPORTER;
-    }
-
-    @Override
-    public void readSQL(SQLInput stream, String typeName) throws SQLException {
-        super.readSQL(stream, typeName);
-        setLvl(stream.readInt());
-        setFailed(stream.readInt());
-    }
-
-    @Override
-    public void writeSQL(SQLOutput stream) throws SQLException {
-        super.writeSQL(stream);
-        stream.writeInt(getLvl());
-        stream.writeInt(getFailed());
     }
 
 }

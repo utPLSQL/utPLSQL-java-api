@@ -6,7 +6,8 @@ import org.utplsql.api.exception.InvalidVersionException;
 public enum OptionalFeatures {
 
     FAIL_ON_ERROR("3.0.3", null),
-    FRAMEWORK_COMPATIBILITY_CHECK("3.0.3", null);
+    FRAMEWORK_COMPATIBILITY_CHECK("3.0.3", null),
+    CUSTOM_REPORTERS("3.1.0", null);
 
     private Version minVersion;
     private Version maxVersion;

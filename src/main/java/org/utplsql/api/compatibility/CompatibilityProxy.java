@@ -4,6 +4,9 @@ import org.utplsql.api.DBHelper;
 import org.utplsql.api.TestRunnerOptions;
 import org.utplsql.api.Version;
 import org.utplsql.api.exception.DatabaseNotCompatibleException;
+import org.utplsql.api.outputBuffer.OutputBuffer;
+import org.utplsql.api.outputBuffer.OutputBufferProvider;
+import org.utplsql.api.reporter.Reporter;
 import org.utplsql.api.testRunner.TestRunnerStatement;
 import org.utplsql.api.testRunner.TestRunnerStatementProvider;
 
@@ -20,8 +23,8 @@ import java.sql.Types;
  */
 public class CompatibilityProxy {
 
-    public static final String UTPLSQL_API_VERSION = "3.0.4";
-    public static final String UTPLSQL_COMPATIBILITY_VERSION = "3.0";
+    public static final String UTPLSQL_API_VERSION = "3.1.0";
+    public static final String UTPLSQL_COMPATIBILITY_VERSION = "3";
 
     private Version databaseVersion;
     private boolean compatible = false;
@@ -145,5 +148,16 @@ public class CompatibilityProxy {
     public TestRunnerStatement getTestRunnerStatement(TestRunnerOptions options, Connection conn) throws SQLException
     {
         return TestRunnerStatementProvider.getCompatibleTestRunnerStatement(databaseVersion, options, conn);
+    }
+
+    /** Returns an OutputBuffer compatible with the current framework
+     *
+     * @param reporter
+     * @param conn
+     * @return
+     * @throws SQLException
+     */
+    public OutputBuffer getOutputBuffer(Reporter reporter, Connection conn) throws SQLException {
+        return OutputBufferProvider.getCompatibleOutputBuffer(databaseVersion, reporter, conn);
     }
 }
