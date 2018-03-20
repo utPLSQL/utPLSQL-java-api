@@ -5,9 +5,7 @@ import org.utplsql.api.ResourceUtil;
 import java.io.IOException;
 import java.io.InputStream;
 import java.net.URISyntaxException;
-import java.nio.file.Files;
-import java.nio.file.Path;
-import java.nio.file.Paths;
+import java.nio.file.*;
 import java.util.List;
 import java.util.function.Consumer;
 
@@ -33,8 +31,15 @@ public class CoverageHTMLReporter extends DefaultReporter {
         super.setAttributes(attributes);
 
         if ( attributes != null ) {
-            projectName = String.valueOf(attributes[3]);
-            assetsPath = String.valueOf(attributes[4]);
+            if ( attributes[3] != null )
+                projectName = String.valueOf(attributes[3]);
+            else
+                projectName = null;
+
+            if ( attributes[4] != null )
+                assetsPath = String.valueOf(attributes[4]);
+            else
+                assetsPath = null;
         }
     }
 
@@ -82,7 +87,7 @@ public class CoverageHTMLReporter extends DefaultReporter {
         try (InputStream is = CoverageHTMLReporter.class.getClassLoader()
                 .getResourceAsStream(assetPath.toString())
         ) {
-            Files.copy( is, targetAssetPath );
+            Files.copy( is, targetAssetPath, StandardCopyOption.REPLACE_EXISTING);
         }
     }
 
