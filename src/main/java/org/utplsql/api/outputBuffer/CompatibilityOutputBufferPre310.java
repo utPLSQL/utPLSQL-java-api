@@ -5,7 +5,6 @@ import org.utplsql.api.reporter.Reporter;
 
 import java.sql.CallableStatement;
 import java.sql.Connection;
-import java.sql.PreparedStatement;
 import java.sql.SQLException;
 
 /** Compatibility Output-Buffer for 3.0.0 - 3.0.4
@@ -16,13 +15,6 @@ class CompatibilityOutputBufferPre310 extends AbstractOutputBuffer {
 
     CompatibilityOutputBufferPre310( Reporter reporter ) {
         super(reporter);
-    }
-
-    @Override
-    protected PreparedStatement getLinesStatement(Connection conn) throws SQLException {
-        PreparedStatement pstmt = conn.prepareStatement("SELECT * FROM table(ut_output_buffer.get_lines(?))");
-        pstmt.setString(1, getReporter().getId());
-        return pstmt;
     }
 
     @Override

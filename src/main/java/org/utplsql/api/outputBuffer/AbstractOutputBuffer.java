@@ -3,7 +3,10 @@ package org.utplsql.api.outputBuffer;
 import org.utplsql.api.reporter.Reporter;
 
 import java.io.PrintStream;
-import java.sql.*;
+import java.sql.CallableStatement;
+import java.sql.Connection;
+import java.sql.ResultSet;
+import java.sql.SQLException;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.function.Consumer;
@@ -62,8 +65,6 @@ abstract class AbstractOutputBuffer implements OutputBuffer {
         });
     }
 
-    protected abstract PreparedStatement getLinesStatement( Connection conn ) throws SQLException;
-
     protected abstract CallableStatement getLinesCursorStatement( Connection conn ) throws SQLException;
 
     /**
@@ -74,11 +75,13 @@ abstract class AbstractOutputBuffer implements OutputBuffer {
      */
     public void fetchAvailable(Connection conn, Consumer<String> onLineFetched) throws SQLException {
 
-        try (PreparedStatement pstmt = getLinesStatement(conn)) {
+        try (CallableStatement cstmt = getLinesCursorStatement(conn)) {
+            cstmt.execute();
+            cstmt.setFetchSize(1);
 
-            try (ResultSet resultSet = pstmt.executeQuery() ) {
+            try ( ResultSet resultSet = (ResultSet) cstmt.getObject(1)) {
                 while (resultSet.next())
-                    onLineFetched.accept(resultSet.getString(1));
+                    onLineFetched.accept(resultSet.getString("text"));
             }
         }
     }
