@@ -5,8 +5,6 @@ import oracle.jdbc.OracleConnection;
 import oracle.jdbc.OracleTypes;
 import oracle.sql.Datum;
 import oracle.sql.ORAData;
-import oracle.sql.STRUCT;
-import oracle.sql.StructDescriptor;
 import org.utplsql.api.compatibility.CompatibilityProxy;
 import org.utplsql.api.outputBuffer.OutputBuffer;
 
@@ -103,9 +101,7 @@ public abstract class Reporter implements ORAData {
 
     public Datum toDatum(Connection c) throws SQLException
     {
-        StructDescriptor sd =
-                StructDescriptor.createDescriptor(getTypeName(), c);
-        return new STRUCT(sd, c, getAttributes());
+        return (Datum)c.createStruct(getTypeName(), getAttributes());
     }
 
     public OutputBuffer getOutputBuffer() {
