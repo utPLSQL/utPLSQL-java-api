@@ -2,16 +2,12 @@ package org.utplsql.api.outputBuffer;
 
 import oracle.jdbc.OracleCallableStatement;
 import oracle.jdbc.OracleConnection;
-import oracle.jdbc.OraclePreparedStatement;
-import org.utplsql.api.reporter.Reporter;
 import oracle.jdbc.OracleTypes;
+import org.utplsql.api.reporter.Reporter;
 
-import javax.xml.transform.Result;
-import java.io.PrintStream;
-import java.sql.*;
-import java.util.ArrayList;
-import java.util.List;
-import java.util.function.Consumer;
+import java.sql.CallableStatement;
+import java.sql.Connection;
+import java.sql.SQLException;
 
 /**
  * Fetches the lines produced by a reporter.
@@ -27,14 +23,6 @@ class DefaultOutputBuffer extends AbstractOutputBuffer {
      */
     DefaultOutputBuffer(Reporter reporter) {
         super(reporter);
-    }
-
-    @Override
-    protected PreparedStatement getLinesStatement(Connection conn) throws SQLException {
-        OracleConnection oraConn = conn.unwrap(OracleConnection.class);
-        OraclePreparedStatement pstmt = (OraclePreparedStatement)oraConn.prepareStatement("select * from table(?.get_lines())");
-        pstmt.setORAData(1, getReporter());
-        return pstmt;
     }
 
     @Override

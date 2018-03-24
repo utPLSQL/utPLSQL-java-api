@@ -3,10 +3,10 @@ package org.utplsql.api.reporter;
 import oracle.sql.Datum;
 import oracle.sql.ORAData;
 import oracle.sql.ORADataFactory;
-import oracle.sql.STRUCT;
 import org.utplsql.api.compatibility.CompatibilityProxy;
 
 import java.sql.SQLException;
+import java.sql.Struct;
 import java.util.HashMap;
 import java.util.Map;
 import java.util.function.BiFunction;
@@ -117,9 +117,9 @@ public final class ReporterFactory implements ORADataFactory {
     @Override
     public ORAData create(Datum d, int sqlType) throws SQLException {
         if (d == null) return null;
-        if ( d instanceof STRUCT) {
-            String sqlName = ((STRUCT)d).getDescriptor().getName();
-            return createReporter(sqlName, ((STRUCT)d).getAttributes());
+        if ( d instanceof Struct) {
+            String sqlName = ((Struct)d).getSQLTypeName();
+            return createReporter(sqlName, ((Struct)d).getAttributes());
         }
 
         return null;
