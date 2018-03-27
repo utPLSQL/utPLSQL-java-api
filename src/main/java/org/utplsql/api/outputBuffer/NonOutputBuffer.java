@@ -27,6 +27,11 @@ class NonOutputBuffer implements OutputBuffer {
     }
 
     @Override
+    public void setFetchSize(int fetchSize) {
+
+    }
+
+    @Override
     public void printAvailable(Connection conn, PrintStream ps) throws SQLException {
         List<PrintStream> printStreams = new ArrayList<>(1);
         printStreams.add(ps);

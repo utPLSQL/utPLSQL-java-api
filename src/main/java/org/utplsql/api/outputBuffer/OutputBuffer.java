@@ -12,6 +12,12 @@ public interface OutputBuffer {
 
     Reporter getReporter();
 
+    /** Override the fetchSize of the OutputBuffer
+     *
+     * @param fetchSize the ResultSet fetch-size.
+     */
+    void setFetchSize( int fetchSize );
+
     /**
      * Print the lines as soon as they are produced and write to a PrintStream.
      * @param conn DB connection
