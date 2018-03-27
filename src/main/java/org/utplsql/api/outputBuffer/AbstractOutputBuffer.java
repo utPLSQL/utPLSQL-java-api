@@ -20,6 +20,7 @@ import java.util.function.Consumer;
 abstract class AbstractOutputBuffer implements OutputBuffer {
 
     private Reporter reporter;
+    private int fetchSize = 100;
 
     /**
      * Creates a new DefaultOutputBuffer.
@@ -38,6 +39,11 @@ abstract class AbstractOutputBuffer implements OutputBuffer {
      */
     public Reporter getReporter() {
         return reporter;
+    }
+
+    @Override
+    public void setFetchSize(int fetchSize) {
+        this.fetchSize = fetchSize;
     }
 
     /**
@@ -77,7 +83,7 @@ abstract class AbstractOutputBuffer implements OutputBuffer {
 
         try (CallableStatement cstmt = getLinesCursorStatement(conn)) {
             cstmt.execute();
-            cstmt.setFetchSize(1);
+            cstmt.setFetchSize(fetchSize);
 
             try ( ResultSet resultSet = (ResultSet) cstmt.getObject(1)) {
                 while (resultSet.next())
@@ -97,6 +103,7 @@ abstract class AbstractOutputBuffer implements OutputBuffer {
         try (CallableStatement cstmt = getLinesCursorStatement(conn)) {
 
             cstmt.execute();
+            cstmt.setFetchSize(fetchSize);
 
             try ( ResultSet resultSet = (ResultSet) cstmt.getObject(1)) {
 

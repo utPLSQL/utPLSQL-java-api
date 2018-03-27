@@ -59,6 +59,7 @@ public class OutputBufferIT extends AbstractDatabaseTest {
                     printStreams.add(System.out);
                     printStreams.add(new PrintStream(fileOutStream));
 
+                    reporter.getOutputBuffer().setFetchSize(1);
                     reporter.getOutputBuffer().printAvailable(newConnection(), printStreams);
 
                     return Boolean.TRUE;
