@@ -3,6 +3,9 @@ package org.utplsql.api.compatibility;
 import org.utplsql.api.Version;
 import org.utplsql.api.exception.InvalidVersionException;
 
+import java.sql.Connection;
+import java.sql.SQLException;
+
 public enum OptionalFeatures {
 
     FAIL_ON_ERROR("3.0.3", null),
@@ -32,5 +35,10 @@ public enum OptionalFeatures {
         } catch ( InvalidVersionException e ) {
             return false; // We have no optional features for invalid versions
         }
+    }
+
+    public boolean isAvailableFor(Connection conn) throws SQLException {
+        CompatibilityProxy proxy = new CompatibilityProxy(conn);
+        return isAvailableFor(proxy.getDatabaseVersion());
     }
 }
