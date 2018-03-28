@@ -42,8 +42,9 @@ abstract class AbstractOutputBuffer implements OutputBuffer {
     }
 
     @Override
-    public void setFetchSize(int fetchSize) {
+    public OutputBuffer setFetchSize(int fetchSize) {
         this.fetchSize = fetchSize;
+        return this;
     }
 
     /**

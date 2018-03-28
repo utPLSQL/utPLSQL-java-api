@@ -15,8 +15,9 @@ public interface OutputBuffer {
     /** Override the fetchSize of the OutputBuffer
      *
      * @param fetchSize the ResultSet fetch-size.
+     * @return this Output-Buffer
      */
-    void setFetchSize( int fetchSize );
+    OutputBuffer setFetchSize( int fetchSize );
 
     /**
      * Print the lines as soon as they are produced and write to a PrintStream.
