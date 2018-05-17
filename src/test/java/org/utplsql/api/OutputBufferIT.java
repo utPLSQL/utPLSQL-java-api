@@ -1,6 +1,8 @@
 package org.utplsql.api;
 
 import org.junit.jupiter.api.Test;
+import org.utplsql.api.reporter.CoreReporters;
+import org.utplsql.api.reporter.DefaultReporter;
 import org.utplsql.api.reporter.DocumentationReporter;
 import org.utplsql.api.reporter.Reporter;
 
@@ -93,6 +95,20 @@ public class OutputBufferIT extends AbstractDatabaseTest {
     @Test
     public void fetchAllLines() throws SQLException {
         final Reporter reporter = createReporter();
+        new TestRunner()
+                .addPath(getUser())
+                .addReporter(reporter)
+                .run(getConnection());
+
+        List<String> outputLines = reporter.getOutputBuffer().fetchAll(getConnection());
+
+        assertTrue(outputLines.size() > 0);
+    }
+
+    @Test
+    public void getOutputFromSonarReporter() throws SQLException {
+        Reporter reporter = new DefaultReporter(CoreReporters.UT_SONAR_TEST_REPORTER.name(), null).init(newConnection());
+
         new TestRunner()
                 .addPath(getUser())
                 .addReporter(reporter)
