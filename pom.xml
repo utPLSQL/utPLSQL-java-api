@@ -4,7 +4,7 @@
 
   <groupId>org.utplsql</groupId>
   <artifactId>java-api</artifactId>
-  <version>3.1.0-SNAPSHOT</version>
+  <version>3.1.1-SNAPSHOT</version>
   <packaging>jar</packaging>
 
   <name>utPLSQL-java-api</name>
@@ -17,7 +17,7 @@
     <junit.platform.version>1.0.3</junit.platform.version>
     <junit.jupiter.version>5.0.3</junit.jupiter.version>
     <coverage.resources.directory>${basedir}/src/main/resources/CoverageHTMLReporter</coverage.resources.directory>
-    <coverage.resources.version>1.0.0</coverage.resources.version>
+    <coverage.resources.version>1.0.1</coverage.resources.version>
     <coverage.resources.zip.directory>utPLSQL-coverage-html-${coverage.resources.version}</coverage.resources.zip.directory>
     <coverage.resources.zip>${coverage.resources.zip.directory}.zip</coverage.resources.zip>
   </properties>
