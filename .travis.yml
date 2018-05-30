@@ -55,7 +55,7 @@ before_deploy:
 
 deploy:
   - provider: script
-    script: mvn clean deploy -DskipTests=true -B -U
+    script: mvn clean deploy -DskipTests=true -B -U -DtravisBuildNumber=$TRAVIS_BUILD_NUMBER
     skip_cleanup: true
     on:
       repository: utPLSQL/utPLSQL-java-api
@@ -64,7 +64,7 @@ deploy:
       condition: "${TRAVIS_JOB_NUMBER} =~ \\.1$"
 
   - provider: script
-    script: mvn clean deploy -DskipTests=true -B -U
+    script: mvn clean deploy -DskipTests=true -B -U -DtravisBuildNumber=$TRAVIS_BUILD_NUMBER
     skip_cleanup: true
     on:
       repository: utPLSQL/utPLSQL-java-api
