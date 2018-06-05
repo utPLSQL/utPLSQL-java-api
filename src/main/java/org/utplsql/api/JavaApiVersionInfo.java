@@ -14,5 +14,6 @@ public class JavaApiVersionInfo {
     public static String getVersion() {
         return MAVEN_PROJECT_VERSION + "." + BUILD_NO;
     }
+    public static String getInfo() { return MAVEN_PROJECT_NAME + " " + getVersion(); }
 
 }
