@@ -20,15 +20,11 @@ public final class DBHelper {
      * @throws SQLException any database error
      */
     public static String newSysGuid(Connection conn) throws SQLException {
-        CallableStatement callableStatement = null;
-        try {
-            callableStatement = conn.prepareCall("BEGIN ? := sys_guid(); END;");
+        assert conn != null;
+        try (CallableStatement callableStatement = conn.prepareCall("BEGIN ? := sys_guid(); END;")) {
             callableStatement.registerOutParameter(1, OracleTypes.RAW);
             callableStatement.executeUpdate();
             return callableStatement.getString(1);
-        } finally {
-            if (callableStatement != null)
-                callableStatement.close();
         }
     }
 
@@ -39,26 +35,22 @@ public final class DBHelper {
      * @throws SQLException any database error
      */
     public static String getCurrentSchema(Connection conn) throws SQLException {
-        CallableStatement callableStatement = null;
-        try {
-            callableStatement = conn.prepareCall("BEGIN ? := sys_context('userenv', 'current_schema'); END;");
+        assert conn != null;
+        try (CallableStatement callableStatement = conn.prepareCall("BEGIN ? := sys_context('userenv', 'current_schema'); END;")) {
             callableStatement.registerOutParameter(1, Types.VARCHAR);
             callableStatement.executeUpdate();
             return callableStatement.getString(1);
-        } finally {
-            if (callableStatement != null)
-                callableStatement.close();
         }
     }
 
     /** Returns the Frameworks version string of the given connection
      *
      * @param conn Active db connection
-     * @return
-     * @throws SQLException
+     * @return Version-string of the utPLSQL framework
+     * @throws SQLException any database error
      */
-    public static Version getDatabaseFrameworkVersion( Connection conn )
-            throws SQLException {
+    public static Version getDatabaseFrameworkVersion( Connection conn ) throws SQLException {
+        assert conn != null;
         Version result = new Version("");
         try (PreparedStatement stmt = conn.prepareStatement("select ut_runner.version() from dual"))
         {
@@ -78,11 +70,32 @@ public final class DBHelper {
         return result;
     }
 
+    /** Returns the Oracle database Version from a given connection object
+     *
+     * @param conn Connection-Object
+     * @return Returns version-string of the Oracle Database product component
+     * @throws SQLException any database error
+     */
+    public static String getOracleDatabaseVersion( Connection conn ) throws SQLException {
+        assert conn != null;
+        String result = null;
+        try (PreparedStatement stmt = conn.prepareStatement("select version from product_component_version where product like 'Oracle Database%'"))
+        {
+            ResultSet rs = stmt.executeQuery();
+
+            if ( rs.next() )
+                result = rs.getString(1);
+        }
+
+        return result;
+    }
+
     /**
      * Enable the dbms_output buffer with unlimited size.
      * @param conn the connection
      */
     public static void enableDBMSOutput(Connection conn) {
+        assert conn != null;
         try (CallableStatement call = conn.prepareCall("BEGIN dbms_output.enable(NULL); END;")) {
             call.execute();
         } catch (SQLException e) {
@@ -95,6 +108,7 @@ public final class DBHelper {
      * @param conn the connection
      */
     public static void disableDBMSOutput(Connection conn) {
+        assert conn != null;
         try (CallableStatement call = conn.prepareCall("BEGIN dbms_output.disable(); END;")) {
             call.execute();
         } catch (SQLException e) {
