@@ -1,6 +1,8 @@
 package org.utplsql.api;
 
 import org.junit.jupiter.api.Test;
+import org.utplsql.api.compatibility.CompatibilityProxy;
+import org.utplsql.api.exception.InvalidVersionException;
 import org.utplsql.api.reporter.CoreReporters;
 import org.utplsql.api.reporter.DefaultReporter;
 import org.utplsql.api.reporter.DocumentationReporter;
@@ -9,6 +11,7 @@ import org.utplsql.api.reporter.Reporter;
 import java.io.File;
 import java.io.FileOutputStream;
 import java.io.PrintStream;
+import java.nio.charset.Charset;
 import java.sql.SQLException;
 import java.util.ArrayList;
 import java.util.List;
@@ -106,7 +109,7 @@ public class OutputBufferIT extends AbstractDatabaseTest {
     }
 
     @Test
-    public void getOutputFromSonarReporter() throws SQLException {
+    public void getOutputFromSonarReporter() throws SQLException, InvalidVersionException {
         Reporter reporter = new DefaultReporter(CoreReporters.UT_SONAR_TEST_REPORTER.name(), null).init(newConnection());
 
         new TestRunner()
@@ -119,4 +122,23 @@ public class OutputBufferIT extends AbstractDatabaseTest {
         assertTrue(outputLines.size() > 0);
     }
 
+    @Test
+    public void sonarReporterHasEncodingSet() throws SQLException, InvalidVersionException {
+        CompatibilityProxy proxy = new CompatibilityProxy(newConnection());
+
+        if ( proxy.getDatabaseVersion().isGreaterOrEqualThan(new Version("3.1.2"))) {
+            Reporter reporter = new DefaultReporter(CoreReporters.UT_SONAR_TEST_REPORTER.name(), null).init(getConnection());
+
+            TestRunner tr = new TestRunner()
+                    .addPath(getUser())
+                    .addReporter(reporter);
+
+            tr.run(getConnection());
+
+            List<String> outputLines = reporter.getOutputBuffer().fetchAll(getConnection());
+
+            assertTrue(outputLines.get(0).contains("encoding=\"" + Charset.defaultCharset().toString() + "\""));
+        }
+
+    }
 }

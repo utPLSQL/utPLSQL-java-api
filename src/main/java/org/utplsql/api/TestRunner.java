@@ -180,4 +180,15 @@ public class TestRunner {
             reporter.init(conn, compatibilityProxy, reporterFactory);
     }
 
+    /** Returns the databaseVersion the TestRunner was run against
+     *
+     * @return Version of the database the TestRunner was run against
+     */
+    public Version getUsedDatabaseVersion() {
+        if ( compatibilityProxy != null )
+            return compatibilityProxy.getDatabaseVersion();
+        else
+            return null;
+    }
+
 }
