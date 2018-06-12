@@ -2,6 +2,8 @@ package org.utplsql.api;
 
 import org.utplsql.api.reporter.Reporter;
 
+import java.nio.charset.Charset;
+import java.nio.charset.StandardCharsets;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -22,4 +24,5 @@ public class TestRunnerOptions {
     public FileMapperOptions testMappingOptions;
     public boolean failOnErrors = false;
     public boolean skipCompatibilityCheck = false;
+    public String clientCharacterSet = Charset.defaultCharset().toString();
 }
