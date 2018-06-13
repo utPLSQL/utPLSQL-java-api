@@ -29,6 +29,8 @@ public class TestRunnerStatementProvider {
         try {
             if (databaseVersion.isLessThan(new Version("3.0.3")))
                 stmt = new Pre303TestRunnerStatement(options, conn);
+            else if (databaseVersion.isLessThan(new Version("3.1.2")))
+                stmt = new Pre312TestRunnerStatement(options, conn);
 
         } catch ( InvalidVersionException e ) {}
 

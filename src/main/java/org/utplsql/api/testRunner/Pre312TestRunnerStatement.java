@@ -5,14 +5,14 @@ import org.utplsql.api.TestRunnerOptions;
 import java.sql.Connection;
 import java.sql.SQLException;
 
-/** Provides the call to run tests for the most actual Framework version.
- * Includes fail on error
+/** TestRunner-Statement for Framework version before 3.0.3
+ * Does not know about client character set
  *
  * @author  pesse
  */
-class ActualTestRunnerStatement extends AbstractTestRunnerStatement {
+class Pre312TestRunnerStatement extends AbstractTestRunnerStatement {
 
-    public ActualTestRunnerStatement(TestRunnerOptions options, Connection connection ) throws SQLException {
+    public Pre312TestRunnerStatement(TestRunnerOptions options, Connection connection ) throws SQLException {
         super( options, connection);
     }
 
@@ -33,17 +33,7 @@ class ActualTestRunnerStatement extends AbstractTestRunnerStatement {
                         "a_test_file_mappings   => ?, " +
                         "a_include_objects      => ?, " +
                         "a_exclude_objects      => ?, " +
-                        "a_fail_on_errors       => " + failOnErrors + ", " +
-                        "a_client_character_set => ?); " +
+                        "a_fail_on_errors       => " + failOnErrors + "); " +
                         "END;";
-    }
-
-    @Override
-    protected int createStatement() throws SQLException {
-        int curParamIdx = super.createStatement();
-
-        callableStatement.setString(++curParamIdx, options.clientCharacterSet);
-
-        return curParamIdx;
     }
 }

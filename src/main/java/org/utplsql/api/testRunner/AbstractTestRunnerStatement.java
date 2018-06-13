@@ -30,7 +30,7 @@ abstract class AbstractTestRunnerStatement implements TestRunnerStatement {
 
     protected abstract String getSql();
 
-    protected void createStatement() throws SQLException {
+    protected int createStatement() throws SQLException {
 
         OracleConnection oraConn = conn.unwrap(OracleConnection.class);
 
@@ -82,6 +82,8 @@ abstract class AbstractTestRunnerStatement implements TestRunnerStatement {
             callableStatement.setArray(
                     ++paramIdx, oraConn.createOracleArray(CustomTypes.UT_VARCHAR2_LIST, options.excludeObjects.toArray()));
         }
+
+        return paramIdx;
     }
 
     public void execute() throws SQLException {
