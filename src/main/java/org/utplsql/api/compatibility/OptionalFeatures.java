@@ -12,15 +12,13 @@ public enum OptionalFeatures {
     FRAMEWORK_COMPATIBILITY_CHECK("3.0.3", null),
     CUSTOM_REPORTERS("3.1.0", null);
 
-    private Version minVersion;
-    private Version maxVersion;
+    private final Version minVersion;
+    private final Version maxVersion;
 
     OptionalFeatures( String minVersion, String maxVersion )
     {
-        if ( minVersion != null )
-            this.minVersion = new Version(minVersion);
-        if ( maxVersion != null)
-            this.maxVersion = new Version(maxVersion);
+        this.minVersion = minVersion != null ? new Version(minVersion) : null;
+        this.maxVersion = maxVersion != null ? new Version(maxVersion) : null;
     }
 
     public boolean isAvailableFor(Version version ) {

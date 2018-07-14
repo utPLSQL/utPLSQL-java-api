@@ -10,44 +10,52 @@ import java.util.regex.Pattern;
  * @author pesse
  */
 public class Version implements Comparable<Version> {
-    private String origString;
-    private Integer major;
-    private Integer minor;
-    private Integer bugfix;
-    private Integer build;
-    private boolean valid = false;
+    private final String origString;
+    private final Integer major;
+    private final Integer minor;
+    private final Integer bugfix;
+    private final Integer build;
+    private final boolean valid;
 
     public Version( String versionString ) {
         assert versionString != null;
-        this.origString = versionString;
-        parseVersionString();
-    }
+        this.origString = versionString.trim();
 
-    private void parseVersionString()
-    {
         Pattern p = Pattern.compile("([0-9]+)\\.?([0-9]+)?\\.?([0-9]+)?\\.?([0-9]+)?");
 
         Matcher m = p.matcher(origString);
 
+        Integer major = null;
+        Integer minor = null;
+        Integer bugfix = null;
+        Integer build = null;
+        boolean valid = false;
+
         try {
             if (m.find()) {
-                if ( m.group(1) != null )
+                if (m.group(1) != null )
                     major = Integer.valueOf(m.group(1));
-                if ( m.group(2) != null )
+                if (m.group(2) != null )
                     minor = Integer.valueOf(m.group(2));
-                if ( m.group(3) != null )
+                if (m.group(3) != null )
                     bugfix = Integer.valueOf(m.group(3));
-                if ( m.group(4) != null )
+                if (m.group(4) != null )
                     build = Integer.valueOf(m.group(4));
 
-                if ( major != null ) // We need a valid major version as minimum requirement for a Version object to be valid
-                    valid = true;
+                 // We need a valid major version as minimum requirement for a Version object to be valid
+                valid = major != null;
             }
         }
         catch ( NumberFormatException e )
         {
             valid = false;
         }
+
+        this.major = major;
+        this.minor = minor;
+        this.bugfix = bugfix;
+        this.build = build;
+        this.valid = valid;
     }
 
     @Override

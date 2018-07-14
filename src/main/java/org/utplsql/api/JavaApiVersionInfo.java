@@ -7,6 +7,8 @@ package org.utplsql.api;
  */
 public class JavaApiVersionInfo {
 
+    private JavaApiVersionInfo() { }
+
     private static final String BUILD_NO = "123";
     private static final String MAVEN_PROJECT_NAME = "utPLSQL-java-api";
     private static final String MAVEN_PROJECT_VERSION = "3.1.1-SNAPSHOT";

@@ -60,4 +60,7 @@ public class OutputBufferProvider {
             }
         }
     }
+
+    private OutputBufferProvider() {
+    }
 }

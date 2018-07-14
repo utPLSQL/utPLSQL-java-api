@@ -37,4 +37,7 @@ public class TestRunnerStatementProvider {
 
         return stmt;
     }
+
+    private TestRunnerStatementProvider() {
+    }
 }

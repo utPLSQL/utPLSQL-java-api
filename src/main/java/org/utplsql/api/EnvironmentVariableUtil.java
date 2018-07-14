@@ -18,6 +18,8 @@ package org.utplsql.api;
  */
 public class EnvironmentVariableUtil {
 
+    private EnvironmentVariableUtil() {}
+
     /**
      * Returns the value for a given key from environment (see class description)
      *
@@ -43,4 +45,6 @@ public class EnvironmentVariableUtil {
 
         return val;
     }
+
+
 }

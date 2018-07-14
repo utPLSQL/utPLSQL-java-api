@@ -19,7 +19,7 @@ import java.util.function.Consumer;
  */
 abstract class AbstractOutputBuffer implements OutputBuffer {
 
-    private Reporter reporter;
+    private final Reporter reporter;
     private int fetchSize = 100;
 
     /**
