@@ -1,7 +1,6 @@
 package org.utplsql.api;
 
 import oracle.jdbc.OracleTypes;
-import org.utplsql.api.exception.DatabaseNotCompatibleException;
 import org.utplsql.api.exception.UtPLSQLNotInstalledException;
 
 import java.sql.*;

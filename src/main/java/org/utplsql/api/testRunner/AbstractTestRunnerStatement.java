@@ -1,8 +1,10 @@
 package org.utplsql.api.testRunner;
 
 import oracle.jdbc.OracleConnection;
-import org.utplsql.api.*;
-import org.utplsql.api.exception.SomeTestsFailedException;
+import org.utplsql.api.CustomTypes;
+import org.utplsql.api.FileMapper;
+import org.utplsql.api.FileMapping;
+import org.utplsql.api.TestRunnerOptions;
 
 import java.sql.CallableStatement;
 import java.sql.Connection;
@@ -10,20 +12,23 @@ import java.sql.SQLException;
 import java.sql.Types;
 import java.util.List;
 
-/** Abstract class which creates a callable statement for running tests
+/**
+ * Abstract class which creates a callable statement for running tests
  * The SQL to be used has to be implemented for there are differences between the Framework-versions
  *
  * @author pesse
  */
 abstract class AbstractTestRunnerStatement implements TestRunnerStatement {
 
-    protected TestRunnerOptions options;
-    protected Connection conn;
-    protected CallableStatement callableStatement;
+    protected final TestRunnerOptions options;
+    protected final Connection conn;
+    protected final CallableStatement callableStatement;
 
     public AbstractTestRunnerStatement(TestRunnerOptions options, Connection conn) throws SQLException {
         this.options = options;
         this.conn = conn;
+
+        callableStatement = conn.prepareCall(getSql());
 
         createStatement();
     }
@@ -33,8 +38,6 @@ abstract class AbstractTestRunnerStatement implements TestRunnerStatement {
     protected int createStatement() throws SQLException {
 
         OracleConnection oraConn = conn.unwrap(OracleConnection.class);
-
-        callableStatement = conn.prepareCall(getSql());
 
         int paramIdx = 0;
 
@@ -90,6 +93,7 @@ abstract class AbstractTestRunnerStatement implements TestRunnerStatement {
         callableStatement.execute();
     }
 
+    @Override
     public void close() throws SQLException {
         if (callableStatement != null)
             callableStatement.close();

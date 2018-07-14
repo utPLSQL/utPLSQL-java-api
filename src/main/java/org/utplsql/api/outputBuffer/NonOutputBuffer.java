@@ -15,7 +15,7 @@ import java.util.function.Consumer;
  */
 class NonOutputBuffer implements OutputBuffer {
 
-    private Reporter reporter;
+    private final Reporter reporter;
 
     NonOutputBuffer( Reporter reporter) {
         this.reporter = reporter;

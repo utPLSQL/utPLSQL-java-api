@@ -9,21 +9,22 @@ import java.sql.Connection;
 import java.sql.SQLException;
 import java.util.Arrays;
 import java.util.HashMap;
-import java.util.List;
 import java.util.Map;
+import java.util.Set;
 import java.util.stream.Collectors;
 
 class ReporterInspectorPre310 extends AbstractReporterInspector {
 
-    private Map<String, String> registeredReporterFactoryMethods;
-    private Map<CoreReporters, String> descriptions;
+    private final Map<String, String> registeredReporterFactoryMethods;
+    private final Map<CoreReporters, String> descriptions = new HashMap<>();
 
-    ReporterInspectorPre310(ReporterFactory reporterFactory, Connection conn ) throws SQLException {
+    ReporterInspectorPre310(ReporterFactory reporterFactory, Connection conn) throws SQLException {
         super(reporterFactory, conn);
+        initDefaultDescriptions();
+        registeredReporterFactoryMethods = reporterFactory.getRegisteredReporterInfo();
     }
 
     private void initDefaultDescriptions() {
-        descriptions = new HashMap<>();
         descriptions.put(CoreReporters.UT_COVERAGE_HTML_REPORTER, "");
         descriptions.put(CoreReporters.UT_COVERAGE_SONAR_REPORTER, "");
         descriptions.put(CoreReporters.UT_COVERALLS_REPORTER, "");
@@ -34,26 +35,24 @@ class ReporterInspectorPre310 extends AbstractReporterInspector {
     }
 
     @Override
-    protected void load() throws SQLException {
-        initDefaultDescriptions();
+    protected Set<ReporterInfo> loadReporterInfos() throws SQLException {
         Version databaseVersion = new CompatibilityProxy(connection).getDatabaseVersion();
-        registeredReporterFactoryMethods = reporterFactory.getRegisteredReporterInfo();
-        infos = Arrays.stream(CoreReporters.values())
+        return Arrays.stream(CoreReporters.values())
                 .filter(r -> r.isAvailableFor(databaseVersion))
                 .map(this::getReporterInfo)
                 .collect(Collectors.toSet());
     }
 
-    private ReporterInfo getReporterInfo( CoreReporters reporter ) {
+    private ReporterInfo getReporterInfo(CoreReporters reporter) {
 
         ReporterInfo.Type type = ReporterInfo.Type.SQL;
         String description = descriptions.get(reporter);
 
-        if ( registeredReporterFactoryMethods.containsKey(reporter.name()) ) {
+        if (registeredReporterFactoryMethods.containsKey(reporter.name())) {
             type = ReporterInfo.Type.SQL_WITH_JAVA;
             description += "\n" + registeredReporterFactoryMethods.get(reporter.name());
         }
 
-        return new ReporterInfo( reporter.name(), type, description);
+        return new ReporterInfo(reporter.name(), type, description);
     }
 }

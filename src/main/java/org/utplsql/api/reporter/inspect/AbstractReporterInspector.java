@@ -4,30 +4,27 @@ import org.utplsql.api.reporter.ReporterFactory;
 
 import java.sql.Connection;
 import java.sql.SQLException;
-import java.util.ArrayList;
-import java.util.List;
-import java.util.Map;
-import java.util.Set;
+import java.util.*;
+import java.util.function.Function;
 import java.util.stream.Collectors;
 
 abstract class AbstractReporterInspector implements ReporterInspector  {
 
-    protected ReporterFactory reporterFactory;
-    protected Connection connection;
-    protected Set<ReporterInfo> infos;
+    protected final ReporterFactory reporterFactory;
+    protected final Connection connection;
+    protected final Set<ReporterInfo> infos;
 
     AbstractReporterInspector(ReporterFactory reporterFactory, Connection conn ) throws SQLException {
         this.reporterFactory = reporterFactory;
         this.connection = conn;
-
-        load();
+        this.infos = loadReporterInfos();
     }
 
-    protected abstract void load() throws SQLException;
+    protected abstract Set<ReporterInfo> loadReporterInfos() throws SQLException;
 
     @Override
     public Map<String, ReporterInfo> getReporterInfoMap() {
-        return infos.stream().collect(Collectors.toMap(ReporterInfo::getName, i -> i));
+        return infos.stream().collect(Collectors.toMap(ReporterInfo::getName, Function.identity()));
     }
 
     @Override

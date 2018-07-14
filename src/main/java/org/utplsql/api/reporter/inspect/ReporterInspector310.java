@@ -4,7 +4,6 @@ import oracle.jdbc.OracleCallableStatement;
 import oracle.jdbc.OracleConnection;
 import oracle.jdbc.OracleType;
 import org.utplsql.api.compatibility.CompatibilityProxy;
-import org.utplsql.api.reporter.CoreReporters;
 import org.utplsql.api.reporter.Reporter;
 import org.utplsql.api.reporter.ReporterFactory;
 
@@ -13,7 +12,6 @@ import java.sql.PreparedStatement;
 import java.sql.ResultSet;
 import java.sql.SQLException;
 import java.util.*;
-import java.util.stream.Collectors;
 
 /** ReporterInspector for v3.1.0 upwards
  *
@@ -21,28 +19,25 @@ import java.util.stream.Collectors;
  */
 class ReporterInspector310 extends AbstractReporterInspector {
 
-
-    private Map<String, String> registeredReporterFactoryMethods;
-    private CompatibilityProxy compatibilityProxy;
+    private final Map<String, String> registeredReporterFactoryMethods;
 
     ReporterInspector310(ReporterFactory reporterFactory, Connection conn ) throws SQLException {
         super(reporterFactory, conn);
+
+        registeredReporterFactoryMethods = reporterFactory.getRegisteredReporterInfo();
+
     }
 
     @Override
-    protected void load() throws SQLException {
-
-        registeredReporterFactoryMethods = reporterFactory.getRegisteredReporterInfo();
-        compatibilityProxy = new CompatibilityProxy(connection);
-
-        infos = new HashSet<>();
-
+    protected Set<ReporterInfo> loadReporterInfos() throws SQLException {
+        Set<ReporterInfo> reporterInfos = new HashSet<>();
         try (PreparedStatement stmt = connection.prepareStatement("select * from table(ut_runner.get_reporters_list) order by 1")) {
             try (ResultSet rs = stmt.executeQuery() ) {
                 while (rs.next())
-                    infos.add(getReporterInfo(rs.getString(1)));
+                    reporterInfos.add(getReporterInfo(rs.getString(1)));
             }
         }
+        return reporterInfos;
     }
 
     private ReporterInfo getReporterInfo( String reporterNameWithOwner ) throws SQLException {
@@ -60,6 +55,7 @@ class ReporterInspector310 extends AbstractReporterInspector {
     }
 
     private String getDescription( String reporterName ) throws SQLException {
+        CompatibilityProxy compatibilityProxy = new CompatibilityProxy(connection);
         Reporter reporter = reporterFactory.createReporter(reporterName).init(connection, compatibilityProxy, reporterFactory);
         OracleConnection oraCon = connection.unwrap(OracleConnection.class);
 

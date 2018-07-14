@@ -20,7 +20,7 @@ public final class FileMapper {
             Connection conn, FileMapperOptions mapperOptions) throws SQLException {
         OracleConnection oraConn = conn.unwrap(OracleConnection.class);
 
-        Map typeMap = conn.getTypeMap();
+        Map<String, Class<?>> typeMap = conn.getTypeMap();
         typeMap.put(CustomTypes.UT_FILE_MAPPING, FileMapping.class);
         typeMap.put(CustomTypes.UT_KEY_VALUE_PAIR, KeyValuePair.class);
         conn.setTypeMap(typeMap);

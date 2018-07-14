@@ -85,11 +85,11 @@ public class Version implements Comparable<Version> {
             StringBuilder sb = new StringBuilder();
             sb.append(String.valueOf(major));
             if ( minor != null )
-                sb.append("." + String.valueOf(minor));
+                sb.append(".").append(String.valueOf(minor));
             if ( bugfix != null )
-                sb.append("." + String.valueOf(bugfix));
+                sb.append(".").append(String.valueOf(bugfix));
             if ( build != null )
-                sb.append("." + String.valueOf(build));
+                sb.append(".").append(String.valueOf(build));
 
             return sb.toString();
         }
@@ -152,10 +152,7 @@ public class Version implements Comparable<Version> {
 
         versionsAreValid(v);
 
-        if ( compareTo(v) >= 0 )
-            return true;
-        else
-            return false;
+        return compareTo(v) >= 0;
     }
 
 
@@ -163,10 +160,7 @@ public class Version implements Comparable<Version> {
     {
         versionsAreValid(v);
 
-        if ( compareTo(v) > 0 )
-            return true;
-        else
-            return false;
+        return compareTo(v) > 0;
     }
 
     public boolean isLessOrEqualThan( Version v ) throws InvalidVersionException
@@ -174,19 +168,13 @@ public class Version implements Comparable<Version> {
 
         versionsAreValid(v);
 
-        if ( compareTo(v) <= 0 )
-            return true;
-        else
-            return false;
+        return compareTo(v) <= 0;
     }
 
     public boolean isLessThan( Version v) throws InvalidVersionException
     {
         versionsAreValid(v);
 
-        if ( compareTo(v) < 0 )
-            return true;
-        else
-            return false;
+        return compareTo(v) < 0;
     }
 }

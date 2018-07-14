@@ -26,12 +26,8 @@ public enum OptionalFeatures {
     public boolean isAvailableFor(Version version ) {
 
         try {
-            if ((minVersion == null || version.isGreaterOrEqualThan(minVersion)) &&
-                    (maxVersion == null || maxVersion.isGreaterOrEqualThan(version))
-                    )
-                return true;
-            else
-                return false;
+            return (minVersion == null || version.isGreaterOrEqualThan(minVersion)) &&
+                    (maxVersion == null || maxVersion.isGreaterOrEqualThan(version));
         } catch ( InvalidVersionException e ) {
             return false; // We have no optional features for invalid versions
         }

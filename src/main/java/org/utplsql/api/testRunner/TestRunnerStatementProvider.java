@@ -1,9 +1,7 @@
 package org.utplsql.api.testRunner;
 
-import org.utplsql.api.DBHelper;
 import org.utplsql.api.TestRunnerOptions;
 import org.utplsql.api.Version;
-import org.utplsql.api.compatibility.OptionalFeatures;
 import org.utplsql.api.exception.InvalidVersionException;
 
 import java.sql.Connection;
@@ -32,7 +30,7 @@ public class TestRunnerStatementProvider {
             else if (databaseVersion.isLessThan(new Version("3.1.2")))
                 stmt = new Pre312TestRunnerStatement(options, conn);
 
-        } catch ( InvalidVersionException e ) {}
+        } catch ( InvalidVersionException ignored ) {}
 
         if ( stmt == null )
             stmt = new ActualTestRunnerStatement(options, conn);
