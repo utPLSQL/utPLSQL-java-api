@@ -3,12 +3,12 @@ package org.utplsql.api.reporter;
 import org.junit.jupiter.api.AfterAll;
 import org.junit.jupiter.api.Test;
 
-import static org.junit.jupiter.api.Assertions.*;
-
 import java.io.File;
 import java.io.IOException;
 import java.nio.file.*;
 import java.nio.file.attribute.BasicFileAttributes;
+
+import static org.junit.jupiter.api.Assertions.assertTrue;
 
 public class CoverageHTMLReporterAssetTest {
 

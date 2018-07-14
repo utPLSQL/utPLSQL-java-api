@@ -1,25 +1,18 @@
 package org.utplsql.api;
 
-import oracle.jdbc.OracleCallableStatement;
-import oracle.jdbc.OracleConnection;
-import oracle.jdbc.OracleType;
 import org.junit.jupiter.api.Test;
 import org.utplsql.api.compatibility.CompatibilityProxy;
 import org.utplsql.api.exception.InvalidVersionException;
 import org.utplsql.api.reporter.CoreReporters;
-import org.utplsql.api.reporter.Reporter;
 import org.utplsql.api.reporter.ReporterFactory;
 import org.utplsql.api.reporter.inspect.ReporterInfo;
 import org.utplsql.api.reporter.inspect.ReporterInspector;
 
-import java.sql.PreparedStatement;
 import java.sql.SQLException;
-import java.sql.SQLType;
 import java.util.Comparator;
 import java.util.Map;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
-import static org.junit.jupiter.api.Assertions.assertNotNull;
 
 public class ReporterInspectorIT extends AbstractDatabaseTest {
 

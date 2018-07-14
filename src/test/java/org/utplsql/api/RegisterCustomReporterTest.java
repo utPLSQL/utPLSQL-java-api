@@ -1,7 +1,6 @@
 package org.utplsql.api;
 
 import org.junit.jupiter.api.Test;
-import org.utplsql.api.compatibility.CompatibilityProxy;
 import org.utplsql.api.reporter.DefaultReporter;
 import org.utplsql.api.reporter.Reporter;
 import org.utplsql.api.reporter.ReporterFactory;

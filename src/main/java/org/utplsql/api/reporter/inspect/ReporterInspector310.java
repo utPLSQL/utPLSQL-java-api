@@ -20,16 +20,12 @@ import java.util.*;
 class ReporterInspector310 extends AbstractReporterInspector {
 
     private final Map<String, String> registeredReporterFactoryMethods;
+    private final Set<ReporterInfo> infos;
 
     ReporterInspector310(ReporterFactory reporterFactory, Connection conn ) throws SQLException {
         super(reporterFactory, conn);
-
         registeredReporterFactoryMethods = reporterFactory.getRegisteredReporterInfo();
 
-    }
-
-    @Override
-    protected Set<ReporterInfo> loadReporterInfos() throws SQLException {
         Set<ReporterInfo> reporterInfos = new HashSet<>();
         try (PreparedStatement stmt = connection.prepareStatement("select * from table(ut_runner.get_reporters_list) order by 1")) {
             try (ResultSet rs = stmt.executeQuery() ) {
@@ -37,10 +33,16 @@ class ReporterInspector310 extends AbstractReporterInspector {
                     reporterInfos.add(getReporterInfo(rs.getString(1)));
             }
         }
-        return reporterInfos;
+        this.infos = reporterInfos;
+
     }
 
-    private ReporterInfo getReporterInfo( String reporterNameWithOwner ) throws SQLException {
+    @Override
+    public List<ReporterInfo> getReporterInfos() {
+        return new ArrayList<>(infos);
+    }
+
+    private ReporterInfo getReporterInfo(String reporterNameWithOwner ) throws SQLException {
         String reporterName = reporterNameWithOwner.substring(reporterNameWithOwner.indexOf(".")+1).toUpperCase();
 
         ReporterInfo.Type type = ReporterInfo.Type.SQL;

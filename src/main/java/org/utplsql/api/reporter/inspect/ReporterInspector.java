@@ -9,6 +9,8 @@ import java.sql.Connection;
 import java.sql.SQLException;
 import java.util.List;
 import java.util.Map;
+import java.util.function.Function;
+import java.util.stream.Collectors;
 
 /**
  * Gives information about available reporters
@@ -19,7 +21,9 @@ public interface ReporterInspector {
 
     List<ReporterInfo> getReporterInfos();
 
-    Map<String, ReporterInfo> getReporterInfoMap();
+    default Map<String, ReporterInfo> getReporterInfoMap() {
+        return getReporterInfos().stream().collect(Collectors.toMap(ReporterInfo::getName, Function.identity()));
+    }
 
     /**
      * Returns a new instance of a ReporterInspector, based on the utPLSQL version used in the connection
