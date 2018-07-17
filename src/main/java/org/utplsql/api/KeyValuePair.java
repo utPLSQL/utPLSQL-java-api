@@ -22,16 +22,8 @@ public class KeyValuePair implements SQLData {
         return key;
     }
 
-    public void setKey(String key) {
-        this.key = key;
-    }
-
     public String getValue() {
         return value;
-    }
-
-    public void setValue(String value) {
-        this.value = value;
     }
 
     @Override
@@ -41,19 +33,19 @@ public class KeyValuePair implements SQLData {
 
     @Override
     public void readSQL(SQLInput stream, String typeName) throws SQLException {
-        setKey(stream.readString());
-        setValue(stream.readString());
+        key = stream.readString();
+        value = stream.readString();
     }
 
     @Override
     public void writeSQL(SQLOutput stream) throws SQLException {
-        stream.writeString(getKey());
-        stream.writeString(getValue());
+        stream.writeString(key);
+        stream.writeString(value);
     }
 
     @Override
     public String toString() {
-        return String.format("%s => %s", getKey(), getValue());
+        return String.format("%s => %s", key, value);
     }
 
 }

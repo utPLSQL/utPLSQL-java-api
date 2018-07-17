@@ -7,7 +7,7 @@ import org.utplsql.api.Version;
  * @author pesse
  */
 public class InvalidVersionException extends Exception {
-    private Version version;
+    private final Version version;
 
     public InvalidVersionException( Version version ) {
         this( version, null );

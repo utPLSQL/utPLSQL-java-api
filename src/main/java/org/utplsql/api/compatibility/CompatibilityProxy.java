@@ -79,9 +79,7 @@ public class CompatibilityProxy {
      */
     private boolean versionCompatibilityCheck(Connection conn, String requested, String current)
             throws SQLException {
-        CallableStatement callableStatement = null;
-        try {
-            callableStatement = conn.prepareCall("BEGIN ? := ut_runner.version_compatibility_check(?, ?); END;");
+        try(CallableStatement callableStatement = conn.prepareCall("BEGIN ? := ut_runner.version_compatibility_check(?, ?); END;")) {
             callableStatement.registerOutParameter(1, Types.SMALLINT);
             callableStatement.setString(2, requested);
 
@@ -97,9 +95,6 @@ public class CompatibilityProxy {
                 return false;
             else
                 throw e;
-        } finally {
-            if (callableStatement != null)
-                callableStatement.close();
         }
     }
 
@@ -108,11 +103,11 @@ public class CompatibilityProxy {
      * @param requested
      * @return
      */
-    private boolean versionCompatibilityCheckPre303( String requested )
+    private boolean versionCompatibilityCheckPre303(String requested )
     {
         Version requesteVersion = new Version(requested);
 
-        if ( databaseVersion.getMajor() == requesteVersion.getMajor() && (requesteVersion.getMinor() == null || databaseVersion.getMinor() == requesteVersion.getMinor()) )
+        if (databaseVersion.getMajor().equals(requesteVersion.getMajor()) && (requesteVersion.getMinor() == null || requesteVersion.getMinor().equals(databaseVersion.getMinor())) )
             return true;
         else
             return false;

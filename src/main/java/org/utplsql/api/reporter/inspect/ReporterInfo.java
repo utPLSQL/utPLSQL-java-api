@@ -10,9 +10,9 @@ public class ReporterInfo {
         SQL, JAVA, SQL_WITH_JAVA
     }
 
-    private String name;
-    private Type type;
-    private String description;
+    private final String name;
+    private final Type type;
+    private final String description;
 
     ReporterInfo( String name, Type type, String description ) {
         this.name = name;

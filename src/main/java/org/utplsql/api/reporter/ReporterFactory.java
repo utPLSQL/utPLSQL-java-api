@@ -30,11 +30,11 @@ public final class ReporterFactory implements ORADataFactory {
             this.factoryMethod = factoryMethod;
             this.description = description;
         }
-        public BiFunction<String, Object[], ? extends Reporter> factoryMethod;
-        public String description;
+        public final BiFunction<String, Object[], ? extends Reporter> factoryMethod;
+        public final String description;
     }
 
-    private Map<String, ReporterFactoryMethodInfo> reportFactoryMethodMap = new HashMap<>();
+    private final Map<String, ReporterFactoryMethodInfo> reportFactoryMethodMap = new HashMap<>();
 
     ReporterFactory() { }
 

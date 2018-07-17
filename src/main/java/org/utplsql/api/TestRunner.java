@@ -1,6 +1,5 @@
 package org.utplsql.api;
 
-import oracle.jdbc.OracleConnection;
 import org.utplsql.api.compatibility.CompatibilityProxy;
 import org.utplsql.api.exception.DatabaseNotCompatibleException;
 import org.utplsql.api.exception.SomeTestsFailedException;
@@ -10,7 +9,6 @@ import org.utplsql.api.reporter.Reporter;
 import org.utplsql.api.reporter.ReporterFactory;
 import org.utplsql.api.testRunner.TestRunnerStatement;
 
-import java.sql.CallableStatement;
 import java.sql.Connection;
 import java.sql.SQLException;
 import java.util.ArrayList;
@@ -24,10 +22,10 @@ import java.util.List;
  */
 public class TestRunner {
 
-    private TestRunnerOptions options = new TestRunnerOptions();
+    private final TestRunnerOptions options = new TestRunnerOptions();
     private CompatibilityProxy compatibilityProxy;
     private ReporterFactory reporterFactory;
-    private List<String> reporterNames = new ArrayList<>();
+    private final List<String> reporterNames = new ArrayList<>();
 
     public TestRunner addPath(String path) {
         options.pathList.add(path);
@@ -35,7 +33,7 @@ public class TestRunner {
     }
 
     public TestRunner addPathList(List<String> paths) {
-        if (options.pathList != null) options.pathList.addAll(paths);
+        options.pathList.addAll(paths);
         return this;
     }
 
@@ -115,7 +113,7 @@ public class TestRunner {
 
     private void delayedAddReporters() {
         if ( reporterFactory != null )
-            reporterNames.stream().forEach( this::addReporter );
+            reporterNames.forEach( this::addReporter );
         else
             throw new IllegalStateException("ReporterFactory must be set to add delayed Reporters!");
     }
@@ -142,13 +140,8 @@ public class TestRunner {
             options.reporterList.add(new DocumentationReporter().init(conn));
         }
 
-        TestRunnerStatement testRunnerStatement = null;
-
-        try {
-            DBHelper.enableDBMSOutput(conn);
-
-            testRunnerStatement = compatibilityProxy.getTestRunnerStatement(options, conn);
-
+        DBHelper.enableDBMSOutput(conn);
+        try(TestRunnerStatement testRunnerStatement = compatibilityProxy.getTestRunnerStatement(options, conn)) {
             testRunnerStatement.execute();
         } catch (SQLException e) {
             if (e.getErrorCode() == SomeTestsFailedException.ERROR_CODE) {
@@ -161,10 +154,6 @@ public class TestRunner {
                 throw e;
             }
         } finally {
-            if (testRunnerStatement != null) {
-                testRunnerStatement.close();
-            }
-
             DBHelper.disableDBMSOutput(conn);
         }
     }

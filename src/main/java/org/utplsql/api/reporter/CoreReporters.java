@@ -19,8 +19,8 @@ public enum CoreReporters {
     UT_SONAR_TEST_REPORTER(new Version("3.0.0"), null),
     UT_COVERAGE_COBERTURA_REPORTER(new Version("3.1.0"), null);
 
-    private Version since;
-    private Version until;
+    private final Version since;
+    private final Version until;
 
     CoreReporters(Version since, Version until ) {
         this.since = since;
@@ -46,7 +46,7 @@ public enum CoreReporters {
                     && (until == null || databaseVersion.isLessOrEqualThan(until)))
                 return true;
         }
-        catch ( InvalidVersionException e ) { }
+        catch ( InvalidVersionException ignored ) { }
 
         return false;
     }

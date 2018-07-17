@@ -17,11 +17,18 @@ public class FileMapping implements SQLData {
 
     public FileMapping() {}
 
+    public FileMapping(String fileName, String objectOwner, String objectName, String objectType) {
+        this.fileName = fileName;
+        this.objectOwner = objectOwner;
+        this.objectName = objectName;
+        this.objectType = objectType;
+    }
+
     public String getFileName() {
         return fileName;
     }
 
-    public void setFileName(String fileName) {
+    private void setFileName(String fileName) {
         this.fileName = fileName;
     }
 
@@ -29,7 +36,7 @@ public class FileMapping implements SQLData {
         return objectOwner;
     }
 
-    public void setObjectOwner(String objectOwner) {
+    private void setObjectOwner(String objectOwner) {
         this.objectOwner = objectOwner;
     }
 
@@ -37,7 +44,7 @@ public class FileMapping implements SQLData {
         return objectName;
     }
 
-    public void setObjectName(String objectName) {
+    private void setObjectName(String objectName) {
         this.objectName = objectName;
     }
 
@@ -45,7 +52,7 @@ public class FileMapping implements SQLData {
         return objectType;
     }
 
-    public void setObjectType(String objectType) {
+    private void setObjectType(String objectType) {
         this.objectType = objectType;
     }
 

@@ -34,7 +34,7 @@ public class OutputBufferProvider {
                }
            }
        }
-       catch ( InvalidVersionException e ) { }
+       catch ( InvalidVersionException ignored ) { }
 
        // If we couldn't find an appropriate OutputBuffer, return the Pre310-Compatibility-Buffer
        return new CompatibilityOutputBufferPre310(reporter);
@@ -52,14 +52,15 @@ public class OutputBufferProvider {
 
                     if ( isReporterResult == null )
                         throw new IllegalArgumentException("The given type " + reporter.getTypeName() + " is not a valid Reporter!");
-                    else if (isReporterResult.equalsIgnoreCase("Y") )
-                        return true;
                     else
-                        return false;
+                        return isReporterResult.equalsIgnoreCase("Y");
                 }
                 else
                     throw new SQLException("Could not check Reporter validity");
             }
         }
+    }
+
+    private OutputBufferProvider() {
     }
 }

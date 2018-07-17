@@ -10,44 +10,52 @@ import java.util.regex.Pattern;
  * @author pesse
  */
 public class Version implements Comparable<Version> {
-    private String origString;
-    private Integer major;
-    private Integer minor;
-    private Integer bugfix;
-    private Integer build;
-    private boolean valid = false;
+    private final String origString;
+    private final Integer major;
+    private final Integer minor;
+    private final Integer bugfix;
+    private final Integer build;
+    private final boolean valid;
 
     public Version( String versionString ) {
         assert versionString != null;
-        this.origString = versionString;
-        parseVersionString();
-    }
+        this.origString = versionString.trim();
 
-    private void parseVersionString()
-    {
         Pattern p = Pattern.compile("([0-9]+)\\.?([0-9]+)?\\.?([0-9]+)?\\.?([0-9]+)?");
 
         Matcher m = p.matcher(origString);
 
+        Integer major = null;
+        Integer minor = null;
+        Integer bugfix = null;
+        Integer build = null;
+        boolean valid = false;
+
         try {
             if (m.find()) {
-                if ( m.group(1) != null )
+                if (m.group(1) != null )
                     major = Integer.valueOf(m.group(1));
-                if ( m.group(2) != null )
+                if (m.group(2) != null )
                     minor = Integer.valueOf(m.group(2));
-                if ( m.group(3) != null )
+                if (m.group(3) != null )
                     bugfix = Integer.valueOf(m.group(3));
-                if ( m.group(4) != null )
+                if (m.group(4) != null )
                     build = Integer.valueOf(m.group(4));
 
-                if ( major != null ) // We need a valid major version as minimum requirement for a Version object to be valid
-                    valid = true;
+                 // We need a valid major version as minimum requirement for a Version object to be valid
+                valid = major != null;
             }
         }
         catch ( NumberFormatException e )
         {
             valid = false;
         }
+
+        this.major = major;
+        this.minor = minor;
+        this.bugfix = bugfix;
+        this.build = build;
+        this.valid = valid;
     }
 
     @Override
@@ -85,11 +93,11 @@ public class Version implements Comparable<Version> {
             StringBuilder sb = new StringBuilder();
             sb.append(String.valueOf(major));
             if ( minor != null )
-                sb.append("." + String.valueOf(minor));
+                sb.append(".").append(String.valueOf(minor));
             if ( bugfix != null )
-                sb.append("." + String.valueOf(bugfix));
+                sb.append(".").append(String.valueOf(bugfix));
             if ( build != null )
-                sb.append("." + String.valueOf(build));
+                sb.append(".").append(String.valueOf(build));
 
             return sb.toString();
         }
@@ -152,10 +160,7 @@ public class Version implements Comparable<Version> {
 
         versionsAreValid(v);
 
-        if ( compareTo(v) >= 0 )
-            return true;
-        else
-            return false;
+        return compareTo(v) >= 0;
     }
 
 
@@ -163,10 +168,7 @@ public class Version implements Comparable<Version> {
     {
         versionsAreValid(v);
 
-        if ( compareTo(v) > 0 )
-            return true;
-        else
-            return false;
+        return compareTo(v) > 0;
     }
 
     public boolean isLessOrEqualThan( Version v ) throws InvalidVersionException
@@ -174,19 +176,13 @@ public class Version implements Comparable<Version> {
 
         versionsAreValid(v);
 
-        if ( compareTo(v) <= 0 )
-            return true;
-        else
-            return false;
+        return compareTo(v) <= 0;
     }
 
     public boolean isLessThan( Version v) throws InvalidVersionException
     {
         versionsAreValid(v);
 
-        if ( compareTo(v) < 0 )
-            return true;
-        else
-            return false;
+        return compareTo(v) < 0;
     }
 }

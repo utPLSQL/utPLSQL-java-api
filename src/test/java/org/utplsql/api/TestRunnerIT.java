@@ -5,7 +5,7 @@ import org.junit.jupiter.api.function.Executable;
 import org.utplsql.api.compatibility.CompatibilityProxy;
 import org.utplsql.api.exception.InvalidVersionException;
 import org.utplsql.api.exception.SomeTestsFailedException;
-import org.utplsql.api.reporter.*;
+import org.utplsql.api.reporter.CoreReporters;
 
 import java.sql.Connection;
 import java.sql.SQLException;

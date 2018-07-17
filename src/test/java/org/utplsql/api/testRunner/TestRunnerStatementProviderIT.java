@@ -8,7 +8,6 @@ import org.utplsql.api.Version;
 import java.sql.SQLException;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
-import static org.junit.jupiter.api.Assertions.fail;
 
 public class TestRunnerStatementProviderIT extends AbstractDatabaseTest {
 

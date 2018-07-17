@@ -21,6 +21,8 @@ import java.util.zip.ZipFile;
  */
 public class ResourceUtil {
 
+    private ResourceUtil() {}
+
     /**
      * Returns the Path to a resource so it is walkable no matter if it's inside a jar or on the file system
      *
