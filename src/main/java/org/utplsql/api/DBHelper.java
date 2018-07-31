@@ -4,6 +4,7 @@ import oracle.jdbc.OracleTypes;
 import org.utplsql.api.exception.UtPLSQLNotInstalledException;
 
 import java.sql.*;
+import java.util.Objects;
 
 /**
  * Database utility functions.
@@ -49,7 +50,7 @@ public final class DBHelper {
      * @throws SQLException any database error
      */
     public static Version getDatabaseFrameworkVersion( Connection conn ) throws SQLException {
-        assert conn != null;
+        Objects.requireNonNull(conn);
         Version result = new Version("");
         try (PreparedStatement stmt = conn.prepareStatement("select ut_runner.version() from dual"))
         {

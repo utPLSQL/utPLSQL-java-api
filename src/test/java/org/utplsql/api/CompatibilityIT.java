@@ -22,7 +22,6 @@ public class CompatibilityIT extends AbstractDatabaseTest {
         CompatibilityProxy proxy = new CompatibilityProxy(getConnection(), true);
         proxy.failOnNotCompatible();
         assertEquals(true, proxy.isCompatible());
-        assertEquals(CompatibilityProxy.UTPLSQL_API_VERSION, proxy.getDatabaseVersion().toString());
 
     }
 }

@@ -14,6 +14,7 @@ import java.sql.CallableStatement;
 import java.sql.Connection;
 import java.sql.SQLException;
 import java.sql.Types;
+import java.util.Objects;
 
 /** Class to check compatibility with database framework and also to give several specific implementations depending
  * on the version of the connected framework.
@@ -23,7 +24,7 @@ import java.sql.Types;
  */
 public class CompatibilityProxy {
 
-    public static final String UTPLSQL_API_VERSION = "3.1.0";
+    private static final String UTPLSQL_API_VERSION = "3.1.1";
     public static final String UTPLSQL_COMPATIBILITY_VERSION = "3";
 
     private Version databaseVersion;
@@ -51,12 +52,19 @@ public class CompatibilityProxy {
     private void doCompatibilityCheckWithDatabase( Connection conn ) throws SQLException
     {
         databaseVersion = DBHelper.getDatabaseFrameworkVersion(conn);
+        Version clientVersion = new Version(UTPLSQL_COMPATIBILITY_VERSION);
+
+        if ( databaseVersion == null )
+            throw new DatabaseNotCompatibleException("Could not get database version", clientVersion, null, null);
+
+        if ( databaseVersion.getMajor() == null )
+            throw new DatabaseNotCompatibleException("Illegal database version: " + databaseVersion.toString(), clientVersion, databaseVersion, null);
 
         if (OptionalFeatures.FRAMEWORK_COMPATIBILITY_CHECK.isAvailableFor(databaseVersion)) {
             try {
                 compatible = versionCompatibilityCheck(conn, UTPLSQL_COMPATIBILITY_VERSION, null);
             } catch (SQLException e) {
-                throw new DatabaseNotCompatibleException("Compatibility-check failed with error. Aborting. Reason: " + e.getMessage(), new Version(UTPLSQL_COMPATIBILITY_VERSION), new Version("Unknown"), e);
+                throw new DatabaseNotCompatibleException("Compatibility-check failed with error. Aborting. Reason: " + e.getMessage(), clientVersion, new Version("Unknown"), e);
             }
         } else
             compatible = versionCompatibilityCheckPre303(UTPLSQL_COMPATIBILITY_VERSION);
@@ -105,9 +113,13 @@ public class CompatibilityProxy {
      */
     private boolean versionCompatibilityCheckPre303(String requested )
     {
-        Version requesteVersion = new Version(requested);
+        Version requestedVersion = new Version(requested);
 
-        if (databaseVersion.getMajor().equals(requesteVersion.getMajor()) && (requesteVersion.getMinor() == null || requesteVersion.getMinor().equals(databaseVersion.getMinor())) )
+        Objects.requireNonNull(databaseVersion.getMajor(), "Illegal database Version: " + databaseVersion.toString());
+        if (
+                databaseVersion.getMajor().equals(requestedVersion.getMajor())
+                        && (requestedVersion.getMinor() == null
+                        || requestedVersion.getMinor().equals(databaseVersion.getMinor())) )
             return true;
         else
             return false;
