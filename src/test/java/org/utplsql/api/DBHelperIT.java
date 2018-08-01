@@ -4,15 +4,16 @@ import org.junit.jupiter.api.Test;
 
 import java.sql.SQLException;
 
-import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertNotNull;
+import static org.junit.jupiter.api.Assertions.assertTrue;
 
 public class DBHelperIT extends AbstractDatabaseTest {
 
     @Test
     public void getFrameworkVersion() throws SQLException {
         Version v = DBHelper.getDatabaseFrameworkVersion(getConnection());
-        assertEquals(true, v.isValid());
+        assertTrue(v.isValid());
+        System.out.println(v.getNormalizedString() + " - " + v.toString());
     }
 
     @Test
