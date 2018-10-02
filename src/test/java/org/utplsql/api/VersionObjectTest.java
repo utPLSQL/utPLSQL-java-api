@@ -20,6 +20,18 @@ public class VersionObjectTest {
     }
 
     @Test
+    public void versionPatternRecognitionDevelop() {
+        Version v = new Version("v3.1.3.2140-develop");
+
+        assertEquals(3, (long)v.getMajor());
+        assertEquals(1, (long)v.getMinor());
+        assertEquals(3, (long)v.getBugfix());
+        assertEquals(2140, (long)v.getBuild());
+        assertTrue(v.isValid());
+        assertEquals("3.1.3.2140", v.getNormalizedString());
+    }
+
+    @Test
     public void versionPatternRecognitionPartial() {
         Version v = new Version("3.1.etc");
 

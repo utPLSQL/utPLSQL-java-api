@@ -11,7 +11,7 @@ public class JavaApiVersionInfo {
 
     private static final String BUILD_NO = "123";
     private static final String MAVEN_PROJECT_NAME = "utPLSQL-java-api";
-    private static final String MAVEN_PROJECT_VERSION = "3.1.1-SNAPSHOT";
+    private static final String MAVEN_PROJECT_VERSION = "3.1.1";
 
     public static String getVersion() {
         return MAVEN_PROJECT_VERSION + "." + BUILD_NO;
