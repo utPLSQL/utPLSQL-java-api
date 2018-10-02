@@ -3,6 +3,8 @@ package org.utplsql.api.compatibility;
 import org.utplsql.api.DBHelper;
 import org.utplsql.api.TestRunnerOptions;
 import org.utplsql.api.Version;
+import org.utplsql.api.db.DatabaseInformation;
+import org.utplsql.api.db.DefaultDatabaseInformation;
 import org.utplsql.api.exception.DatabaseNotCompatibleException;
 import org.utplsql.api.outputBuffer.OutputBuffer;
 import org.utplsql.api.outputBuffer.OutputBufferProvider;
@@ -29,14 +31,25 @@ public class CompatibilityProxy {
 
     private Version databaseVersion;
     private boolean compatible = false;
+    private DatabaseInformation databaseInformation;
 
-    public CompatibilityProxy( Connection conn ) throws SQLException
-    {
-        this(conn, false);
+    public CompatibilityProxy( Connection conn ) throws SQLException {
+        this(conn, false, null);
     }
 
-    public CompatibilityProxy( Connection conn, boolean skipCompatibilityCheck ) throws SQLException
-    {
+    public CompatibilityProxy( Connection conn, DatabaseInformation databaseInformation ) throws SQLException {
+        this(conn, false, databaseInformation);
+    }
+
+    public CompatibilityProxy( Connection conn, boolean skipCompatibilityCheck ) throws SQLException {
+        this(conn, skipCompatibilityCheck, null);
+    }
+
+    public CompatibilityProxy( Connection conn, boolean skipCompatibilityCheck, DatabaseInformation databaseInformation ) throws SQLException {
+        this.databaseInformation = (databaseInformation != null )
+            ? databaseInformation
+            : new DefaultDatabaseInformation();
+
         if ( skipCompatibilityCheck )
             doExpectCompatibility();
         else
@@ -51,7 +64,7 @@ public class CompatibilityProxy {
      */
     private void doCompatibilityCheckWithDatabase( Connection conn ) throws SQLException
     {
-        databaseVersion = DBHelper.getDatabaseFrameworkVersion(conn);
+        databaseVersion = databaseInformation.getUtPlsqlFrameworkVersion(conn);
         Version clientVersion = new Version(UTPLSQL_COMPATIBILITY_VERSION);
 
         if ( databaseVersion == null )
@@ -87,17 +100,8 @@ public class CompatibilityProxy {
      */
     private boolean versionCompatibilityCheck(Connection conn, String requested, String current)
             throws SQLException {
-        try(CallableStatement callableStatement = conn.prepareCall("BEGIN ? := ut_runner.version_compatibility_check(?, ?); END;")) {
-            callableStatement.registerOutParameter(1, Types.SMALLINT);
-            callableStatement.setString(2, requested);
-
-            if (current == null)
-                callableStatement.setNull(3, Types.VARCHAR);
-            else
-                callableStatement.setString(3, current);
-
-            callableStatement.executeUpdate();
-            return callableStatement.getInt(1) == 1;
+        try {
+            return databaseInformation.frameworkCompatibilityCheck(conn, requested, current) == 1;
         } catch (SQLException e) {
             if (e.getErrorCode() == 6550)
                 return false;
