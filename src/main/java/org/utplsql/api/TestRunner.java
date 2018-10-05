@@ -1,6 +1,8 @@
 package org.utplsql.api;
 
 import org.utplsql.api.compatibility.CompatibilityProxy;
+import org.utplsql.api.db.DatabaseInformation;
+import org.utplsql.api.db.DefaultDatabaseInformation;
 import org.utplsql.api.exception.DatabaseNotCompatibleException;
 import org.utplsql.api.exception.SomeTestsFailedException;
 import org.utplsql.api.exception.UtPLSQLNotInstalledException;
@@ -120,7 +122,9 @@ public class TestRunner {
 
     public void run(Connection conn) throws SomeTestsFailedException, SQLException, DatabaseNotCompatibleException, UtPLSQLNotInstalledException {
 
-        compatibilityProxy = new CompatibilityProxy(conn, options.skipCompatibilityCheck);
+        DatabaseInformation databaseInformation = new DefaultDatabaseInformation();
+
+        compatibilityProxy = new CompatibilityProxy(conn, options.skipCompatibilityCheck, databaseInformation);
         if ( reporterFactory ==  null )
             reporterFactory = ReporterFactory.createDefault(compatibilityProxy);
 
@@ -133,7 +137,7 @@ public class TestRunner {
             validateReporter(conn, r);
 
         if (options.pathList.isEmpty()) {
-            options.pathList.add(DBHelper.getCurrentSchema(conn));
+            options.pathList.add(databaseInformation.getCurrentSchema(conn));
         }
 
         if (options.reporterList.isEmpty()) {

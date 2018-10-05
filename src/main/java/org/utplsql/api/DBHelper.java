@@ -30,10 +30,13 @@ public final class DBHelper {
 
     /**
      * Return the current schema name.
+     * Deprecated. Use DatabaseInformation-Interface instead.
+     *
      * @param conn the connection
      * @return the schema name
      * @throws SQLException any database error
      */
+    @Deprecated
     public static String getCurrentSchema(Connection conn) throws SQLException {
         assert conn != null;
         try (CallableStatement callableStatement = conn.prepareCall("BEGIN ? := sys_context('userenv', 'current_schema'); END;")) {
@@ -44,11 +47,13 @@ public final class DBHelper {
     }
 
     /** Returns the Frameworks version string of the given connection
+     * Deprecated. Use DatabaseInformation-Interface instead.
      *
      * @param conn Active db connection
      * @return Version-string of the utPLSQL framework
      * @throws SQLException any database error
      */
+    @Deprecated
     public static Version getDatabaseFrameworkVersion( Connection conn ) throws SQLException {
         Objects.requireNonNull(conn);
         Version result = new Version("");
@@ -71,11 +76,13 @@ public final class DBHelper {
     }
 
     /** Returns the Oracle database Version from a given connection object
+     * Deprecated. Use DatabaseInformation-Interface instead.
      *
      * @param conn Connection-Object
      * @return Returns version-string of the Oracle Database product component
      * @throws SQLException any database error
      */
+    @Deprecated
     public static String getOracleDatabaseVersion( Connection conn ) throws SQLException {
         assert conn != null;
         String result = null;
