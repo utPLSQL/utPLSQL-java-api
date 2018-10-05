@@ -17,6 +17,7 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.concurrent.*;
 
+import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertTrue;
 import static org.junit.jupiter.api.Assertions.fail;
 
@@ -137,7 +138,10 @@ public class OutputBufferIT extends AbstractDatabaseTest {
 
             List<String> outputLines = reporter.getOutputBuffer().fetchAll(getConnection());
 
-            assertTrue(outputLines.get(0).contains("encoding=\"" + Charset.defaultCharset().toString() + "\""));
+            String defaultCharset = Charset.defaultCharset().toString();
+            String actualCharset = outputLines.get(0).replaceAll("(.*)encoding=\"([^\"]+)\"(.*)", "$2");
+
+            assertEquals(defaultCharset.toLowerCase(), actualCharset.toLowerCase());
         }
 
     }
