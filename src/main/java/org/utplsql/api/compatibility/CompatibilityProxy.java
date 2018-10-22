@@ -1,6 +1,5 @@
 package org.utplsql.api.compatibility;
 
-import org.utplsql.api.DBHelper;
 import org.utplsql.api.TestRunnerOptions;
 import org.utplsql.api.Version;
 import org.utplsql.api.db.DatabaseInformation;
@@ -12,10 +11,8 @@ import org.utplsql.api.reporter.Reporter;
 import org.utplsql.api.testRunner.TestRunnerStatement;
 import org.utplsql.api.testRunner.TestRunnerStatementProvider;
 
-import java.sql.CallableStatement;
 import java.sql.Connection;
 import java.sql.SQLException;
-import java.sql.Types;
 import java.util.Objects;
 
 /** Class to check compatibility with database framework and also to give several specific implementations depending
@@ -120,13 +117,9 @@ public class CompatibilityProxy {
         Version requestedVersion = new Version(requested);
 
         Objects.requireNonNull(databaseVersion.getMajor(), "Illegal database Version: " + databaseVersion.toString());
-        if (
-                databaseVersion.getMajor().equals(requestedVersion.getMajor())
-                        && (requestedVersion.getMinor() == null
-                        || requestedVersion.getMinor().equals(databaseVersion.getMinor())) )
-            return true;
-        else
-            return false;
+        return databaseVersion.getMajor().equals(requestedVersion.getMajor())
+                && (requestedVersion.getMinor() == null
+                || requestedVersion.getMinor().equals(databaseVersion.getMinor()));
     }
 
     /** Checks if actual API-version is compatible with utPLSQL database version and throws a DatabaseNotCompatibleException if not

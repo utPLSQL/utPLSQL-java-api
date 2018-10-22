@@ -47,12 +47,12 @@ class NonOutputBuffer implements OutputBuffer {
     }
 
     @Override
-    public void fetchAvailable(Connection conn, Consumer<String> onLineFetched) throws SQLException {
+    public void fetchAvailable(Connection conn, Consumer<String> onLineFetched) {
         onLineFetched.accept(null);
     }
 
     @Override
-    public List<String> fetchAll(Connection conn) throws SQLException {
+    public List<String> fetchAll(Connection conn) {
         return new ArrayList<>();
     }
 }

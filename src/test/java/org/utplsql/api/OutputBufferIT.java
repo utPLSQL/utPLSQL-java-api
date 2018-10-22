@@ -110,7 +110,7 @@ public class OutputBufferIT extends AbstractDatabaseTest {
     }
 
     @Test
-    public void getOutputFromSonarReporter() throws SQLException, InvalidVersionException {
+    public void getOutputFromSonarReporter() throws SQLException {
         Reporter reporter = new DefaultReporter(CoreReporters.UT_SONAR_TEST_REPORTER.name(), null).init(newConnection());
 
         new TestRunner()

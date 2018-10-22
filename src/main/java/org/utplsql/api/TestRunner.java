@@ -120,7 +120,7 @@ public class TestRunner {
             throw new IllegalStateException("ReporterFactory must be set to add delayed Reporters!");
     }
 
-    public void run(Connection conn) throws SomeTestsFailedException, SQLException, DatabaseNotCompatibleException, UtPLSQLNotInstalledException {
+    public void run(Connection conn) throws SQLException {
 
         DatabaseInformation databaseInformation = new DefaultDatabaseInformation();
 
