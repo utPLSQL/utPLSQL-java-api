@@ -2,6 +2,7 @@ package org.utplsql.api.db;
 
 import org.utplsql.api.Version;
 
+import javax.annotation.Nullable;
 import java.sql.Connection;
 import java.sql.SQLException;
 
@@ -17,5 +18,5 @@ public interface DatabaseInformation {
 
     String getCurrentSchema( Connection conn ) throws SQLException;
 
-    int frameworkCompatibilityCheck(Connection conn, String requested, String current) throws SQLException;
+    int frameworkCompatibilityCheck(Connection conn, String requested, @Nullable String current) throws SQLException;
 }

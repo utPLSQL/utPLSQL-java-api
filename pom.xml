@@ -4,7 +4,7 @@
 
   <groupId>org.utplsql</groupId>
   <artifactId>java-api</artifactId>
-  <version>3.1.1.1-SNAPSHOT</version>
+  <version>3.1.2-SNAPSHOT</version>
   <packaging>jar</packaging>
 
   <name>utPLSQL-java-api</name>
@@ -35,6 +35,11 @@
       <artifactId>orai18n</artifactId>
       <version>12.2.0.1</version>
       <scope>compile</scope>
+    </dependency>
+    <dependency>
+      <groupId>com.google.code.findbugs</groupId>
+      <artifactId>jsr305</artifactId>
+      <version>3.0.2</version>
     </dependency>
     <dependency>
       <groupId>org.junit.jupiter</groupId>

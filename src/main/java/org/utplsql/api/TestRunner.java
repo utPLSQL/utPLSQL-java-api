@@ -58,7 +58,7 @@ public class TestRunner {
     }
 
     public TestRunner addReporterList(List<Reporter> reporterList) {
-        if (options.reporterList != null) options.reporterList.addAll(reporterList);
+        options.reporterList.addAll(reporterList);
         return this;
     }
 

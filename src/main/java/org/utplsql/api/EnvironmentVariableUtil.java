@@ -1,5 +1,7 @@
 package org.utplsql.api;
 
+import javax.annotation.Nullable;
+
 /**
  * This class provides an easy way to get environmental variables.
  * This is mainly to improve testability but also to standardize the way how utPLSQL API and CLI read from
@@ -37,7 +39,7 @@ public class EnvironmentVariableUtil {
      * @param defaultValue Default value if nothing found
      * @return Environment value or defaultValue
      */
-    public static String getEnvValue(String key, String defaultValue) {
+    public static String getEnvValue(String key, @Nullable String defaultValue) {
 
         String val = System.getProperty(key);
         if (val == null || val.isEmpty()) val = System.getenv(key);
