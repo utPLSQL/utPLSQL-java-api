@@ -40,14 +40,16 @@ To use the java-api library, add this to the `<dependencies>` section of your `p
 <dependency>
     <groupId>org.utplsql</groupId>
     <artifactId>java-api</artifactId>
-    <version>3.1.0</version>
+    <version>3.1.2</version>
     <scope>compile</scope>
 </dependency>
 ```
 
 ## Compatibility
 The latest Java-API is always compatible with all database frameworks of the same major version.
-For example API-3.0.4 is compatible with database framework 3.0.0-3.1.0 but not with database framework 2.x.
+For example API-3.0.4 is compatible with database framework 3.0.0-3.1.2 but not with database framework 2.x.
+
+It is although recommended to always use the latest release of the API to build your tools for utPLSQL.
 
 ## Usage
 
@@ -84,7 +86,9 @@ try (Connection conn = DriverManager.getConnection(url)) {
 
 ### Optional Features
 
-There might be some features which are not available in previous versions of utPLSQL. These "optional features" are listed in the enum org.utplsql.api.compatibility.OptionalFeatures and their availability can be checked against a connection or Version-object:
+There might be some features which are not available in previous versions of utPLSQL. 
+These "optional features" are listed in the enum org.utplsql.api.compatibility.OptionalFeatures 
+and their availability can be checked against a connection or Version-object:
 
 ```OptionalFeatures.CUSTOM_REPORTERS.isAvailableFor( databaseConnection );```
 
