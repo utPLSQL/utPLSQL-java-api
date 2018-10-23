@@ -57,7 +57,7 @@ public class FileMapping implements SQLData {
     }
 
     @Override
-    public String getSQLTypeName() throws SQLException {
+    public String getSQLTypeName() {
         return CustomTypes.UT_FILE_MAPPING;
     }
 

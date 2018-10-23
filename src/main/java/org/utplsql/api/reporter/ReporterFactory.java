@@ -5,6 +5,7 @@ import oracle.sql.ORAData;
 import oracle.sql.ORADataFactory;
 import org.utplsql.api.compatibility.CompatibilityProxy;
 
+import javax.annotation.Nullable;
 import java.sql.SQLException;
 import java.sql.Struct;
 import java.util.HashMap;
@@ -74,7 +75,7 @@ public final class ReporterFactory implements ORADataFactory {
      * @param attributes attributes from STRUCT
      * @return A reporter
      */
-    public Reporter createReporter(String reporterName, Object[] attributes) {
+    public Reporter createReporter(String reporterName, @Nullable Object[] attributes) {
 
         reporterName = reporterName.toUpperCase();
         BiFunction<String, Object[], ? extends Reporter> supplier = DefaultReporter::new;

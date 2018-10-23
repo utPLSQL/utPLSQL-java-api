@@ -20,7 +20,6 @@ public final class DBHelper {
      * @throws SQLException any database error
      */
     public static String newSysGuid(Connection conn) throws SQLException {
-        assert conn != null;
         try (CallableStatement callableStatement = conn.prepareCall("BEGIN ? := sys_guid(); END;")) {
             callableStatement.registerOutParameter(1, OracleTypes.RAW);
             callableStatement.executeUpdate();
@@ -38,7 +37,6 @@ public final class DBHelper {
      */
     @Deprecated
     public static String getCurrentSchema(Connection conn) throws SQLException {
-        assert conn != null;
         try (CallableStatement callableStatement = conn.prepareCall("BEGIN ? := sys_context('userenv', 'current_schema'); END;")) {
             callableStatement.registerOutParameter(1, Types.VARCHAR);
             callableStatement.executeUpdate();
@@ -55,7 +53,6 @@ public final class DBHelper {
      */
     @Deprecated
     public static Version getDatabaseFrameworkVersion( Connection conn ) throws SQLException {
-        Objects.requireNonNull(conn);
         Version result = new Version("");
         try (PreparedStatement stmt = conn.prepareStatement("select ut_runner.version() from dual"))
         {
@@ -84,7 +81,6 @@ public final class DBHelper {
      */
     @Deprecated
     public static String getOracleDatabaseVersion( Connection conn ) throws SQLException {
-        assert conn != null;
         String result = null;
         try (PreparedStatement stmt = conn.prepareStatement("select version from product_component_version where product like 'Oracle Database%'"))
         {
@@ -102,7 +98,6 @@ public final class DBHelper {
      * @param conn the connection
      */
     public static void enableDBMSOutput(Connection conn) {
-        assert conn != null;
         try (CallableStatement call = conn.prepareCall("BEGIN dbms_output.enable(NULL); END;")) {
             call.execute();
         } catch (SQLException e) {
@@ -115,7 +110,6 @@ public final class DBHelper {
      * @param conn the connection
      */
     public static void disableDBMSOutput(Connection conn) {
-        assert conn != null;
         try (CallableStatement call = conn.prepareCall("BEGIN dbms_output.disable(); END;")) {
             call.execute();
         } catch (SQLException e) {

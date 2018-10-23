@@ -27,7 +27,7 @@ public class KeyValuePair implements SQLData {
     }
 
     @Override
-    public String getSQLTypeName() throws SQLException {
+    public String getSQLTypeName() {
         return CustomTypes.UT_KEY_VALUE_PAIR;
     }
 

@@ -2,6 +2,7 @@ package org.utplsql.api;
 
 import org.utplsql.api.exception.InvalidVersionException;
 
+import javax.annotation.Nullable;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
@@ -105,7 +106,7 @@ public class Version implements Comparable<Version> {
             return "invalid";
     }
 
-    private int compareToWithNulls( Integer i1, Integer i2 ) {
+    private int compareToWithNulls(@Nullable Integer i1, @Nullable Integer i2 ) {
         if ( i1 == null && i2 == null )
             return 0;
         else if ( i1 == null )
