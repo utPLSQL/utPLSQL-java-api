@@ -42,9 +42,13 @@ public class OutputBufferProvider {
 
     private static boolean hasOutput( Reporter reporter, OracleConnection oraConn ) throws SQLException {
 
-        String sql = "select is_output_reporter from table(ut_runner.get_reporters_list) where regexp_like(reporter_object_name, ?)";
+        String sql = "select is_output_reporter " +
+                " from table(ut_runner.get_reporters_list)" +
+                " where ? = substr(reporter_object_name, length(reporter_object_name)-?+1)";
         try ( PreparedStatement stmt = oraConn.prepareStatement(sql)) {
-            stmt.setString(1, "[a-zA-Z0-9_]*\\.?" + reporter.getTypeName());
+            stmt.setQueryTimeout(3);
+            stmt.setString(1, reporter.getTypeName());
+            stmt.setInt(2, reporter.getTypeName().length());
 
             try ( ResultSet rs = stmt.executeQuery() ) {
                 if ( rs.next() ) {
