@@ -1,13 +1,13 @@
 package org.utplsql.api.outputBuffer;
 
 import oracle.jdbc.OracleConnection;
+import oracle.jdbc.OracleTypes;
 import org.utplsql.api.Version;
 import org.utplsql.api.exception.InvalidVersionException;
 import org.utplsql.api.reporter.Reporter;
 
+import java.sql.CallableStatement;
 import java.sql.Connection;
-import java.sql.PreparedStatement;
-import java.sql.ResultSet;
 import java.sql.SQLException;
 
 public class OutputBufferProvider {
@@ -42,26 +42,29 @@ public class OutputBufferProvider {
 
     private static boolean hasOutput( Reporter reporter, OracleConnection oraConn ) throws SQLException {
 
-        String sql = "select is_output_reporter " +
-                " from table(ut_runner.get_reporters_list)" +
-                " where ? = substr(reporter_object_name, length(reporter_object_name)-?+1)";
-        try ( PreparedStatement stmt = oraConn.prepareStatement(sql)) {
+        String sql =
+                "declare " +
+                "   l_result boolean;" +
+                "begin " +
+                "   begin " +
+                "       execute immediate '" +
+                "       begin " +
+                "           :x :=' || DBMS_ASSERT.SQL_OBJECT_NAME( ? ) || '() is of (ut_output_reporter_base);" +
+                "       end;'" +
+                "       using out l_result;" +
+                "   exception when others then null;" +
+                "   end;" +
+                "   ? := case l_result when true then 1 else 0 end;" +
+                "end;";
+
+        try ( CallableStatement stmt = oraConn.prepareCall(sql)) {
             stmt.setQueryTimeout(3);
             stmt.setString(1, reporter.getTypeName());
-            stmt.setInt(2, reporter.getTypeName().length());
+            stmt.registerOutParameter(2, OracleTypes.INTEGER);
 
-            try ( ResultSet rs = stmt.executeQuery() ) {
-                if ( rs.next() ) {
-                    String isReporterResult = rs.getString(1);
-
-                    if ( isReporterResult == null )
-                        throw new IllegalArgumentException("The given type " + reporter.getTypeName() + " is not a valid Reporter!");
-                    else
-                        return isReporterResult.equalsIgnoreCase("Y");
-                }
-                else
-                    throw new SQLException("Could not check Reporter validity");
-            }
+            stmt.execute();
+            int result = stmt.getInt(2);
+            return result == 1;
         }
     }
 
