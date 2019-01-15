@@ -42,6 +42,10 @@ public class OutputBufferProvider {
 
     private static boolean hasOutput( Reporter reporter, OracleConnection oraConn ) throws SQLException {
 
+        String reporterName = reporter.getTypeName();
+        if ( !reporterName.matches("^[a-zA-Z0-9_]+$"))
+            throw new IllegalArgumentException(String.format("Reporter-Name %s is not valid", reporterName));
+
         String sql =
                 "declare " +
                 "   l_result int;" +
@@ -49,7 +53,7 @@ public class OutputBufferProvider {
                 "   begin " +
                 "       execute immediate '" +
                 "       begin " +
-                "           :x := case (' || DBMS_ASSERT.SQL_OBJECT_NAME( ? ) || '() is of (ut_output_reporter_base)) when true then 1 else 0 end;" +
+                "           :x := case ' || ? || '() is of (ut_output_reporter_base) when true then 1 else 0 end;" +
                 "       end;'" +
                 "       using out l_result;" +
                 "   end;" +
@@ -58,13 +62,13 @@ public class OutputBufferProvider {
 
         try ( CallableStatement stmt = oraConn.prepareCall(sql)) {
             stmt.setQueryTimeout(3);
-            stmt.setString(1, reporter.getTypeName());
+            stmt.setString(1, reporterName);
             stmt.registerOutParameter(2, OracleTypes.INTEGER);
 
             stmt.execute();
             int result = stmt.getInt(2);
 
-            System.out.println("Output-check for " + reporter.getTypeName() + ": " + result);
+            System.out.println("Output-check for " + reporterName + ": " + result);
             return result == 1;
         }
     }
