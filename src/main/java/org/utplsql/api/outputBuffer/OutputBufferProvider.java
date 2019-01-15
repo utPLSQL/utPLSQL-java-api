@@ -49,7 +49,7 @@ public class OutputBufferProvider {
                 "   begin " +
                 "       execute immediate '" +
                 "       begin " +
-                "           :x := case ' || DBMS_ASSERT.SQL_OBJECT_NAME( ? ) || '() is of (ut_output_reporter_base) when true then 1 else 0 end;" +
+                "           :x := case (' || DBMS_ASSERT.SQL_OBJECT_NAME( ? ) || '() is of (ut_output_reporter_base)) when true then 1 else 0 end;" +
                 "       end;'" +
                 "       using out l_result;" +
                 "   end;" +
