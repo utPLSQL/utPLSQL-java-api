@@ -42,7 +42,6 @@ public class OutputBufferProvider {
 
     private static boolean hasOutput( Reporter reporter, OracleConnection oraConn ) throws SQLException {
 
-        System.out.println("Checking Reporter hasOutput: " + reporter.getTypeName());
         String sql =
                 "declare " +
                 "   l_result int;" +
@@ -53,7 +52,6 @@ public class OutputBufferProvider {
                 "           :x := case ' || DBMS_ASSERT.SQL_OBJECT_NAME( ? ) || '() is of (ut_output_reporter_base) when true then 1 else 0 end;" +
                 "       end;'" +
                 "       using out l_result;" +
-                "   exception when others then null;" +
                 "   end;" +
                 "   ? := l_result;" +
                 "end;";
@@ -66,7 +64,7 @@ public class OutputBufferProvider {
             stmt.execute();
             int result = stmt.getInt(2);
 
-            System.out.println("Output-check: " + result);
+            System.out.println("Output-check for " + reporter.getTypeName() + ": " + result);
             return result == 1;
         }
     }
