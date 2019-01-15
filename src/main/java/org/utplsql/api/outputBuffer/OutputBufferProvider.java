@@ -45,17 +45,17 @@ public class OutputBufferProvider {
         System.out.println("Checking Reporter hasOutput: " + reporter.getTypeName());
         String sql =
                 "declare " +
-                "   l_result boolean;" +
+                "   l_result int;" +
                 "begin " +
                 "   begin " +
                 "       execute immediate '" +
                 "       begin " +
-                "           :x :=' || DBMS_ASSERT.SQL_OBJECT_NAME( ? ) || '() is of (ut_output_reporter_base);" +
+                "           :x := case ' || DBMS_ASSERT.SQL_OBJECT_NAME( ? ) || '() is of (ut_output_reporter_base) when true then 1 else 0 end;" +
                 "       end;'" +
                 "       using out l_result;" +
                 "   exception when others then null;" +
                 "   end;" +
-                "   ? := case l_result when true then 1 else 0 end;" +
+                "   ? := l_result;" +
                 "end;";
 
         try ( CallableStatement stmt = oraConn.prepareCall(sql)) {
