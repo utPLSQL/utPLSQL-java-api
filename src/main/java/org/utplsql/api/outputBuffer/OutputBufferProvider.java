@@ -53,7 +53,7 @@ public class OutputBufferProvider {
                 "   begin " +
                 "       execute immediate '" +
                 "       begin " +
-                "           :x := case ' || dbms_assert.valid_sql_name( ? ) || '() is of (ut_output_reporter_base) when true then 1 else 0 end;" +
+                "           :x := case ' || dbms_assert.simple_sql_name( ? ) || '() is of (ut_output_reporter_base) when true then 1 else 0 end;" +
                 "       end;'" +
                 "       using out l_result;" +
                 "   end;" +
