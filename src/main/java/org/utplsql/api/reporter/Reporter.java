@@ -5,6 +5,8 @@ import oracle.jdbc.OracleConnection;
 import oracle.jdbc.OracleTypes;
 import oracle.sql.Datum;
 import oracle.sql.ORAData;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.utplsql.api.compatibility.CompatibilityProxy;
 import org.utplsql.api.outputBuffer.OutputBuffer;
 
@@ -17,6 +19,8 @@ import java.sql.SQLException;
  * @author pesse
  */
 public abstract class Reporter implements ORAData {
+
+    private static final Logger logger = LoggerFactory.getLogger(Reporter.class);
 
     private String selfType;
     private String id;
@@ -73,6 +77,8 @@ public abstract class Reporter implements ORAData {
         Reporter obj = (Reporter) callableStatement.getORAData(1, reporterFactory);
 
         setAttributes(obj.getAttributes());
+
+        logger.debug("Database-reporter initialized, Type: {}, ID: {}", selfType, id);
     }
 
     protected void setAttributes(Object[] attributes ) {

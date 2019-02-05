@@ -1,5 +1,7 @@
 package org.utplsql.api;
 
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.utplsql.api.compatibility.CompatibilityProxy;
 import org.utplsql.api.db.DatabaseInformation;
 import org.utplsql.api.db.DefaultDatabaseInformation;
@@ -23,6 +25,8 @@ import java.util.List;
  * @author pesse
  */
 public class TestRunner {
+
+    private static final Logger logger = LoggerFactory.getLogger(TestRunner.class);
 
     private final TestRunnerOptions options = new TestRunnerOptions();
     private CompatibilityProxy compatibilityProxy;
@@ -122,9 +126,13 @@ public class TestRunner {
 
     public void run(Connection conn) throws SQLException {
 
+        logger.info("TestRunner initialized");
+
         DatabaseInformation databaseInformation = new DefaultDatabaseInformation();
 
         compatibilityProxy = new CompatibilityProxy(conn, options.skipCompatibilityCheck, databaseInformation);
+        logger.info("Running on utPLSQL {}", compatibilityProxy.getDatabaseVersion());
+
         if ( reporterFactory ==  null )
             reporterFactory = ReporterFactory.createDefault(compatibilityProxy);
 
@@ -133,6 +141,7 @@ public class TestRunner {
         // First of all check version compatibility
         compatibilityProxy.failOnNotCompatible();
 
+        logger.info("Initializing reporters");
         for (Reporter r : options.reporterList)
             validateReporter(conn, r);
 
@@ -141,12 +150,14 @@ public class TestRunner {
         }
 
         if (options.reporterList.isEmpty()) {
+            logger.info("No reporter given so choosing ut_documentation_reporter");
             options.reporterList.add(new DocumentationReporter().init(conn));
         }
 
-        DBHelper.enableDBMSOutput(conn);
         try(TestRunnerStatement testRunnerStatement = compatibilityProxy.getTestRunnerStatement(options, conn)) {
+            logger.info("Running tests");
             testRunnerStatement.execute();
+            logger.info("Running tests finished.");
         } catch (SQLException e) {
             if (e.getErrorCode() == SomeTestsFailedException.ERROR_CODE) {
                 throw new SomeTestsFailedException(e.getMessage(), e);
@@ -157,8 +168,6 @@ public class TestRunner {
             else {
                 throw e;
             }
-        } finally {
-            DBHelper.disableDBMSOutput(conn);
         }
     }
 
