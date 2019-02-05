@@ -154,7 +154,6 @@ public class TestRunner {
             options.reporterList.add(new DocumentationReporter().init(conn));
         }
 
-        DBHelper.enableDBMSOutput(conn);
         try(TestRunnerStatement testRunnerStatement = compatibilityProxy.getTestRunnerStatement(options, conn)) {
             logger.info("Running tests");
             testRunnerStatement.execute();
@@ -169,8 +168,6 @@ public class TestRunner {
             else {
                 throw e;
             }
-        } finally {
-            DBHelper.disableDBMSOutput(conn);
         }
     }
 
