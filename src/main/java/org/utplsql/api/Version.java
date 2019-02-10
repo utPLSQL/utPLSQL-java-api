@@ -64,7 +64,7 @@ public class Version implements Comparable<Version> {
     }
 
     public static Version create(final String versionString) {
-        String origString = Objects.requireNonNull(versionString);
+        String origString = Objects.requireNonNull(versionString).trim();
         Version version = knownVersions.get(origString);
         return version != null ? version : parseVersionString(origString);
     }
