@@ -15,7 +15,7 @@ class VersionObjectTest {
         assertEquals(1, (long)v.getMinor());
         assertEquals(3, (long)v.getBugfix());
         assertEquals(1234, (long)v.getBuild());
-        assertEquals(true, v.isValid());
+        assertTrue(v.isValid());
         assertEquals("3.1.3.1234", v.getNormalizedString());
     }
 
@@ -39,7 +39,7 @@ class VersionObjectTest {
         assertEquals(1, (long)v.getMinor());
         assertNull(v.getBugfix());
         assertNull(v.getBuild());
-        assertEquals(true, v.isValid());
+        assertTrue(v.isValid());
         assertEquals("3.1", v.getNormalizedString());
     }
 
@@ -51,7 +51,7 @@ class VersionObjectTest {
         assertNull(v.getMinor());
         assertNull(v.getBugfix());
         assertNull(v.getBuild());
-        assertEquals(false, v.isValid());
+        assertFalse(v.isValid());
         assertEquals("invalid", v.getNormalizedString());
     }
 
@@ -80,29 +80,24 @@ class VersionObjectTest {
     }
 
     @Test
-    void isGreaterOrEqualThan()
+    void isGreaterOrEqualThan() throws InvalidVersionException
     {
         Version base = Version.create("2.3.4.5");
 
-        try {
-            assertEquals(true, base.isGreaterOrEqualThan(Version.create("1")));
-            assertEquals(true, base.isGreaterOrEqualThan(Version.create("2")));
-            assertEquals(true, base.isGreaterOrEqualThan(Version.create("2.3")));
-            assertEquals(true, base.isGreaterOrEqualThan(Version.create("2.2")));
-            assertEquals(true, base.isGreaterOrEqualThan(Version.create("2.3.4")));
-            assertEquals(true, base.isGreaterOrEqualThan(Version.create("2.3.3")));
-            assertEquals(true, base.isGreaterOrEqualThan(Version.create("2.3.4.5")));
-            assertEquals(true, base.isGreaterOrEqualThan(Version.create("2.3.4.4")));
+        assertTrue(base.isGreaterOrEqualThan(Version.create("1")));
+        assertTrue(base.isGreaterOrEqualThan(Version.create("2")));
+        assertTrue(base.isGreaterOrEqualThan(Version.create("2.3")));
+        assertTrue(base.isGreaterOrEqualThan(Version.create("2.2")));
+        assertTrue(base.isGreaterOrEqualThan(Version.create("2.3.4")));
+        assertTrue(base.isGreaterOrEqualThan(Version.create("2.3.3")));
+        assertTrue(base.isGreaterOrEqualThan(Version.create("2.3.4.5")));
+        assertTrue(base.isGreaterOrEqualThan(Version.create("2.3.4.4")));
 
-            assertEquals(false, base.isGreaterOrEqualThan(Version.create("2.3.4.6")));
-            assertEquals(false, base.isGreaterOrEqualThan(Version.create("2.3.5")));
-            assertEquals(false, base.isGreaterOrEqualThan(Version.create("2.4")));
-            assertEquals(false, base.isGreaterOrEqualThan(Version.create("3")));
-        }
-        catch ( InvalidVersionException e )
-        {
-            fail(e);
-        }
+        assertFalse(base.isGreaterOrEqualThan(Version.create("2.3.4.6")));
+        assertFalse(base.isGreaterOrEqualThan(Version.create("2.3.5")));
+        assertFalse(base.isGreaterOrEqualThan(Version.create("2.4")));
+        assertFalse(base.isGreaterOrEqualThan(Version.create("3")));
+
     }
 
     @Test
@@ -113,7 +108,7 @@ class VersionObjectTest {
             Version.create("2.3.4.5").isGreaterOrEqualThan(Version.create("aerfvf"));
             fail("Given Version is invalid - not recognized");
         }
-        catch ( InvalidVersionException e ) {
+        catch ( InvalidVersionException ignored ) {
         }
 
         // Base version is invalid
@@ -121,7 +116,7 @@ class VersionObjectTest {
             Version.create("erefs").isGreaterOrEqualThan(Version.create("1.2.3"));
             fail("Base version is invalid - not recognized");
         }
-        catch ( InvalidVersionException e ) {
+        catch ( InvalidVersionException ignored ) {
         }
 
         // Both versions are invalid
@@ -129,7 +124,7 @@ class VersionObjectTest {
             Version.create("erefs").isGreaterOrEqualThan(Version.create("aerfvf"));
             fail("Both versions are invalid - not recognized");
         }
-        catch ( InvalidVersionException e ) {
+        catch ( InvalidVersionException ignored ) {
         }
     }
 }
