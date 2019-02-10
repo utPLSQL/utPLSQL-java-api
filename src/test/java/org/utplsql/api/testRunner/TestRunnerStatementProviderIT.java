@@ -9,30 +9,30 @@ import java.sql.SQLException;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
 
-public class TestRunnerStatementProviderIT extends AbstractDatabaseTest {
+class TestRunnerStatementProviderIT extends AbstractDatabaseTest {
 
     @Test
-    public void testGettingPre303Version() throws SQLException {
-        TestRunnerStatement stmt = TestRunnerStatementProvider.getCompatibleTestRunnerStatement(new Version("3.0.2"), new TestRunnerOptions(), getConnection());
+    void testGettingPre303Version() throws SQLException {
+        TestRunnerStatement stmt = TestRunnerStatementProvider.getCompatibleTestRunnerStatement(Version.V3_0_2, new TestRunnerOptions(), getConnection());
         assertEquals(Pre303TestRunnerStatement.class, stmt.getClass());
     }
 
 
     @Test
-    public void testGettingPre312Version_from_303() throws SQLException {
-        TestRunnerStatement stmt = TestRunnerStatementProvider.getCompatibleTestRunnerStatement(new Version("3.0.3"), new TestRunnerOptions(), getConnection());
+    void testGettingPre312Version_from_303() throws SQLException {
+        TestRunnerStatement stmt = TestRunnerStatementProvider.getCompatibleTestRunnerStatement(Version.V3_0_3, new TestRunnerOptions(), getConnection());
         assertEquals(Pre312TestRunnerStatement.class, stmt.getClass());
     }
 
     @Test
-    public void testGettingPre312Version_from_311() throws SQLException {
-        TestRunnerStatement stmt = TestRunnerStatementProvider.getCompatibleTestRunnerStatement(new Version("3.1.1"), new TestRunnerOptions(), getConnection());
+    void testGettingPre312Version_from_311() throws SQLException {
+        TestRunnerStatement stmt = TestRunnerStatementProvider.getCompatibleTestRunnerStatement(Version.V3_1_1, new TestRunnerOptions(), getConnection());
         assertEquals(Pre312TestRunnerStatement.class, stmt.getClass());
     }
 
     @Test
-    public void testGettingActualVersion() throws SQLException {
-        TestRunnerStatement stmt = TestRunnerStatementProvider.getCompatibleTestRunnerStatement(new Version("3.1.2"), new TestRunnerOptions(), getConnection());
+    void testGettingActualVersion() throws SQLException {
+        TestRunnerStatement stmt = TestRunnerStatementProvider.getCompatibleTestRunnerStatement(Version.V3_1_2, new TestRunnerOptions(), getConnection());
         assertEquals(ActualTestRunnerStatement.class, stmt.getClass());
     }
 }

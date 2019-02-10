@@ -7,10 +7,10 @@ import org.utplsql.api.reporter.ReporterFactory;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
 
-public class RegisterCustomReporterTest {
+class RegisterCustomReporterTest {
 
     @Test
-    public void addCustomReporter() {
+    void addCustomReporter() {
 
         ReporterFactory reporterFactory = ReporterFactory.createEmpty();
         reporterFactory.registerReporterFactoryMethod("ut_custom_reporter",
@@ -23,7 +23,7 @@ public class RegisterCustomReporterTest {
     }
 
     @Test
-    public void createCustomDefaultReporter() {
+    void createCustomDefaultReporter() {
         ReporterFactory reporterFactory = ReporterFactory.createEmpty();
         Reporter r = reporterFactory.createReporter("ut_custom_reporter");
 

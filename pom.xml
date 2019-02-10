@@ -14,8 +14,7 @@
     <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
     <maven.compiler.source>1.8</maven.compiler.source>
     <maven.compiler.target>1.8</maven.compiler.target>
-    <junit.platform.version>1.0.3</junit.platform.version>
-    <junit.jupiter.version>5.0.3</junit.jupiter.version>
+    <junit.jupiter.version>5.4.0</junit.jupiter.version>
     <coverage.resources.directory>${basedir}/src/main/resources/CoverageHTMLReporter</coverage.resources.directory>
     <coverage.resources.version>1.0.1</coverage.resources.version>
     <coverage.resources.zip.directory>utPLSQL-coverage-html-${coverage.resources.version}</coverage.resources.zip.directory>
@@ -50,13 +49,7 @@
     <!-- Tests -->
     <dependency>
       <groupId>org.junit.jupiter</groupId>
-      <artifactId>junit-jupiter-api</artifactId>
-      <version>${junit.jupiter.version}</version>
-      <scope>test</scope>
-    </dependency>
-    <dependency>
-      <groupId>org.junit.jupiter</groupId>
-      <artifactId>junit-jupiter-engine</artifactId>
+      <artifactId>junit-jupiter</artifactId>
       <version>${junit.jupiter.version}</version>
       <scope>test</scope>
     </dependency>
@@ -163,25 +156,18 @@
       <plugin>
         <groupId>org.apache.maven.plugins</groupId>
         <artifactId>maven-surefire-plugin</artifactId>
-        <version>2.19.1</version>
+        <version>2.22.0</version>
         <configuration>
           <excludes>
             <exclude>**/*IT.java</exclude>
           </excludes>
           <trimStackTrace>false</trimStackTrace>
         </configuration>
-        <dependencies>
-          <dependency>
-            <groupId>org.junit.platform</groupId>
-            <artifactId>junit-platform-surefire-provider</artifactId>
-            <version>${junit.platform.version}</version>
-          </dependency>
-        </dependencies>
       </plugin>
       <plugin>
         <groupId>org.apache.maven.plugins</groupId>
         <artifactId>maven-failsafe-plugin</artifactId>
-        <version>2.19.1</version>
+        <version>2.22.0</version>
         <executions>
           <execution>
             <goals>
@@ -190,13 +176,6 @@
             </goals>
           </execution>
         </executions>
-        <dependencies>
-          <dependency>
-            <groupId>org.junit.platform</groupId>
-            <artifactId>junit-platform-surefire-provider</artifactId>
-            <version>${junit.platform.version}</version>
-          </dependency>
-        </dependencies>
       </plugin>
     </plugins>
     <resources>

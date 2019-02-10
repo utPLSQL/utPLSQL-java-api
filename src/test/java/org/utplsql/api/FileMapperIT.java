@@ -9,10 +9,10 @@ import java.util.List;
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.fail;
 
-public class FileMapperIT extends AbstractDatabaseTest {
+class FileMapperIT extends AbstractDatabaseTest {
 
     @Test
-    public void testFileMapper() throws SQLException {
+    void testFileMapper() throws SQLException {
         List<KeyValuePair> typeMappings = new ArrayList<>();
         typeMappings.add(new KeyValuePair("procedures", "PROCEDURE"));
         typeMappings.add(new KeyValuePair("functions", "FUNCTION"));

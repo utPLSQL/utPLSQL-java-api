@@ -17,8 +17,8 @@ public enum OptionalFeatures {
 
     OptionalFeatures( String minVersion, String maxVersion )
     {
-        this.minVersion = minVersion != null ? new Version(minVersion) : null;
-        this.maxVersion = maxVersion != null ? new Version(maxVersion) : null;
+        this.minVersion = minVersion != null ? Version.create(minVersion) : null;
+        this.maxVersion = maxVersion != null ? Version.create(maxVersion) : null;
     }
 
     public boolean isAvailableFor(Version version ) {

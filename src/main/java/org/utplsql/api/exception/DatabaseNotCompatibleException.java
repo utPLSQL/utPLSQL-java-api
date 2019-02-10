@@ -35,12 +35,12 @@ public class DatabaseNotCompatibleException extends SQLException {
 
     public DatabaseNotCompatibleException( Version databaseVersion, Throwable cause )
     {
-        this(new Version(CompatibilityProxy.UTPLSQL_COMPATIBILITY_VERSION), databaseVersion, cause );
+        this(Version.create(CompatibilityProxy.UTPLSQL_COMPATIBILITY_VERSION), databaseVersion, cause );
     }
 
     public DatabaseNotCompatibleException( Version databaseVersion )
     {
-        this(new Version(CompatibilityProxy.UTPLSQL_COMPATIBILITY_VERSION), databaseVersion, null );
+        this(Version.create(CompatibilityProxy.UTPLSQL_COMPATIBILITY_VERSION), databaseVersion, null );
     }
 
     public Version getClientVersion() {

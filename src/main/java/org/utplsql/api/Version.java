@@ -3,14 +3,33 @@ package org.utplsql.api;
 import org.utplsql.api.exception.InvalidVersionException;
 
 import javax.annotation.Nullable;
+import java.util.Map;
+import java.util.Objects;
+import java.util.function.Function;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
+import java.util.stream.Stream;
+
+import static java.util.stream.Collectors.toMap;
 
 /** Simple class to parse utPLSQL Version-information and provide the separate version-numbers
  *
  * @author pesse
  */
 public class Version implements Comparable<Version> {
+
+    public final static Version V3_0_0 = new Version("3.0.0", 3,0,0,null, true);
+    public final static Version V3_0_1 = new Version("3.0.1", 3,0,1,null, true);
+    public final static Version V3_0_2 = new Version("3.0.2", 3,0,2,null, true);
+    public final static Version V3_0_3 = new Version("3.0.3", 3,0,3,null, true);
+    public final static Version V3_0_4 = new Version("3.0.4", 3,0,4,null, true);
+    public final static Version V3_1_0 = new Version("3.1.0", 3,1,0,null, true);
+    public final static Version V3_1_1 = new Version("3.1.1", 3,1,1,null, true);
+    public final static Version V3_1_2 = new Version("3.1.2", 3,1,2,null, true);
+    private final static Map<String, Version> knownVersions =
+            Stream.of(V3_0_0, V3_0_1, V3_0_2, V3_0_3, V3_0_4, V3_1_0, V3_1_1, V3_1_2)
+                    .collect(toMap(Version::toString, Function.identity()));
+
     private final String origString;
     private final Integer major;
     private final Integer minor;
@@ -18,19 +37,49 @@ public class Version implements Comparable<Version> {
     private final Integer build;
     private final boolean valid;
 
-    public Version( String versionString ) {
+    private Version(String origString, Integer major, Integer minor, Integer bugfix, Integer build, boolean valid) {
+        this.origString = origString;
+        this.major = major;
+        this.minor = minor;
+        this.bugfix = bugfix;
+        this.build = build;
+        this.valid = valid;
+    }
+
+    /**
+     * Use {@link Version#create} factory method instead
+     * For removal
+     */
+    @Deprecated()
+    public Version(String versionString) {
         assert versionString != null;
-        this.origString = versionString.trim();
+        Version dummy = parseVersionString(versionString);
 
-        Pattern p = Pattern.compile("([0-9]+)\\.?([0-9]+)?\\.?([0-9]+)?\\.?([0-9]+)?");
+        this.origString = dummy.origString;
+        this.major = dummy.major;
+        this.minor =dummy.minor;
+        this.bugfix = dummy.bugfix;
+        this.build = dummy.build;
+        this.valid = dummy.valid;
+    }
 
-        Matcher m = p.matcher(origString);
+    public static Version create(final String versionString) {
+        String origString = Objects.requireNonNull(versionString);
+        Version version = knownVersions.get(origString);
+        return version != null ? version : parseVersionString(origString);
+    }
+
+    private static Version parseVersionString(String origString)
+    {
 
         Integer major = null;
         Integer minor = null;
         Integer bugfix = null;
         Integer build = null;
         boolean valid = false;
+        Pattern p = Pattern.compile("([0-9]+)\\.?([0-9]+)?\\.?([0-9]+)?\\.?([0-9]+)?");
+
+        Matcher m = p.matcher(origString);
 
         try {
             if (m.find()) {
@@ -52,11 +101,7 @@ public class Version implements Comparable<Version> {
             valid = false;
         }
 
-        this.major = major;
-        this.minor = minor;
-        this.bugfix = bugfix;
-        this.build = build;
-        this.valid = valid;
+        return new Version(origString, major, minor, bugfix, build, valid);
     }
 
     @Override
@@ -92,13 +137,13 @@ public class Version implements Comparable<Version> {
     {
         if ( isValid() ) {
             StringBuilder sb = new StringBuilder();
-            sb.append(String.valueOf(major));
+            sb.append(major);
             if ( minor != null )
-                sb.append(".").append(String.valueOf(minor));
+                sb.append(".").append(minor);
             if ( bugfix != null )
-                sb.append(".").append(String.valueOf(bugfix));
+                sb.append(".").append(bugfix);
             if ( build != null )
-                sb.append(".").append(String.valueOf(build));
+                sb.append(".").append(build);
 
             return sb.toString();
         }

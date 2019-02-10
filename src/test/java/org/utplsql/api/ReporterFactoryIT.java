@@ -11,11 +11,11 @@ import java.sql.SQLException;
 
 import static org.junit.jupiter.api.Assertions.assertTrue;
 
-public class ReporterFactoryIT extends AbstractDatabaseTest {
+class ReporterFactoryIT extends AbstractDatabaseTest {
 
 
     @Test
-    public void createDefaultReporterFactoryMethod() throws SQLException {
+    void createDefaultReporterFactoryMethod() throws SQLException {
         CompatibilityProxy proxy = new CompatibilityProxy(getConnection());
 
         ReporterFactory reporterFactory = ReporterFactory.createDefault(proxy);

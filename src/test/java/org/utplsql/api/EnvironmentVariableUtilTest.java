@@ -10,10 +10,10 @@ import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.fail;
 
 
-public class EnvironmentVariableUtilTest {
+class EnvironmentVariableUtilTest {
 
     @Test
-    public void testGetVariableFromEnvironment() {
+    void testGetVariableFromEnvironment() {
         // Let's find an environment variable which is not in Properties list and not empty
         Set<Object> props = System.getProperties().keySet();
         Optional<Map.Entry<String, String>> envVariable = System.getenv().entrySet().stream()
@@ -27,14 +27,14 @@ public class EnvironmentVariableUtilTest {
     }
 
     @Test
-    public void testGetVariableFromProperty() {
+    void testGetVariableFromProperty() {
         System.setProperty("PATH", "MyPath");
 
         assertEquals("MyPath", EnvironmentVariableUtil.getEnvValue("PATH"));
     }
 
     @Test
-    public void testGetVariableFromDefault() {
+    void testGetVariableFromDefault() {
 
         assertEquals("defaultValue", EnvironmentVariableUtil.getEnvValue("RANDOM"+String.valueOf(System.currentTimeMillis()), "defaultValue"));
     }

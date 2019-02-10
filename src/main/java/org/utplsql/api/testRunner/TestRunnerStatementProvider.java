@@ -25,9 +25,9 @@ public class TestRunnerStatementProvider {
         AbstractTestRunnerStatement stmt = null;
 
         try {
-            if (databaseVersion.isLessThan(new Version("3.0.3")))
+            if (databaseVersion.isLessThan(Version.V3_0_3))
                 stmt = new Pre303TestRunnerStatement(options, conn);
-            else if (databaseVersion.isLessThan(new Version("3.1.2")))
+            else if (databaseVersion.isLessThan(Version.V3_1_2))
                 stmt = new Pre312TestRunnerStatement(options, conn);
 
         } catch ( InvalidVersionException ignored ) {}
@@ -39,5 +39,6 @@ public class TestRunnerStatementProvider {
     }
 
     private TestRunnerStatementProvider() {
+        throw new UnsupportedOperationException();
     }
 }

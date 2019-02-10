@@ -62,7 +62,7 @@ public class CompatibilityProxy {
     private void doCompatibilityCheckWithDatabase( Connection conn ) throws SQLException
     {
         databaseVersion = databaseInformation.getUtPlsqlFrameworkVersion(conn);
-        Version clientVersion = new Version(UTPLSQL_COMPATIBILITY_VERSION);
+        Version clientVersion = Version.create(UTPLSQL_COMPATIBILITY_VERSION);
 
         if ( databaseVersion == null )
             throw new DatabaseNotCompatibleException("Could not get database version", clientVersion, null, null);
@@ -74,7 +74,7 @@ public class CompatibilityProxy {
             try {
                 compatible = versionCompatibilityCheck(conn, UTPLSQL_COMPATIBILITY_VERSION, null);
             } catch (SQLException e) {
-                throw new DatabaseNotCompatibleException("Compatibility-check failed with error. Aborting. Reason: " + e.getMessage(), clientVersion, new Version("Unknown"), e);
+                throw new DatabaseNotCompatibleException("Compatibility-check failed with error. Aborting. Reason: " + e.getMessage(), clientVersion, Version.create("Unknown"), e);
             }
         } else
             compatible = versionCompatibilityCheckPre303(UTPLSQL_COMPATIBILITY_VERSION);
@@ -85,7 +85,7 @@ public class CompatibilityProxy {
      */
     private void doExpectCompatibility()
     {
-        databaseVersion = new Version(UTPLSQL_API_VERSION);
+        databaseVersion = Version.create(UTPLSQL_API_VERSION);
         compatible = true;
     }
 
@@ -114,7 +114,7 @@ public class CompatibilityProxy {
      */
     private boolean versionCompatibilityCheckPre303(String requested )
     {
-        Version requestedVersion = new Version(requested);
+        Version requestedVersion = Version.create(requested);
 
         Objects.requireNonNull(databaseVersion.getMajor(), "Illegal database Version: " + databaseVersion.toString());
         return databaseVersion.getMajor().equals(requestedVersion.getMajor())
