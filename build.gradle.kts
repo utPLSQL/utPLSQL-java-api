@@ -49,6 +49,7 @@ dependencies {
     // Use Jupiter test framework
     testImplementation("org.junit.jupiter:junit-jupiter:5.4.0")
     testImplementation("org.hamcrest:hamcrest:2.1")
+    testImplementation("com.zaxxer:HikariCP:3.3.1")
     deployerJars("io.packagecloud.maven.wagon:maven-packagecloud-wagon:0.0.6")
 }
 

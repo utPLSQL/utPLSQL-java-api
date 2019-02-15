@@ -1,8 +1,12 @@
 package org.utplsql.api;
 
+import com.zaxxer.hikari.HikariDataSource;
+import org.junit.jupiter.api.AfterAll;
 import org.junit.jupiter.api.AfterEach;
+import org.junit.jupiter.api.BeforeAll;
 import org.junit.jupiter.api.BeforeEach;
 
+import javax.sql.DataSource;
 import java.sql.Connection;
 import java.sql.DriverManager;
 import java.sql.SQLException;
@@ -23,15 +27,36 @@ public abstract class AbstractDatabaseTest {
 
     private Connection conn;
     private List<Connection> connectionList = new ArrayList<>();
+    private HikariDataSource dataSource;
+
+    public AbstractDatabaseTest() {
+        this.dataSource = new HikariDataSource();
+        dataSource.setJdbcUrl("jdbc:oracle:thins:@" + sUrl);
+        dataSource.setUsername(sUser);
+        dataSource.setPassword(sPass);
+    }
+
+    public DataSource getDataSource() {
+        return dataSource;
+    }
 
     public static String getUser() {
         return sUser;
+    }
+
+    @BeforeAll
+    public void setupDataSource() {
+        this.dataSource = new HikariDataSource();
+        dataSource.setJdbcUrl("jdbc:oracle:thins:@" + sUrl);
+        dataSource.setUsername(sUser);
+        dataSource.setPassword(sPass);
     }
 
     @BeforeEach
     public void setupConnection() throws SQLException {
         conn = newConnection();
     }
+
 
     protected Connection getConnection() {
         return conn;
@@ -51,5 +76,10 @@ public abstract class AbstractDatabaseTest {
             } catch (SQLException ignored) {
             }
         }
+    }
+
+    @AfterAll
+    public void teardownDatasource() {
+        dataSource.close();
     }
 }
