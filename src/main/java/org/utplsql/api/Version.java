@@ -37,7 +37,7 @@ public class Version implements Comparable<Version> {
     private final Integer build;
     private final boolean valid;
 
-    private Version(String origString, Integer major, Integer minor, Integer bugfix, Integer build, boolean valid) {
+    private Version(String origString, @Nullable Integer major, @Nullable Integer minor, @Nullable Integer bugfix, @Nullable Integer build, boolean valid) {
         this.origString = origString;
         this.major = major;
         this.minor = minor;
@@ -109,18 +109,22 @@ public class Version implements Comparable<Version> {
         return origString;
     }
 
+    @Nullable
     public Integer getMajor() {
         return major;
     }
 
+    @Nullable
     public Integer getMinor() {
         return minor;
     }
 
+    @Nullable
     public Integer getBugfix() {
         return bugfix;
     }
 
+    @Nullable
     public Integer getBuild() {
         return build;
     }

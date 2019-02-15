@@ -28,7 +28,7 @@ public class CompatibilityProxy {
 
     private Version databaseVersion;
     private boolean compatible = false;
-    private DatabaseInformation databaseInformation;
+    private final DatabaseInformation databaseInformation;
 
     public CompatibilityProxy( Connection conn ) throws SQLException {
         this(conn, false, null);

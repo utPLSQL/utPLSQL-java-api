@@ -27,7 +27,7 @@ import static org.junit.jupiter.api.Assertions.*;
  */
 class OutputBufferIT extends AbstractDatabaseTest {
 
-    public Reporter createReporter() throws SQLException {
+    private Reporter createReporter() throws SQLException {
         Reporter reporter = new DocumentationReporter().init(newConnection());
         System.out.println("Reporter ID: " + reporter.getId());
         return reporter;
