@@ -53,18 +53,35 @@ dependencies {
 }
 
 tasks {
-    withType<Test> {
+    test {
+        useJUnitPlatform()
+        exclude("**/*IT.class")
+        testLogging {
+            events("passed", "skipped", "failed")
+            exceptionFormat = TestExceptionFormat.FULL
+            showStackTraces = true
+        }
+    }
+
+    val intTest = create<Test>("intTest") {
+        dependsOn(test)
         doFirst {
             environment("DB_URL", System.getenv("DB_URL") ?: "localhost:1521/XE")
             environment("DB_USER", System.getenv("DB_USER") ?: "app")
             environment("DB_PASS", System.getenv("DB_PASS") ?: "app")
         }
         useJUnitPlatform()
+        include("**/*IT.class")
         testLogging {
             events("passed", "skipped", "failed")
             exceptionFormat = TestExceptionFormat.FULL
             showStackTraces = true
         }
+    }
+
+    named("check") {
+        // add integration tests to the whole check
+        dependsOn(intTest)
     }
 
     val coverageResourcesDirectory = "${project.buildDir}/resources/main/CoverageHTMLReporter"
