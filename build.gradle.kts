@@ -79,39 +79,42 @@ tasks {
         }
     }
 
+    // add integration tests to the whole check
     named("check") {
-        // add integration tests to the whole check
         dependsOn(intTest)
     }
 
     val coverageResourcesDirectory = "${project.buildDir}/resources/main/CoverageHTMLReporter"
-    val coverageResourcesZipDirectory = "${project.buildDir}/utPLSQL-coverage-html-$coverageResourcesVersion"
-    val coverageResourcesZip = "$coverageResourcesZipDirectory.zip"
+    val coverageResourcesZip = "${project.buildDir}/utPLSQL-coverage-html-$coverageResourcesVersion.zip"
 
     // download Coverage Resources from web
     val downloadResources = create<Download>("downloadCoverageResources") {
         src("https://codeload.github.com/utPLSQL/utPLSQL-coverage-html/zip/$coverageResourcesVersion")
         dest(File(coverageResourcesZip))
-    }
-    // Extract zip-archive to build
-    val extractCoverageResources = create<Copy>("extractCoverageResources") {
-        dependsOn(downloadResources)
-        from(zipTree(coverageResourcesZip))
-        into(buildDir)
-    }
-    // copy assets to sources
-    val copyCoverageResourcesToSources = create<Copy>("copyCoverageResources") {
-        dependsOn(extractCoverageResources)
-        from("$coverageResourcesZipDirectory/assets")
-        into(coverageResourcesDirectory)
+        overwrite(true)
     }
 
     withType<ProcessResources> {
-        dependsOn(copyCoverageResourcesToSources)
+        dependsOn(downloadResources)
 
         val properties = project.properties.toMutableMap()
         properties.putIfAbsent("travisBuildNumber", "local")
         expand(properties)
+
+        doLast {
+            copy {
+                // extract assets folder only from downloaded archive
+                // https://github.com/gradle/gradle/pull/8494
+                from(zipTree(coverageResourcesZip)) {
+                    include("*/assets/**")
+                    eachFile {
+                        relativePath = RelativePath(true, *relativePath.segments.drop(2).toTypedArray())  // <2>
+                    }
+                    includeEmptyDirs = false
+                }
+                into(coverageResourcesDirectory)
+            }
+        }
     }
 
     withType<Jar> {
