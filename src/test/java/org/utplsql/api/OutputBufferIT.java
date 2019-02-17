@@ -17,7 +17,11 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.concurrent.*;
 
-import static org.junit.jupiter.api.Assertions.*;
+import static org.hamcrest.MatcherAssert.assertThat;
+import static org.hamcrest.Matchers.emptyIterable;
+import static org.hamcrest.Matchers.not;
+import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.fail;
 
 /**
  * Integration-test for OutputBuffers
@@ -104,7 +108,7 @@ class OutputBufferIT extends AbstractDatabaseTest {
 
         List<String> outputLines = reporter.getOutputBuffer().fetchAll(getConnection());
 
-        assertTrue(outputLines.size() > 0);
+        assertThat(outputLines, not(emptyIterable()));
     }
 
     @Test
@@ -118,7 +122,7 @@ class OutputBufferIT extends AbstractDatabaseTest {
 
         List<String> outputLines = reporter.getOutputBuffer().fetchAll(getConnection());
 
-        assertTrue(outputLines.size() > 0);
+        assertThat(outputLines, not(emptyIterable()));
     }
 
     @Test

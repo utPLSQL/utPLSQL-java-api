@@ -2,12 +2,13 @@ package org.utplsql.api;
 
 import org.junit.jupiter.api.Test;
 
-import static org.junit.jupiter.api.Assertions.assertTrue;
+import static org.hamcrest.MatcherAssert.assertThat;
+import static org.hamcrest.Matchers.startsWith;
 
 class JavaApiVersionTest {
 
     @Test
     void getJavaApiVersion() {
-        assertTrue(JavaApiVersionInfo.getVersion().startsWith("3.1"));
+        assertThat(JavaApiVersionInfo.getVersion(), startsWith("3.1"));
     }
 }
