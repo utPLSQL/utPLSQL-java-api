@@ -12,7 +12,7 @@ https://maven.apache.org/install.html
 The library uses OJDBC Driver to connect to the database, it's added as a maven dependency. To be able to download the Oracle dependencies, you need to configure your access to Oracle's Maven Repository:
 Create file `gradle.properties` in the root directory of the repository and place OTN credentials there:
 ```properties
-ORACLE_OTN_USER=usar@email.com
+ORACLE_OTN_USER=user@email.com
 ORACLE_OTN_PASSWORD=password
 ```
 
