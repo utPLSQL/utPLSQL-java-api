@@ -45,9 +45,10 @@ install:
   - bash .travis/start_db.sh
   - bash .travis/install_utplsql.sh
   - bash .travis/install_demo_project.sh
+  - ./gradlew assemble
 
 script:
-  - ./gradlew clean build -PtravisBuildNumber=$TRAVIS_BUILD_NUMBER
+  - ./gradlew check -PtravisBuildNumber=$TRAVIS_BUILD_NUMBER
 
 deploy:
   - provider: script
