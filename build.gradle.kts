@@ -76,6 +76,7 @@ tasks {
             events("passed", "skipped", "failed")
             exceptionFormat = TestExceptionFormat.FULL
             showStackTraces = true
+            showStandardStreams = true
         }
     }
 
