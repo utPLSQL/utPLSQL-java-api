@@ -33,10 +33,13 @@ env:
 
 before_cache:
   - rm -f  $HOME/.gradle/caches/modules-2/modules-2.lock
-  - rm -fr $HOME/.gradle/caches/*/plugin-resolution/
+  - rm -f  $HOME/.gradle/caches/generated-gradle-jars/generated-gradle-jars.lock
+  - rm -f  $HOME/.gradle/caches/embedded-kotlin-repo*/embedded-kotlin-repo-*.lock
 cache:
   directories:
-    - $HOME/.gradle/caches/
+    - $HOME/.gradle/caches/modules-2
+    - $HOME/.gradle/caches/generated-gradle-jars
+    - $HOME/.gradle/caches/embedded-kotlin-repo*/
     - $HOME/.gradle/wrapper/
     - $DOCKER_CFG
     - $CACHE_DIR
@@ -65,15 +68,6 @@ deploy:
     on:
       repository: utPLSQL/utPLSQL-java-api
       branch: develop
-      # Use only first job "#xxx.1" to publish artifacts
-      condition: "${TRAVIS_JOB_NUMBER} =~ \\.1$"
-
-  - provider: script
-    script: ./gradlew uploadArchives -PtravisBuildNumber=$TRAVIS_BUILD_NUMBER
-    skip_cleanup: true
-    on:
-      repository: utPLSQL/utPLSQL-java-api
-      branch: gradle-dsl-migration
       # Use only first job "#xxx.1" to publish artifacts
       condition: "${TRAVIS_JOB_NUMBER} =~ \\.1$"
 
