@@ -45,14 +45,13 @@ install:
   - bash .travis/start_db.sh
   - bash .travis/install_utplsql.sh
   - bash .travis/install_demo_project.sh
-  - ./gradlew assemble
 
 script:
-  - ./gradlew check -PtravisBuildNumber=$TRAVIS_BUILD_NUMBER
+  - ./gradlew check
 
 deploy:
   - provider: script
-    script: ./gradlew uploadArchives -PtravisBuildNumber=$TRAVIS_BUILD_NUMBER
+    script: ./gradlew uploadArchives
     skip_cleanup: true
     on:
       repository: utPLSQL/utPLSQL-java-api

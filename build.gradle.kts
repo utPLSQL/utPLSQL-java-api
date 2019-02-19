@@ -99,7 +99,7 @@ tasks {
         dependsOn(downloadResources)
 
         val properties = project.properties.toMutableMap()
-        properties.putIfAbsent("travisBuildNumber", "local")
+        properties.putIfAbsent("travisBuildNumber", System.getenv("TRAVIS_BUILD_NUMBER") ?: "local")
         expand(properties)
 
         doLast {
