@@ -45,6 +45,8 @@ install:
   - bash .travis/start_db.sh
   - bash .travis/install_utplsql.sh
   - bash .travis/install_demo_project.sh
+  - echo $JAVA_OPTS
+  - echo $GRADLE_OPTS
 
 script:
   - ./gradlew check -Dorg.gradle.debug=true --no-daemon
