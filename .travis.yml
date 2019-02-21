@@ -56,7 +56,7 @@ before_script:
   - echo JAVA_HOME = ${GRADLE_HOME}
 
 script:
-  - ./gradlew check -Dorg.gradle.debug=true --no-daemon
+  - ./gradlew check
 
 deploy:
   - provider: script
@@ -69,7 +69,7 @@ deploy:
       condition: "${TRAVIS_JOB_NUMBER} =~ \\.1$"
 
   - provider: script
-    script: ./gradlew uploadArchives -PtravisBuildNumber=$TRAVIS_BUILD_NUMBER
+    script: ./gradlew uploadArchives
     skip_cleanup: true
     on:
       repository: utPLSQL/utPLSQL-java-api
@@ -78,7 +78,7 @@ deploy:
       condition: "${TRAVIS_JOB_NUMBER} =~ \\.1$"
 
   - provider: script
-    script: ./gradlew uploadArchives -PtravisBuildNumber=$TRAVIS_BUILD_NUMBER
+    script: ./gradlew uploadArchives
     skip_cleanup: true
     on:
       repository: utPLSQL/utPLSQL-java-api
