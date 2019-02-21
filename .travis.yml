@@ -77,15 +77,6 @@ deploy:
       # Use only first job "#xxx.1" to publish artifacts
       condition: "${TRAVIS_JOB_NUMBER} =~ \\.1$"
 
-  - provider: script
-    script: ./gradlew uploadArchives
-    skip_cleanup: true
-    on:
-      repository: utPLSQL/utPLSQL-java-api
-      branch: gradle-dsl-migration
-      # Use only first job "#xxx.1" to publish artifacts
-      condition: "${TRAVIS_JOB_NUMBER} =~ \\.1$"
-
 notifications:
   slack:
     rooms:
