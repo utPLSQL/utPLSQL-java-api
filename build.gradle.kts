@@ -87,7 +87,6 @@ tasks {
 
     val coverageResourcesDirectory = "${project.buildDir}/resources/main/CoverageHTMLReporter"
     val coverageResourcesZip = "${project.buildDir}/utPLSQL-coverage-html-$coverageResourcesVersion.zip"
-
     // download Coverage Resources from web
     val downloadResources = create<Download>("downloadCoverageResources") {
         src("https://codeload.github.com/utPLSQL/utPLSQL-coverage-html/zip/$coverageResourcesVersion")
@@ -131,7 +130,7 @@ tasks {
             from("$buildDir/publications/maven")
             rename(".*", "pom.xml")
         }
-
+        archiveBaseName.set("java-api")
     }
 
     named<Upload>("uploadArchives") {
