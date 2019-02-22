@@ -131,7 +131,7 @@ tasks {
             from("$buildDir/publications/maven")
             rename(".*", "pom.xml")
         }
-
+        archiveBaseName.set("java-api")
     }
 
     named<Upload>("uploadArchives") {
