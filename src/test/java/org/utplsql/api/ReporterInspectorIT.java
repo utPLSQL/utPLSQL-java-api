@@ -31,15 +31,15 @@ class ReporterInspectorIT extends AbstractDatabaseTest {
 
         Map<String, ReporterInfo> infos = inspector.getReporterInfoMap();
 
-        assertEquals( infos.get(CoreReporters.UT_COVERAGE_HTML_REPORTER.name()).getType(), ReporterInfo.Type.SQL_WITH_JAVA );
-        assertEquals( infos.get(CoreReporters.UT_COVERAGE_SONAR_REPORTER.name()).getType(), ReporterInfo.Type.SQL );
-        assertEquals( infos.get(CoreReporters.UT_COVERALLS_REPORTER.name()).getType(), ReporterInfo.Type.SQL );
-        assertEquals( infos.get(CoreReporters.UT_DOCUMENTATION_REPORTER.name()).getType(), ReporterInfo.Type.SQL_WITH_JAVA );
-        assertEquals( infos.get(CoreReporters.UT_SONAR_TEST_REPORTER.name()).getType(), ReporterInfo.Type.SQL);
-        assertEquals( infos.get(CoreReporters.UT_TEAMCITY_REPORTER.name()).getType(), ReporterInfo.Type.SQL);
-        assertEquals( infos.get(CoreReporters.UT_XUNIT_REPORTER.name()).getType(), ReporterInfo.Type.SQL);
+        assertEquals(infos.get(CoreReporters.UT_COVERAGE_HTML_REPORTER.name()).getType(), ReporterInfo.Type.SQL_WITH_JAVA);
+        assertEquals(infos.get(CoreReporters.UT_COVERAGE_SONAR_REPORTER.name()).getType(), ReporterInfo.Type.SQL);
+        assertEquals(infos.get(CoreReporters.UT_COVERALLS_REPORTER.name()).getType(), ReporterInfo.Type.SQL);
+        assertEquals(infos.get(CoreReporters.UT_DOCUMENTATION_REPORTER.name()).getType(), ReporterInfo.Type.SQL_WITH_JAVA);
+        assertEquals(infos.get(CoreReporters.UT_SONAR_TEST_REPORTER.name()).getType(), ReporterInfo.Type.SQL);
+        assertEquals(infos.get(CoreReporters.UT_TEAMCITY_REPORTER.name()).getType(), ReporterInfo.Type.SQL);
+        assertEquals(infos.get(CoreReporters.UT_XUNIT_REPORTER.name()).getType(), ReporterInfo.Type.SQL);
 
-        if ( CoreReporters.UT_COVERAGE_COBERTURA_REPORTER.isAvailableFor(proxy.getDatabaseVersion())) {
+        if (CoreReporters.UT_COVERAGE_COBERTURA_REPORTER.isAvailableFor(proxy.getDatabaseVersion())) {
             assertEquals(infos.get(CoreReporters.UT_COVERAGE_COBERTURA_REPORTER.name()).getType(), ReporterInfo.Type.SQL);
         }
     }

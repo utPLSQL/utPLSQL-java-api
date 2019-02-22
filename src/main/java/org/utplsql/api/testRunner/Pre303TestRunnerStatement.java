@@ -5,7 +5,8 @@ import org.utplsql.api.TestRunnerOptions;
 import java.sql.Connection;
 import java.sql.SQLException;
 
-/** TestRunner-Statement for Framework version before 3.0.3
+/**
+ * TestRunner-Statement for Framework version before 3.0.3
  * Does not know about failOnErrors option
  *
  * @author pesse

@@ -21,7 +21,8 @@ import java.util.zip.ZipFile;
  */
 public class ResourceUtil {
 
-    private ResourceUtil() {}
+    private ResourceUtil() {
+    }
 
     /**
      * Returns the Path to a resource so it is walkable no matter if it's inside a jar or on the file system
@@ -68,8 +69,9 @@ public class ResourceUtil {
                     // Get entry-path with root element so we can compare it
                     Path entryPath = resourcePath.getRoot().resolve(resourcePath.getFileSystem().getPath(entry.toString()));
 
-                    if (entryPath.startsWith(resourcePath) && (!filesOnly || !entry.isDirectory()))
+                    if (entryPath.startsWith(resourcePath) && (!filesOnly || !entry.isDirectory())) {
                         result.add(entryPath.subpath(relativeStartIndex, entryPath.getNameCount()));
+                    }
                 }
             }
             resourcePath.getFileSystem().close();

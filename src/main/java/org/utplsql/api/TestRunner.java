@@ -28,9 +28,9 @@ public class TestRunner {
     private static final Logger logger = LoggerFactory.getLogger(TestRunner.class);
 
     private final TestRunnerOptions options = new TestRunnerOptions();
+    private final List<String> reporterNames = new ArrayList<>();
     private CompatibilityProxy compatibilityProxy;
     private ReporterFactory reporterFactory;
-    private final List<String> reporterNames = new ArrayList<>();
 
     public TestRunner addPath(String path) {
         options.pathList.add(path);
@@ -47,11 +47,12 @@ public class TestRunner {
         return this;
     }
 
-    public TestRunner addReporter( String reporterName ) {
-        if ( reporterFactory != null )
+    public TestRunner addReporter(String reporterName) {
+        if (reporterFactory != null) {
             options.reporterList.add(reporterFactory.createReporter(reporterName));
-        else
+        } else {
             reporterNames.add(reporterName);
+        }
         return this;
     }
 
@@ -105,22 +106,22 @@ public class TestRunner {
         return this;
     }
 
-    public TestRunner skipCompatibilityCheck( boolean skipCompatibilityCheck )
-    {
+    public TestRunner skipCompatibilityCheck(boolean skipCompatibilityCheck) {
         options.skipCompatibilityCheck = skipCompatibilityCheck;
         return this;
     }
 
-    public TestRunner setReporterFactory( ReporterFactory reporterFactory ) {
+    public TestRunner setReporterFactory(ReporterFactory reporterFactory) {
         this.reporterFactory = reporterFactory;
         return this;
     }
 
     private void delayedAddReporters() {
-        if ( reporterFactory != null )
-            reporterNames.forEach( this::addReporter );
-        else
+        if (reporterFactory != null) {
+            reporterNames.forEach(this::addReporter);
+        } else {
             throw new IllegalStateException("ReporterFactory must be set to add delayed Reporters!");
+        }
     }
 
     public void run(Connection conn) throws SQLException {
@@ -132,8 +133,9 @@ public class TestRunner {
         compatibilityProxy = new CompatibilityProxy(conn, options.skipCompatibilityCheck, databaseInformation);
         logger.info("Running on utPLSQL {}", compatibilityProxy.getDatabaseVersion());
 
-        if ( reporterFactory ==  null )
+        if (reporterFactory == null) {
             reporterFactory = ReporterFactory.createDefault(compatibilityProxy);
+        }
 
         delayedAddReporters();
 
@@ -141,8 +143,9 @@ public class TestRunner {
         compatibilityProxy.failOnNotCompatible();
 
         logger.info("Initializing reporters");
-        for (Reporter r : options.reporterList)
+        for (Reporter r : options.reporterList) {
             validateReporter(conn, r);
+        }
 
         if (options.pathList.isEmpty()) {
             options.pathList.add(databaseInformation.getCurrentSchema(conn));
@@ -153,18 +156,16 @@ public class TestRunner {
             options.reporterList.add(new DocumentationReporter().init(conn));
         }
 
-        try(TestRunnerStatement testRunnerStatement = compatibilityProxy.getTestRunnerStatement(options, conn)) {
+        try (TestRunnerStatement testRunnerStatement = compatibilityProxy.getTestRunnerStatement(options, conn)) {
             logger.info("Running tests");
             testRunnerStatement.execute();
             logger.info("Running tests finished.");
         } catch (SQLException e) {
             if (e.getErrorCode() == SomeTestsFailedException.ERROR_CODE) {
                 throw new SomeTestsFailedException(e.getMessage(), e);
-            }
-            else if (e.getErrorCode() == UtPLSQLNotInstalledException.ERROR_CODE) {
+            } else if (e.getErrorCode() == UtPLSQLNotInstalledException.ERROR_CODE) {
                 throw new UtPLSQLNotInstalledException(e);
-            }
-            else {
+            } else {
                 throw e;
             }
         }
@@ -172,24 +173,28 @@ public class TestRunner {
 
     /**
      * Check if the reporter was initialized, if not call reporter.init.
-     * @param conn the database connection
+     *
+     * @param conn     the database connection
      * @param reporter the reporter
      * @throws SQLException any sql exception
      */
     private void validateReporter(Connection conn, Reporter reporter) throws SQLException {
-        if (!reporter.isInit() || reporter.getId() == null || reporter.getId().isEmpty())
+        if (!reporter.isInit() || reporter.getId() == null || reporter.getId().isEmpty()) {
             reporter.init(conn, compatibilityProxy, reporterFactory);
+        }
     }
 
-    /** Returns the databaseVersion the TestRunner was run against
+    /**
+     * Returns the databaseVersion the TestRunner was run against
      *
      * @return Version of the database the TestRunner was run against
      */
     public Version getUsedDatabaseVersion() {
-        if ( compatibilityProxy != null )
+        if (compatibilityProxy != null) {
             return compatibilityProxy.getDatabaseVersion();
-        else
+        } else {
             return null;
+        }
     }
 
 }

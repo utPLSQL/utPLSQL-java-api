@@ -5,15 +5,16 @@ import org.utplsql.api.TestRunnerOptions;
 import java.sql.Connection;
 import java.sql.SQLException;
 
-/** TestRunner-Statement for Framework version before 3.0.3
+/**
+ * TestRunner-Statement for Framework version before 3.0.3
  * Does not know about client character set
  *
- * @author  pesse
+ * @author pesse
  */
 class Pre312TestRunnerStatement extends AbstractTestRunnerStatement {
 
-    public Pre312TestRunnerStatement(TestRunnerOptions options, Connection connection ) throws SQLException {
-        super( options, connection);
+    public Pre312TestRunnerStatement(TestRunnerOptions options, Connection connection) throws SQLException {
+        super(options, connection);
     }
 
     @Override

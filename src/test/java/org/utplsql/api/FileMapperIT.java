@@ -31,8 +31,9 @@ class FileMapperIT extends AbstractDatabaseTest {
 
         List<FileMapping> fileMappings = FileMapper.buildFileMappingList(getConnection(), mapperOptions);
 
-        if (fileMappings.size() != 2)
+        if (fileMappings.size() != 2) {
             fail("Wrong mapping list size.");
+        }
 
         assertMapping(fileMappings.get(0), "APP", "AWARD_BONUS", "PROCEDURE");
         assertMapping(fileMappings.get(1), "APP", "BETWNSTR", "FUNCTION");

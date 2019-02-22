@@ -11,7 +11,8 @@ import java.util.Map;
 
 public final class FileMapper {
 
-    private FileMapper() {}
+    private FileMapper() {
+    }
 
     /**
      * Call the database api to build the custom file mappings.
@@ -27,7 +28,7 @@ public final class FileMapper {
 
         CallableStatement callableStatement = conn.prepareCall(
                 "BEGIN " +
-                    "? := ut_file_mapper.build_file_mappings(" +
+                        "? := ut_file_mapper.build_file_mappings(" +
                         "a_object_owner                => ?, " +
                         "a_file_paths                  => ?, " +
                         "a_file_to_object_type_mapping => ?, " +
@@ -35,7 +36,7 @@ public final class FileMapper {
                         "a_object_owner_subexpression  => ?, " +
                         "a_object_name_subexpression   => ?, " +
                         "a_object_type_subexpression   => ?); " +
-                "END;");
+                        "END;");
 
         int paramIdx = 0;
         callableStatement.registerOutParameter(++paramIdx, OracleTypes.ARRAY, CustomTypes.UT_FILE_MAPPINGS);

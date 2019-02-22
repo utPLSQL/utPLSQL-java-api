@@ -20,8 +20,9 @@ class EnvironmentVariableUtilTest {
                 .filter((e) -> !props.contains(e.getKey()) && e.getValue() != null && !e.getValue().isEmpty())
                 .findFirst();
 
-        if ( !envVariable.isPresent() )
-            fail ("Can't test for there is no environment variable not overridden by property");
+        if (!envVariable.isPresent()) {
+            fail("Can't test for there is no environment variable not overridden by property");
+        }
 
         assertEquals(envVariable.get().getValue(), EnvironmentVariableUtil.getEnvValue(envVariable.get().getKey()));
     }
@@ -36,7 +37,7 @@ class EnvironmentVariableUtilTest {
     @Test
     void testGetVariableFromDefault() {
 
-        assertEquals("defaultValue", EnvironmentVariableUtil.getEnvValue("RANDOM"+String.valueOf(System.currentTimeMillis()), "defaultValue"));
+        assertEquals("defaultValue", EnvironmentVariableUtil.getEnvValue("RANDOM" + String.valueOf(System.currentTimeMillis()), "defaultValue"));
     }
 
 }
