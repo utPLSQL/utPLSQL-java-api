@@ -25,7 +25,7 @@ public class DatabaseNotCompatibleException extends SQLException {
 
     public DatabaseNotCompatibleException( Version clientVersion, Version databaseVersion, Throwable cause )
     {
-        this("utPLSQL API (" + String.valueOf(clientVersion) + ") not compatible with database (" + String.valueOf(databaseVersion) + ")", clientVersion, databaseVersion, cause);
+        this("utPLSQL API (" + clientVersion + ") not compatible with database (" + databaseVersion + ")", clientVersion, databaseVersion, cause);
     }
 
     public DatabaseNotCompatibleException( Version clientVersion, Version databaseVersion )
@@ -35,12 +35,12 @@ public class DatabaseNotCompatibleException extends SQLException {
 
     public DatabaseNotCompatibleException( Version databaseVersion, Throwable cause )
     {
-        this(new Version(CompatibilityProxy.UTPLSQL_COMPATIBILITY_VERSION), databaseVersion, cause );
+        this(Version.create(CompatibilityProxy.UTPLSQL_COMPATIBILITY_VERSION), databaseVersion, cause );
     }
 
     public DatabaseNotCompatibleException( Version databaseVersion )
     {
-        this(new Version(CompatibilityProxy.UTPLSQL_COMPATIBILITY_VERSION), databaseVersion, null );
+        this(Version.create(CompatibilityProxy.UTPLSQL_COMPATIBILITY_VERSION), databaseVersion, null );
     }
 
     public Version getClientVersion() {

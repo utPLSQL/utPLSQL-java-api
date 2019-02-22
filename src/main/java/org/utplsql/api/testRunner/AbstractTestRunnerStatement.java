@@ -21,7 +21,7 @@ import java.util.List;
 abstract class AbstractTestRunnerStatement implements TestRunnerStatement {
 
     protected final TestRunnerOptions options;
-    protected final Connection conn;
+    private final Connection conn;
     protected final CallableStatement callableStatement;
 
     public AbstractTestRunnerStatement(TestRunnerOptions options, Connection conn) throws SQLException {

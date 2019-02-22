@@ -5,23 +5,23 @@ import org.utplsql.api.exception.InvalidVersionException;
 
 import static org.junit.jupiter.api.Assertions.*;
 
-public class VersionObjectTest {
+class VersionObjectTest {
 
     @Test
-    public void versionPatternRecognitionFull() {
-        Version v = new Version("v3.1.3.1234");
+    void versionPatternRecognitionFull() {
+        Version v = Version.create("v3.1.3.1234");
 
         assertEquals(3, (long)v.getMajor());
         assertEquals(1, (long)v.getMinor());
         assertEquals(3, (long)v.getBugfix());
         assertEquals(1234, (long)v.getBuild());
-        assertEquals(true, v.isValid());
+        assertTrue(v.isValid());
         assertEquals("3.1.3.1234", v.getNormalizedString());
     }
 
     @Test
-    public void versionPatternRecognitionDevelop() {
-        Version v = new Version("v3.1.3.2140-develop");
+    void versionPatternRecognitionDevelop() {
+        Version v = Version.create("v3.1.3.2140-develop");
 
         assertEquals(3, (long)v.getMajor());
         assertEquals(1, (long)v.getMinor());
@@ -32,104 +32,99 @@ public class VersionObjectTest {
     }
 
     @Test
-    public void versionPatternRecognitionPartial() {
-        Version v = new Version("3.1.etc");
+    void versionPatternRecognitionPartial() {
+        Version v = Version.create("3.1.etc");
 
         assertEquals(3, (long)v.getMajor());
         assertEquals(1, (long)v.getMinor());
         assertNull(v.getBugfix());
         assertNull(v.getBuild());
-        assertEquals(true, v.isValid());
+        assertTrue(v.isValid());
         assertEquals("3.1", v.getNormalizedString());
     }
 
     @Test
-    public void versionPatternRecognitionInvalid() {
-        Version v = new Version("adseef");
+    void versionPatternRecognitionInvalid() {
+        Version v = Version.create("adseef");
 
         assertNull(v.getMajor());
         assertNull(v.getMinor());
         assertNull(v.getBugfix());
         assertNull(v.getBuild());
-        assertEquals(false, v.isValid());
+        assertFalse(v.isValid());
         assertEquals("invalid", v.getNormalizedString());
     }
 
     @Test
-    public void versionCompareTo()
+    void versionCompareTo()
     {
-        Version base = new Version("2.3.4.5");
+        Version base = Version.create("2.3.4.5");
 
         // Less than
-        assertEquals(-1, base.compareTo(new Version("3")));
-        assertEquals(-1, base.compareTo(new Version("3.2")));
-        assertEquals(-1, base.compareTo(new Version("2.4.1")));
-        assertEquals(-1, base.compareTo(new Version("2.3.9.1")));
-        assertEquals(-1, base.compareTo(new Version("2.3.4.9")));
+        assertEquals(-1, base.compareTo(Version.create("3")));
+        assertEquals(-1, base.compareTo(Version.create("3.2")));
+        assertEquals(-1, base.compareTo(Version.create("2.4.1")));
+        assertEquals(-1, base.compareTo(Version.create("2.3.9.1")));
+        assertEquals(-1, base.compareTo(Version.create("2.3.4.9")));
 
         // Greater than
-        assertEquals(1, base.compareTo(new Version("1")));
-        assertEquals(1, base.compareTo(new Version("1.6")));
-        assertEquals(1, base.compareTo(new Version("2.2.4")));
-        assertEquals(1, base.compareTo(new Version("2.3.3")));
-        assertEquals(1, base.compareTo(new Version("2.3.4.1")));
-        assertEquals(1, base.compareTo(new Version("2.3.4")));
+        assertEquals(1, base.compareTo(Version.create("1")));
+        assertEquals(1, base.compareTo(Version.create("1.6")));
+        assertEquals(1, base.compareTo(Version.create("2.2.4")));
+        assertEquals(1, base.compareTo(Version.create("2.3.3")));
+        assertEquals(1, base.compareTo(Version.create("2.3.4.1")));
+        assertEquals(1, base.compareTo(Version.create("2.3.4")));
 
         // Equal
-        assertEquals(0, base.compareTo(new Version("2.3.4.5")));
+        assertEquals(0, base.compareTo(Version.create("2.3.4.5")));
     }
 
     @Test
-    public void isGreaterOrEqualThan()
+    void isGreaterOrEqualThan() throws InvalidVersionException
     {
-        Version base = new Version("2.3.4.5");
+        Version base = Version.create("2.3.4.5");
 
-        try {
-            assertEquals(true, base.isGreaterOrEqualThan(new Version("1")));
-            assertEquals(true, base.isGreaterOrEqualThan(new Version("2")));
-            assertEquals(true, base.isGreaterOrEqualThan(new Version("2.3")));
-            assertEquals(true, base.isGreaterOrEqualThan(new Version("2.2")));
-            assertEquals(true, base.isGreaterOrEqualThan(new Version("2.3.4")));
-            assertEquals(true, base.isGreaterOrEqualThan(new Version("2.3.3")));
-            assertEquals(true, base.isGreaterOrEqualThan(new Version("2.3.4.5")));
-            assertEquals(true, base.isGreaterOrEqualThan(new Version("2.3.4.4")));
+        assertTrue(base.isGreaterOrEqualThan(Version.create("1")));
+        assertTrue(base.isGreaterOrEqualThan(Version.create("2")));
+        assertTrue(base.isGreaterOrEqualThan(Version.create("2.3")));
+        assertTrue(base.isGreaterOrEqualThan(Version.create("2.2")));
+        assertTrue(base.isGreaterOrEqualThan(Version.create("2.3.4")));
+        assertTrue(base.isGreaterOrEqualThan(Version.create("2.3.3")));
+        assertTrue(base.isGreaterOrEqualThan(Version.create("2.3.4.5")));
+        assertTrue(base.isGreaterOrEqualThan(Version.create("2.3.4.4")));
 
-            assertEquals(false, base.isGreaterOrEqualThan(new Version("2.3.4.6")));
-            assertEquals(false, base.isGreaterOrEqualThan(new Version("2.3.5")));
-            assertEquals(false, base.isGreaterOrEqualThan(new Version("2.4")));
-            assertEquals(false, base.isGreaterOrEqualThan(new Version("3")));
-        }
-        catch ( InvalidVersionException e )
-        {
-            fail(e);
-        }
+        assertFalse(base.isGreaterOrEqualThan(Version.create("2.3.4.6")));
+        assertFalse(base.isGreaterOrEqualThan(Version.create("2.3.5")));
+        assertFalse(base.isGreaterOrEqualThan(Version.create("2.4")));
+        assertFalse(base.isGreaterOrEqualThan(Version.create("3")));
+
     }
 
     @Test
-    public void isGreaterOrEqualThanFails()
+    void isGreaterOrEqualThanFails()
     {
         // Given version is invalid
         try {
-            new Version("2.3.4.5").isGreaterOrEqualThan(new Version("aerfvf"));
+            Version.create("2.3.4.5").isGreaterOrEqualThan(Version.create("aerfvf"));
             fail("Given Version is invalid - not recognized");
         }
-        catch ( InvalidVersionException e ) {
+        catch ( InvalidVersionException ignored ) {
         }
 
         // Base version is invalid
         try {
-            new Version("erefs").isGreaterOrEqualThan(new Version("1.2.3"));
+            Version.create("erefs").isGreaterOrEqualThan(Version.create("1.2.3"));
             fail("Base version is invalid - not recognized");
         }
-        catch ( InvalidVersionException e ) {
+        catch ( InvalidVersionException ignored ) {
         }
 
         // Both versions are invalid
         try {
-            new Version("erefs").isGreaterOrEqualThan(new Version("aerfvf"));
+            Version.create("erefs").isGreaterOrEqualThan(Version.create("aerfvf"));
             fail("Both versions are invalid - not recognized");
         }
-        catch ( InvalidVersionException e ) {
+        catch ( InvalidVersionException ignored ) {
         }
     }
 }

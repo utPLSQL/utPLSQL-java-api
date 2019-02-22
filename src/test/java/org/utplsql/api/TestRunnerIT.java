@@ -18,20 +18,21 @@ import static org.junit.jupiter.api.Assertions.assertThrows;
  * @author viniciusam
  * @author pesse
  */
-public class TestRunnerIT extends AbstractDatabaseTest {
+class TestRunnerIT extends AbstractDatabaseTest {
 
     @Test
-    public void runWithDefaultParameters() throws SQLException {
+    void runWithDefaultParameters() throws SQLException {
         new TestRunner().run(getConnection());
     }
 
-    @Test
+
     /** This can only be run against versions >= 3.0.3
      */
-    public void runWithoutCompatibilityCheck() throws SQLException, InvalidVersionException {
+    @Test
+    void runWithoutCompatibilityCheck() throws SQLException, InvalidVersionException {
         CompatibilityProxy proxy = new CompatibilityProxy(getConnection());
 
-        if (proxy.getDatabaseVersion().isGreaterOrEqualThan(new Version("3.0.3"))) {
+        if (proxy.getDatabaseVersion().isGreaterOrEqualThan(Version.V3_0_3)) {
             new TestRunner()
                     .skipCompatibilityCheck(true)
                     .run(getConnection());
@@ -39,7 +40,7 @@ public class TestRunnerIT extends AbstractDatabaseTest {
     }
 
     @Test
-    public void runWithManyReporters() throws SQLException {
+    void runWithManyReporters() throws SQLException {
         Connection conn = getConnection();
         new TestRunner()
                 .addPath(getUser())
@@ -53,15 +54,16 @@ public class TestRunnerIT extends AbstractDatabaseTest {
                 .run(conn);
     }
 
-    @Test
+
     /** This can only be tested on frameworks >= 3.0.3
      */
-    public void failOnErrors() throws SQLException, InvalidVersionException {
+    @Test
+    void failOnErrors() throws SQLException, InvalidVersionException {
         Connection conn = getConnection();
 
         CompatibilityProxy proxy = new CompatibilityProxy(conn);
 
-        if (proxy.getDatabaseVersion().isGreaterOrEqualThan(new Version("3.0.3"))) {
+        if (proxy.getDatabaseVersion().isGreaterOrEqualThan(Version.V3_0_3)) {
             Executable throwingTestRunner = () -> new TestRunner()
                     .failOnErrors(true)
                     .run(conn);

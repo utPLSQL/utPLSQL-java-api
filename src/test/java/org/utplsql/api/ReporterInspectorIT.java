@@ -14,7 +14,7 @@ import java.util.Map;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
 
-public class ReporterInspectorIT extends AbstractDatabaseTest {
+class ReporterInspectorIT extends AbstractDatabaseTest {
 
     private ReporterFactory getReporterFactory() throws SQLException {
         CompatibilityProxy proxy = new CompatibilityProxy(getConnection());
@@ -23,7 +23,7 @@ public class ReporterInspectorIT extends AbstractDatabaseTest {
     }
 
     @Test
-    public void testGetReporterInfo() throws SQLException, InvalidVersionException {
+    void testGetReporterInfo() throws SQLException, InvalidVersionException {
 
         CompatibilityProxy proxy = new CompatibilityProxy(getConnection());
 
@@ -45,7 +45,7 @@ public class ReporterInspectorIT extends AbstractDatabaseTest {
     }
 
     @Test
-    public void printReporterInfos() throws SQLException, InvalidVersionException {
+    void printReporterInfos() throws SQLException, InvalidVersionException {
 
         ReporterInspector inspector = ReporterInspector.create(getReporterFactory(), getConnection());
 

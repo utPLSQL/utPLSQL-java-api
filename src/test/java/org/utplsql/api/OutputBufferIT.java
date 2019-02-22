@@ -17,8 +17,10 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.concurrent.*;
 
+import static org.hamcrest.MatcherAssert.assertThat;
+import static org.hamcrest.Matchers.emptyIterable;
+import static org.hamcrest.Matchers.not;
 import static org.junit.jupiter.api.Assertions.assertEquals;
-import static org.junit.jupiter.api.Assertions.assertTrue;
 import static org.junit.jupiter.api.Assertions.fail;
 
 /**
@@ -27,16 +29,16 @@ import static org.junit.jupiter.api.Assertions.fail;
  * @author viniciusam
  * @author pesse
  */
-public class OutputBufferIT extends AbstractDatabaseTest {
+class OutputBufferIT extends AbstractDatabaseTest {
 
-    public Reporter createReporter() throws SQLException {
+    private Reporter createReporter() throws SQLException {
         Reporter reporter = new DocumentationReporter().init(newConnection());
         System.out.println("Reporter ID: " + reporter.getId());
         return reporter;
     }
 
     @Test
-    public void printAvailableLines() throws SQLException {
+    void printAvailableLines() throws SQLException {
         ExecutorService executorService = Executors.newFixedThreadPool(2);
 
         try {
@@ -97,7 +99,7 @@ public class OutputBufferIT extends AbstractDatabaseTest {
     }
 
     @Test
-    public void fetchAllLines() throws SQLException {
+    void fetchAllLines() throws SQLException {
         final Reporter reporter = createReporter();
         new TestRunner()
                 .addPath(getUser())
@@ -106,11 +108,11 @@ public class OutputBufferIT extends AbstractDatabaseTest {
 
         List<String> outputLines = reporter.getOutputBuffer().fetchAll(getConnection());
 
-        assertTrue(outputLines.size() > 0);
+        assertThat(outputLines, not(emptyIterable()));
     }
 
     @Test
-    public void getOutputFromSonarReporter() throws SQLException {
+    void getOutputFromSonarReporter() throws SQLException {
         Reporter reporter = new DefaultReporter(CoreReporters.UT_SONAR_TEST_REPORTER.name(), null).init(newConnection());
 
         new TestRunner()
@@ -120,14 +122,14 @@ public class OutputBufferIT extends AbstractDatabaseTest {
 
         List<String> outputLines = reporter.getOutputBuffer().fetchAll(getConnection());
 
-        assertTrue(outputLines.size() > 0);
+        assertThat(outputLines, not(emptyIterable()));
     }
 
     @Test
-    public void sonarReporterHasEncodingSet() throws SQLException, InvalidVersionException {
+    void sonarReporterHasEncodingSet() throws SQLException, InvalidVersionException {
         CompatibilityProxy proxy = new CompatibilityProxy(newConnection());
 
-        if ( proxy.getDatabaseVersion().isGreaterOrEqualThan(new Version("3.1.2"))) {
+        if ( proxy.getDatabaseVersion().isGreaterOrEqualThan(Version.V3_1_2)) {
             Reporter reporter = new DefaultReporter(CoreReporters.UT_SONAR_TEST_REPORTER.name(), null).init(getConnection());
 
             TestRunner tr = new TestRunner()

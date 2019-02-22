@@ -10,7 +10,7 @@ import java.nio.file.attribute.BasicFileAttributes;
 
 import static org.junit.jupiter.api.Assertions.assertTrue;
 
-public class CoverageHTMLReporterAssetTest {
+class CoverageHTMLReporterAssetTest {
 
     private static final String TEST_FOLDER = "__testAssets";
 
@@ -21,7 +21,7 @@ public class CoverageHTMLReporterAssetTest {
     }
 
     @Test
-    public void writeReporterAssetsTo() throws RuntimeException {
+    void writeReporterAssetsTo() throws RuntimeException {
 
         Path targetPath = Paths.get(TEST_FOLDER);
 
@@ -58,7 +58,7 @@ public class CoverageHTMLReporterAssetTest {
     }
 
     @AfterAll
-    public static void clearTestAssetsFolder() {
+    static void clearTestAssetsFolder() {
         try {
             Files.walkFileTree(Paths.get(TEST_FOLDER), new SimpleFileVisitor<Path>() {
                 @Override

@@ -25,7 +25,7 @@ public class OutputBufferProvider {
        OracleConnection oraConn = conn.unwrap(OracleConnection.class);
 
        try {
-           if (databaseVersion.isGreaterOrEqualThan(new Version("3.1.0"))) {
+           if (databaseVersion.isGreaterOrEqualThan(Version.V3_1_0)) {
                if ( hasOutput(reporter, oraConn) ) {
                    return new DefaultOutputBuffer(reporter);
                }

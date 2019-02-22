@@ -5,23 +5,23 @@ import org.utplsql.api.compatibility.CompatibilityProxy;
 
 import java.sql.SQLException;
 
-import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertTrue;
 
-public class CompatibilityIT extends AbstractDatabaseTest {
+class CompatibilityIT extends AbstractDatabaseTest {
 
 
     @Test
-    public void compatibleVersion() throws SQLException {
+    void compatibleVersion() throws SQLException {
         CompatibilityProxy proxy = new CompatibilityProxy(getConnection());
         proxy.failOnNotCompatible();
-        assertEquals(true, proxy.isCompatible());
+        assertTrue(proxy.isCompatible());
     }
 
     @Test
-    public void skipCompatibilityCheck() throws SQLException {
+    void skipCompatibilityCheck() throws SQLException {
         CompatibilityProxy proxy = new CompatibilityProxy(getConnection(), true);
         proxy.failOnNotCompatible();
-        assertEquals(true, proxy.isCompatible());
+        assertTrue(proxy.isCompatible());
 
     }
 }

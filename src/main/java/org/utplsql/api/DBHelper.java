@@ -1,10 +1,13 @@
 package org.utplsql.api;
 
 import oracle.jdbc.OracleTypes;
-import org.utplsql.api.exception.UtPLSQLNotInstalledException;
+import org.utplsql.api.db.DatabaseInformation;
+import org.utplsql.api.db.DefaultDatabaseInformation;
 
-import java.sql.*;
-import java.util.Objects;
+import java.sql.CallableStatement;
+import java.sql.Connection;
+import java.sql.SQLException;
+import java.sql.Types;
 
 /**
  * Database utility functions.
@@ -53,23 +56,9 @@ public final class DBHelper {
      */
     @Deprecated
     public static Version getDatabaseFrameworkVersion( Connection conn ) throws SQLException {
-        Version result = new Version("");
-        try (PreparedStatement stmt = conn.prepareStatement("select ut_runner.version() from dual"))
-        {
-            ResultSet rs = stmt.executeQuery();
+        DatabaseInformation databaseInformation = new DefaultDatabaseInformation();
+        return databaseInformation.getUtPlsqlFrameworkVersion(conn);
 
-            if ( rs.next() )
-                result = new Version(rs.getString(1));
-
-            rs.close();
-        } catch ( SQLException e ) {
-            if ( e.getErrorCode() == UtPLSQLNotInstalledException.ERROR_CODE )
-                throw new UtPLSQLNotInstalledException(e);
-            else
-                throw e;
-        }
-
-        return result;
     }
 
     /** Returns the Oracle database Version from a given connection object
@@ -81,16 +70,8 @@ public final class DBHelper {
      */
     @Deprecated
     public static String getOracleDatabaseVersion( Connection conn ) throws SQLException {
-        String result = null;
-        try (PreparedStatement stmt = conn.prepareStatement("select version from product_component_version where product like 'Oracle Database%'"))
-        {
-            ResultSet rs = stmt.executeQuery();
-
-            if ( rs.next() )
-                result = rs.getString(1);
-        }
-
-        return result;
+        DatabaseInformation databaseInformation = new DefaultDatabaseInformation();
+        return databaseInformation.getOracleVersion(conn);
     }
 
     /**

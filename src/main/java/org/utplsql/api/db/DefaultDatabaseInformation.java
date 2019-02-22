@@ -5,19 +5,18 @@ import org.utplsql.api.exception.UtPLSQLNotInstalledException;
 
 import javax.annotation.Nullable;
 import java.sql.*;
-import java.util.Objects;
 
 public class DefaultDatabaseInformation implements DatabaseInformation {
 
     @Override
     public Version getUtPlsqlFrameworkVersion(Connection conn) throws SQLException {
-        Version result = new Version("");
+        Version result = Version.create("");
         try (PreparedStatement stmt = conn.prepareStatement("select ut_runner.version() from dual"))
         {
             ResultSet rs = stmt.executeQuery();
 
             if ( rs.next() )
-                result = new Version(rs.getString(1));
+                result = Version.create(rs.getString(1));
 
             rs.close();
         } catch ( SQLException e ) {

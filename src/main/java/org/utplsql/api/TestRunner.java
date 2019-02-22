@@ -5,7 +5,6 @@ import org.slf4j.LoggerFactory;
 import org.utplsql.api.compatibility.CompatibilityProxy;
 import org.utplsql.api.db.DatabaseInformation;
 import org.utplsql.api.db.DefaultDatabaseInformation;
-import org.utplsql.api.exception.DatabaseNotCompatibleException;
 import org.utplsql.api.exception.SomeTestsFailedException;
 import org.utplsql.api.exception.UtPLSQLNotInstalledException;
 import org.utplsql.api.reporter.DocumentationReporter;
