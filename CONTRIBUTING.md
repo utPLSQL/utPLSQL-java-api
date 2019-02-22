@@ -10,50 +10,32 @@ https://maven.apache.org/install.html
 
 ### Oracle Maven Repository
 The library uses OJDBC Driver to connect to the database, it's added as a maven dependency. To be able to download the Oracle dependencies, you need to configure your access to Oracle's Maven Repository:
+Create file `gradle.properties` in the root directory of the repository and place OTN credentials there:
+```properties
+ORACLE_OTN_USER=user@email.com
+ORACLE_OTN_PASSWORD=password
+```
 
-http://docs.oracle.com/middleware/1213/core/MAVEN/config_maven_repo.htm#MAVEN9010
+After configuring your access to Oracle's Maven repository, you will be able to successfully build this API by disabling integration tests.
 
-*Sections 6.1 and 6.5 are the more important ones, and the only ones you need if you're using the latest Maven version.*
+```bash
+./gradlew build -x intTest
+```
 
 ### Local database with utPLSQL and utPLSQL-demo-project
 
 To usefully contribute you'll have to setup a local database with installed [latest utPLSQL v3](https://github.com/utPLSQL/utPLSQL) and [utPLSQL-demo-project](https://github.com/utPLSQL/utPLSQL-demo-project). 
 The demo-project will serve as your test user. See .travis.yml to see an example on how it can be installed. 
+By default tests are executed against `app/app` user of `localhost:1521/XE database`. 
 
-### Maven settings for utPLSQL-local profile
+If you want to run tests against another database you may set `DB_URL`, `DB_USER`, `DB_PASS` environment variables.
 
-utPLSQL-java-api comes with a preconfigured profile "utPLSQL-local". This profile uses properties to set the correct 
-environment variables for DB_URL, DB_USER and DB_PASS which is needed to run the integration tests.
-You can set these properties by adding the following to your Maven settings.xml:
-
-```xml
-<settings>
-    <!-- ... -->
-    <profiles>
-        <profile>
-            <id>utPLSQL-local</id>
-            <properties>
-                <dbUrl>localhost:1521/XE</dbUrl>
-                <dbUser>app</dbUser>
-                <dbPass>app</dbPass>
-            </properties>
-        </profile>
-    </profiles>
-     
-    <activeProfiles>
-        <activeProfile>utPLSQL-local</activeProfile>
-    </activeProfiles>
-</settings>
-```
-
-After configuring your access to Oracle's Maven repository, you will be able to successfully build this API.
-
+When you have local database set up you can run the complete build including integration tests by executing 
 ```bash
-cd utPLSQL-java-api
-mvn clean package install
+./gradlew build
 ```
 
 ### Skip the local database part
 
-If you want to skip the local database part, just run ``mvn clean package install -DskipTests``. 
-You will still be able to run ``mvn test`` because integration tests are run in the ``verify``-phase.
+If you want to skip the local database part, just run ``./gradlew test``. 
+You will be able to run ``./gradle test`` because integration tests are executed in the separate ``intTest`` task as part of overall ``check``.

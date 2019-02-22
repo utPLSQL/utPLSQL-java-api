@@ -4,6 +4,8 @@
 
 # Maven
 target/
+build
+.gradle
 pom.xml.tag
 pom.xml.releaseBackup
 pom.xml.versionsBackup
@@ -18,3 +20,4 @@ buildNumber.properties
 
 #Exclude CoverageHTMLReporter resources as they are managed by maven
 src/main/resources/CoverageHTMLReporter/
+/gradle.properties

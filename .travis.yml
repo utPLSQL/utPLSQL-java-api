@@ -12,8 +12,6 @@ env:
     - DOCKER_CFG=$HOME/.docker
     - DOCKER_REPO="utplsqlv3/oracledb"
     - CACHE_DIR=$HOME/.cache
-    - MAVEN_HOME=/usr/local/maven
-    - MAVEN_CFG=$HOME/.m2
     - DB_URL="127.0.0.1:1521:XE"
     - DB_USER=app
     - DB_PASS=app
@@ -33,30 +31,36 @@ env:
     - UTPLSQL_VERSION="develop"
       UTPLSQL_FILE="utPLSQL"
 
+before_cache:
+  - rm -f  $HOME/.gradle/caches/modules-2/modules-2.lock
+  - rm -fr $HOME/.gradle/caches/*/plugin-resolution/
 cache:
   directories:
+    - $HOME/.gradle/caches/
+    - $HOME/.gradle/wrapper/
     - $DOCKER_CFG
     - $CACHE_DIR
-    - $MAVEN_CFG
 
 install:
-  - bash .travis/maven_cfg.sh
   - bash .travis/start_db.sh
   - bash .travis/install_utplsql.sh
   - bash .travis/install_demo_project.sh
-
+  
 before_script:
-  - cp .travis/settings.xml $MAVEN_CFG/settings.xml
+  - echo JAVA_HOME = ${JAVA_HOME}
+  - echo PATH = ${PATH}
+  - ls ${JAVA_HOME}
+  - java -version
+  - echo $JAVA_OPTS
+  - echo $GRADLE_OPTS
+  - echo JAVA_HOME = ${GRADLE_HOME}
 
 script:
-  - mvn verify -B
-
-before_deploy:
-  - if [ ! -z "$TRAVIS_TAG" ]; then VERSION=$(tr -d "/v/" <<<$TRAVIS_TAG); mvn org.codehaus.mojo:versions-maven-plugin:2.1:set -DnewVersion=${VERSION}; fi
+  - ./gradlew check
 
 deploy:
   - provider: script
-    script: mvn clean deploy -DskipTests=true -B -U -DtravisBuildNumber=$TRAVIS_BUILD_NUMBER
+    script: ./gradlew uploadArchives
     skip_cleanup: true
     on:
       repository: utPLSQL/utPLSQL-java-api
@@ -65,7 +69,7 @@ deploy:
       condition: "${TRAVIS_JOB_NUMBER} =~ \\.1$"
 
   - provider: script
-    script: mvn clean deploy -DskipTests=true -B -U -DtravisBuildNumber=$TRAVIS_BUILD_NUMBER
+    script: ./gradlew uploadArchives
     skip_cleanup: true
     on:
       repository: utPLSQL/utPLSQL-java-api
