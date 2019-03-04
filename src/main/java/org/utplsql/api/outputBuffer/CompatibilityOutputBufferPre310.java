@@ -7,13 +7,14 @@ import java.sql.CallableStatement;
 import java.sql.Connection;
 import java.sql.SQLException;
 
-/** Compatibility Output-Buffer for 3.0.0 - 3.0.4
+/**
+ * Compatibility Output-Buffer for 3.0.0 - 3.0.4
  *
  * @author pesse
  */
 class CompatibilityOutputBufferPre310 extends AbstractOutputBuffer {
 
-    CompatibilityOutputBufferPre310( Reporter reporter ) {
+    CompatibilityOutputBufferPre310(Reporter reporter) {
         super(reporter);
     }
 

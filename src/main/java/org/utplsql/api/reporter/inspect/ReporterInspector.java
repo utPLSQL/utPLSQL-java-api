@@ -19,12 +19,6 @@ import java.util.stream.Collectors;
  */
 public interface ReporterInspector {
 
-    List<ReporterInfo> getReporterInfos();
-
-    default Map<String, ReporterInfo> getReporterInfoMap() {
-        return getReporterInfos().stream().collect(Collectors.toMap(ReporterInfo::getName, Function.identity()));
-    }
-
     /**
      * Returns a new instance of a ReporterInspector, based on the utPLSQL version used in the connection
      *
@@ -37,10 +31,17 @@ public interface ReporterInspector {
 
         CompatibilityProxy proxy = new CompatibilityProxy(conn);
 
-        if (proxy.getDatabaseVersion().isGreaterOrEqualThan(Version.V3_1_0))
+        if (proxy.getDatabaseVersion().isGreaterOrEqualThan(Version.V3_1_0)) {
             return new ReporterInspector310(reporterFactory, conn);
-        else
+        } else {
             return new ReporterInspectorPre310(reporterFactory, conn);
+        }
+    }
+
+    List<ReporterInfo> getReporterInfos();
+
+    default Map<String, ReporterInfo> getReporterInfoMap() {
+        return getReporterInfos().stream().collect(Collectors.toMap(ReporterInfo::getName, Function.identity()));
     }
 
 }

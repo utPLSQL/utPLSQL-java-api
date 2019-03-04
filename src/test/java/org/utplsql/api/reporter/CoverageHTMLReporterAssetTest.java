@@ -14,6 +14,27 @@ class CoverageHTMLReporterAssetTest {
 
     private static final String TEST_FOLDER = "__testAssets";
 
+    @AfterAll
+    static void clearTestAssetsFolder() {
+        try {
+            Files.walkFileTree(Paths.get(TEST_FOLDER), new SimpleFileVisitor<Path>() {
+                @Override
+                public FileVisitResult visitFile(Path file, BasicFileAttributes attrs) throws IOException {
+                    Files.delete(file);
+                    return FileVisitResult.CONTINUE;
+                }
+
+                @Override
+                public FileVisitResult postVisitDirectory(Path dir, IOException exc) throws IOException {
+                    Files.delete(dir);
+                    return FileVisitResult.CONTINUE;
+                }
+            });
+        } catch (IOException e) {
+            e.printStackTrace();
+        }
+    }
+
     private void testFileExists(Path filePath) {
         File f = new File(filePath.toUri());
 
@@ -55,26 +76,5 @@ class CoverageHTMLReporterAssetTest {
         testFileExists(targetPath.resolve(Paths.get("loading.gif")));
         testFileExists(targetPath.resolve(Paths.get("magnify.png")));
 
-    }
-
-    @AfterAll
-    static void clearTestAssetsFolder() {
-        try {
-            Files.walkFileTree(Paths.get(TEST_FOLDER), new SimpleFileVisitor<Path>() {
-                @Override
-                public FileVisitResult visitFile(Path file, BasicFileAttributes attrs) throws IOException {
-                    Files.delete(file);
-                    return FileVisitResult.CONTINUE;
-                }
-
-                @Override
-                public FileVisitResult postVisitDirectory(Path dir, IOException exc) throws IOException {
-                    Files.delete(dir);
-                    return FileVisitResult.CONTINUE;
-                }
-            });
-        } catch (IOException e) {
-            e.printStackTrace();
-        }
     }
 }

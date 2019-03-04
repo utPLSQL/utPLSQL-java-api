@@ -17,6 +17,7 @@ public final class CustomTypes {
     public static final String UT_KEY_VALUE_PAIR = "UT_KEY_VALUE_PAIR";
     public static final String UT_KEY_VALUE_PAIRS = "UT_KEY_VALUE_PAIRS";
 
-    private CustomTypes() {}
+    private CustomTypes() {
+    }
 
 }

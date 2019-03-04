@@ -15,7 +15,8 @@ public class FileMapping implements SQLData {
     private String objectName;
     private String objectType;
 
-    public FileMapping() {}
+    public FileMapping() {
+    }
 
     public FileMapping(String fileName, String objectOwner, String objectName, String objectType) {
         this.fileName = fileName;

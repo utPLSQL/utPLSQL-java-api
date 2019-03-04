@@ -88,11 +88,13 @@ class OutputBufferIT extends AbstractDatabaseTest {
             Object res1 = task1.get();
             Object res2 = task2.get();
 
-            if (res1 instanceof Exception)
+            if (res1 instanceof Exception) {
                 fail((Exception) res1);
+            }
 
-            if (res2 instanceof Exception)
+            if (res2 instanceof Exception) {
                 fail((Exception) res2);
+            }
         } catch (InterruptedException | ExecutionException e) {
             e.printStackTrace();
         }
@@ -129,7 +131,7 @@ class OutputBufferIT extends AbstractDatabaseTest {
     void sonarReporterHasEncodingSet() throws SQLException, InvalidVersionException {
         CompatibilityProxy proxy = new CompatibilityProxy(newConnection());
 
-        if ( proxy.getDatabaseVersion().isGreaterOrEqualThan(Version.V3_1_2)) {
+        if (proxy.getDatabaseVersion().isGreaterOrEqualThan(Version.V3_1_2)) {
             Reporter reporter = new DefaultReporter(CoreReporters.UT_SONAR_TEST_REPORTER.name(), null).init(getConnection());
 
             TestRunner tr = new TestRunner()

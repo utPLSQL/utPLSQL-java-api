@@ -8,21 +8,11 @@ public class DocumentationReporter extends DefaultReporter {
     private int failed;
 
     public DocumentationReporter() {
-        super( CoreReporters.UT_DOCUMENTATION_REPORTER.name(), null );
+        super(CoreReporters.UT_DOCUMENTATION_REPORTER.name(), null);
     }
 
-    public DocumentationReporter(String selfType, Object[] attributes ) {
+    public DocumentationReporter(String selfType, Object[] attributes) {
         super(selfType, attributes);
-    }
-
-    @Override
-    protected void setAttributes(Object[] attributes) {
-        super.setAttributes(attributes);
-
-        if ( attributes != null ) {
-            lvl = ((BigDecimal)attributes[3]).intValue();
-            failed = ((BigDecimal)attributes[4]).intValue();
-        }
     }
 
     @Override
@@ -31,6 +21,16 @@ public class DocumentationReporter extends DefaultReporter {
         attributes[3] = lvl;
         attributes[4] = failed;
         return attributes;
+    }
+
+    @Override
+    protected void setAttributes(Object[] attributes) {
+        super.setAttributes(attributes);
+
+        if (attributes != null) {
+            lvl = ((BigDecimal) attributes[3]).intValue();
+            failed = ((BigDecimal) attributes[4]).intValue();
+        }
     }
 
     public int getLvl() {

@@ -26,7 +26,8 @@ class TestRunnerIT extends AbstractDatabaseTest {
     }
 
 
-    /** This can only be run against versions >= 3.0.3
+    /**
+     * This can only be run against versions >= 3.0.3
      */
     @Test
     void runWithoutCompatibilityCheck() throws SQLException, InvalidVersionException {
@@ -55,7 +56,8 @@ class TestRunnerIT extends AbstractDatabaseTest {
     }
 
 
-    /** This can only be tested on frameworks >= 3.0.3
+    /**
+     * This can only be tested on frameworks >= 3.0.3
      */
     @Test
     void failOnErrors() throws SQLException, InvalidVersionException {

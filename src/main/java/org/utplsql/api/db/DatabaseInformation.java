@@ -6,17 +6,18 @@ import javax.annotation.Nullable;
 import java.sql.Connection;
 import java.sql.SQLException;
 
-/** Abstraction-interface to encapsulate Database-Calls (and potentially mock them)
+/**
+ * Abstraction-interface to encapsulate Database-Calls (and potentially mock them)
  *
  * @author pesse
  */
 public interface DatabaseInformation {
 
-    Version getUtPlsqlFrameworkVersion(Connection conn ) throws SQLException;
+    Version getUtPlsqlFrameworkVersion(Connection conn) throws SQLException;
 
-    String getOracleVersion( Connection conn ) throws SQLException;
+    String getOracleVersion(Connection conn) throws SQLException;
 
-    String getCurrentSchema( Connection conn ) throws SQLException;
+    String getCurrentSchema(Connection conn) throws SQLException;
 
     int frameworkCompatibilityCheck(Connection conn, String requested, @Nullable String current) throws SQLException;
 }

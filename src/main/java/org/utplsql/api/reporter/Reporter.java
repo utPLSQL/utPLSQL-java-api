@@ -14,44 +14,41 @@ import javax.xml.bind.DatatypeConverter;
 import java.sql.Connection;
 import java.sql.SQLException;
 
-/** This is a basic Reporter implementation, using ORAData interface
+/**
+ * This is a basic Reporter implementation, using ORAData interface
  *
  * @author pesse
  */
 public abstract class Reporter implements ORAData {
 
     private static final Logger logger = LoggerFactory.getLogger(Reporter.class);
-
+    protected OutputBuffer outputBuffer;
     private String selfType;
     private String id;
     private Object[] attributes;
     private boolean init = false;
-    protected OutputBuffer outputBuffer;
 
-    public Reporter( String typeName, Object[] attributes ) {
+    public Reporter(String typeName, Object[] attributes) {
         setTypeName(typeName);
-        setAttributes( attributes );
+        setAttributes(attributes);
     }
 
-    protected void setTypeName( String typeName ) {
-        this.selfType = typeName.replaceAll("[^0-9a-zA-Z_\\.]", "");
-    }
+    public Reporter init(Connection con, CompatibilityProxy compatibilityProxy, ReporterFactory reporterFactory) throws SQLException {
 
-
-    public Reporter init(Connection con, CompatibilityProxy compatibilityProxy, ReporterFactory reporterFactory ) throws SQLException {
-
-        if ( compatibilityProxy == null )
+        if (compatibilityProxy == null) {
             compatibilityProxy = new CompatibilityProxy(con);
-        if ( reporterFactory == null )
+        }
+        if (reporterFactory == null) {
             reporterFactory = new ReporterFactory();
+        }
 
         OracleConnection oraConn = con.unwrap(OracleConnection.class);
 
-        initDbReporter( oraConn, reporterFactory );
+        initDbReporter(oraConn, reporterFactory);
 
         init = true;
 
-        initOutputBuffer( oraConn, compatibilityProxy);
+        initOutputBuffer(oraConn, compatibilityProxy);
 
         return this;
     }
@@ -60,16 +57,17 @@ public abstract class Reporter implements ORAData {
         return init(con, null, null);
     }
 
-    protected abstract void initOutputBuffer( OracleConnection oraConn, CompatibilityProxy compatibilityProxy ) throws SQLException;
+    protected abstract void initOutputBuffer(OracleConnection oraConn, CompatibilityProxy compatibilityProxy) throws SQLException;
 
-    /** Initializes the Reporter from database
+    /**
+     * Initializes the Reporter from database
      * This is necessary because we set up DefaultOutputBuffer (and maybe other stuff) we don't want to know and care about
      * in the java API. Let's just do the instantiation of the Reporter in the database and map it into this object.
      *
      * @param oraConn
      * @throws SQLException
      */
-    private void initDbReporter( OracleConnection oraConn, ReporterFactory reporterFactory ) throws SQLException {
+    private void initDbReporter(OracleConnection oraConn, ReporterFactory reporterFactory) throws SQLException {
         OracleCallableStatement callableStatement = (OracleCallableStatement) oraConn.prepareCall("{? = call " + selfType + "()}");
         callableStatement.registerOutParameter(1, OracleTypes.STRUCT, "UT_REPORTER_BASE");
         callableStatement.execute();
@@ -81,15 +79,15 @@ public abstract class Reporter implements ORAData {
         logger.debug("Database-reporter initialized, Type: {}, ID: {}", selfType, id);
     }
 
-    protected void setAttributes(Object[] attributes ) {
-        if (attributes != null) {
-            this.id = DatatypeConverter.printHexBinary((byte[])attributes[1]);
-        }
-        this.attributes = attributes;
-    }
-
     protected Object[] getAttributes() {
         return attributes;
+    }
+
+    protected void setAttributes(Object[] attributes) {
+        if (attributes != null) {
+            this.id = DatatypeConverter.printHexBinary((byte[]) attributes[1]);
+        }
+        this.attributes = attributes;
     }
 
     public boolean isInit() {
@@ -100,14 +98,17 @@ public abstract class Reporter implements ORAData {
         return this.selfType;
     }
 
+    protected void setTypeName(String typeName) {
+        this.selfType = typeName.replaceAll("[^0-9a-zA-Z_\\.]", "");
+    }
+
     public String getId() {
         return this.id;
     }
 
 
-    public Datum toDatum(Connection c) throws SQLException
-    {
-        return (Datum)c.createStruct(getTypeName(), getAttributes());
+    public Datum toDatum(Connection c) throws SQLException {
+        return (Datum) c.createStruct(getTypeName(), getAttributes());
     }
 
     public OutputBuffer getOutputBuffer() {

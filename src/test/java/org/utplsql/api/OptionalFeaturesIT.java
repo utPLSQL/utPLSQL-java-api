@@ -22,10 +22,11 @@ class OptionalFeaturesIT extends AbstractDatabaseTest {
 
         boolean available = OptionalFeatures.FAIL_ON_ERROR.isAvailableFor(getConnection());
 
-        if (getDatabaseVersion().isGreaterOrEqualThan(Version.V3_0_3))
+        if (getDatabaseVersion().isGreaterOrEqualThan(Version.V3_0_3)) {
             assertTrue(available);
-        else
+        } else {
             assertFalse(available);
+        }
     }
 
     @Test
@@ -33,10 +34,11 @@ class OptionalFeaturesIT extends AbstractDatabaseTest {
 
         boolean available = OptionalFeatures.FRAMEWORK_COMPATIBILITY_CHECK.isAvailableFor(getConnection());
 
-        if (getDatabaseVersion().isGreaterOrEqualThan(Version.V3_0_3))
+        if (getDatabaseVersion().isGreaterOrEqualThan(Version.V3_0_3)) {
             assertTrue(available);
-        else
+        } else {
             assertFalse(available);
+        }
     }
 
     @Test
@@ -44,9 +46,10 @@ class OptionalFeaturesIT extends AbstractDatabaseTest {
 
         boolean available = OptionalFeatures.CUSTOM_REPORTERS.isAvailableFor(getConnection());
 
-        if (getDatabaseVersion().isGreaterOrEqualThan(Version.V3_1_0))
+        if (getDatabaseVersion().isGreaterOrEqualThan(Version.V3_1_0)) {
             assertTrue(available);
-        else
+        } else {
             assertFalse(available);
+        }
     }
 }

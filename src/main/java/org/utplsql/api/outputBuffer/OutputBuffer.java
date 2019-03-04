@@ -12,24 +12,27 @@ public interface OutputBuffer {
 
     Reporter getReporter();
 
-    /** Override the fetchSize of the OutputBuffer
+    /**
+     * Override the fetchSize of the OutputBuffer
      *
      * @param fetchSize the ResultSet fetch-size.
      * @return this Output-Buffer
      */
-    OutputBuffer setFetchSize( int fetchSize );
+    OutputBuffer setFetchSize(int fetchSize);
 
     /**
      * Print the lines as soon as they are produced and write to a PrintStream.
+     *
      * @param conn DB connection
-     * @param ps the PrintStream to be used, e.g: System.out
+     * @param ps   the PrintStream to be used, e.g: System.out
      * @throws SQLException any sql errors
      */
     void printAvailable(Connection conn, PrintStream ps) throws SQLException;
 
     /**
      * Print the lines as soon as they are produced and write to a list of PrintStreams.
-     * @param conn DB connection
+     *
+     * @param conn         DB connection
      * @param printStreams the PrintStream list to be used, e.g: System.out, new PrintStream(new FileOutputStream)
      * @throws SQLException any sql errors
      */
@@ -37,7 +40,8 @@ public interface OutputBuffer {
 
     /**
      * Print the lines as soon as they are produced and call the callback passing the new line.
-     * @param conn DB connection
+     *
+     * @param conn          DB connection
      * @param onLineFetched the callback to be called
      * @throws SQLException any sql errors
      */
@@ -45,6 +49,7 @@ public interface OutputBuffer {
 
     /**
      * Get all lines from output buffer and return it as a list of strings.
+     *
      * @param conn DB connection
      * @return the lines
      * @throws SQLException any sql errors

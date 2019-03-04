@@ -14,10 +14,12 @@ import java.sql.Types;
  */
 public final class DBHelper {
 
-    private DBHelper() {}
+    private DBHelper() {
+    }
 
     /**
      * Return a new sys_guid from database.
+     *
      * @param conn the connection
      * @return the new id string
      * @throws SQLException any database error
@@ -47,7 +49,8 @@ public final class DBHelper {
         }
     }
 
-    /** Returns the Frameworks version string of the given connection
+    /**
+     * Returns the Frameworks version string of the given connection
      * Deprecated. Use DatabaseInformation-Interface instead.
      *
      * @param conn Active db connection
@@ -55,13 +58,14 @@ public final class DBHelper {
      * @throws SQLException any database error
      */
     @Deprecated
-    public static Version getDatabaseFrameworkVersion( Connection conn ) throws SQLException {
+    public static Version getDatabaseFrameworkVersion(Connection conn) throws SQLException {
         DatabaseInformation databaseInformation = new DefaultDatabaseInformation();
         return databaseInformation.getUtPlsqlFrameworkVersion(conn);
 
     }
 
-    /** Returns the Oracle database Version from a given connection object
+    /**
+     * Returns the Oracle database Version from a given connection object
      * Deprecated. Use DatabaseInformation-Interface instead.
      *
      * @param conn Connection-Object
@@ -69,13 +73,14 @@ public final class DBHelper {
      * @throws SQLException any database error
      */
     @Deprecated
-    public static String getOracleDatabaseVersion( Connection conn ) throws SQLException {
+    public static String getOracleDatabaseVersion(Connection conn) throws SQLException {
         DatabaseInformation databaseInformation = new DefaultDatabaseInformation();
         return databaseInformation.getOracleVersion(conn);
     }
 
     /**
      * Enable the dbms_output buffer with unlimited size.
+     *
      * @param conn the connection
      */
     public static void enableDBMSOutput(Connection conn) {
@@ -88,6 +93,7 @@ public final class DBHelper {
 
     /**
      * Disable the dbms_output buffer.
+     *
      * @param conn the connection
      */
     public static void disableDBMSOutput(Connection conn) {

@@ -24,6 +24,7 @@ abstract class AbstractOutputBuffer implements OutputBuffer {
 
     /**
      * Creates a new DefaultOutputBuffer.
+     *
      * @param reporter the reporter to be used
      */
     AbstractOutputBuffer(Reporter reporter) {
@@ -35,6 +36,7 @@ abstract class AbstractOutputBuffer implements OutputBuffer {
 
     /**
      * Returns the reporter used by this buffer.
+     *
      * @return the reporter instance
      */
     public Reporter getReporter() {
@@ -49,8 +51,9 @@ abstract class AbstractOutputBuffer implements OutputBuffer {
 
     /**
      * Print the lines as soon as they are produced and write to a PrintStream.
+     *
      * @param conn DB connection
-     * @param ps the PrintStream to be used, e.g: System.out
+     * @param ps   the PrintStream to be used, e.g: System.out
      * @throws SQLException any sql errors
      */
     public void printAvailable(Connection conn, PrintStream ps) throws SQLException {
@@ -61,22 +64,25 @@ abstract class AbstractOutputBuffer implements OutputBuffer {
 
     /**
      * Print the lines as soon as they are produced and write to a list of PrintStreams.
-     * @param conn DB connection
+     *
+     * @param conn         DB connection
      * @param printStreams the PrintStream list to be used, e.g: System.out, new PrintStream(new FileOutputStream)
      * @throws SQLException any sql errors
      */
     public void printAvailable(Connection conn, List<PrintStream> printStreams) throws SQLException {
         fetchAvailable(conn, s -> {
-            for (PrintStream ps : printStreams)
+            for (PrintStream ps : printStreams) {
                 ps.println(s);
+            }
         });
     }
 
-    protected abstract CallableStatement getLinesCursorStatement( Connection conn ) throws SQLException;
+    protected abstract CallableStatement getLinesCursorStatement(Connection conn) throws SQLException;
 
     /**
      * Print the lines as soon as they are produced and call the callback passing the new line.
-     * @param conn DB connection
+     *
+     * @param conn          DB connection
      * @param onLineFetched the callback to be called
      * @throws SQLException any sql errors
      */
@@ -86,15 +92,17 @@ abstract class AbstractOutputBuffer implements OutputBuffer {
             cstmt.execute();
             cstmt.setFetchSize(fetchSize);
 
-            try ( ResultSet resultSet = (ResultSet) cstmt.getObject(1)) {
-                while (resultSet.next())
+            try (ResultSet resultSet = (ResultSet) cstmt.getObject(1)) {
+                while (resultSet.next()) {
                     onLineFetched.accept(resultSet.getString("text"));
+                }
             }
         }
     }
 
     /**
      * Get all lines from output buffer and return it as a list of strings.
+     *
      * @param conn DB connection
      * @return the lines
      * @throws SQLException any sql errors
@@ -106,7 +114,7 @@ abstract class AbstractOutputBuffer implements OutputBuffer {
             cstmt.execute();
             cstmt.setFetchSize(fetchSize);
 
-            try ( ResultSet resultSet = (ResultSet) cstmt.getObject(1)) {
+            try (ResultSet resultSet = (ResultSet) cstmt.getObject(1)) {
 
                 List<String> outputLines = new ArrayList<>();
                 while (resultSet.next()) {
@@ -116,7 +124,6 @@ abstract class AbstractOutputBuffer implements OutputBuffer {
             }
         }
     }
-
 
 
 }

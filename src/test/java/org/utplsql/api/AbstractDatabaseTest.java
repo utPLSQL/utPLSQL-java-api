@@ -14,14 +14,19 @@ public abstract class AbstractDatabaseTest {
     private static String sUrl;
     private static String sUser;
     private static String sPass;
+
     static {
-        sUrl  = EnvironmentVariableUtil.getEnvValue("DB_URL", "192.168.99.100:1521:XE");
+        sUrl = EnvironmentVariableUtil.getEnvValue("DB_URL", "192.168.99.100:1521:XE");
         sUser = EnvironmentVariableUtil.getEnvValue("DB_USER", "app");
         sPass = EnvironmentVariableUtil.getEnvValue("DB_PASS", "app");
     }
 
     private Connection conn;
     private List<Connection> connectionList = new ArrayList<>();
+
+    public static String getUser() {
+        return sUser;
+    }
 
     @BeforeEach
     public void setupConnection() throws SQLException {
@@ -38,13 +43,13 @@ public abstract class AbstractDatabaseTest {
         return conn;
     }
 
-    public static String getUser() {
-        return sUser;
-    }
-
     @AfterEach
     public void teardownConnection() {
-        for (Connection conn : connectionList)
-            try { conn.close(); } catch (SQLException ignored) {}
+        for (Connection conn : connectionList) {
+            try {
+                conn.close();
+            } catch (SQLException ignored) {
+            }
+        }
     }
 }

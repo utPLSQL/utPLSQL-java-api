@@ -9,7 +9,8 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.function.Consumer;
 
-/** An OutputBuffer replacement which just returns nothing at all. Suitable for Reporters without any output
+/**
+ * An OutputBuffer replacement which just returns nothing at all. Suitable for Reporters without any output
  *
  * @author pesse
  */
@@ -17,7 +18,7 @@ class NonOutputBuffer implements OutputBuffer {
 
     private final Reporter reporter;
 
-    NonOutputBuffer( Reporter reporter) {
+    NonOutputBuffer(Reporter reporter) {
         this.reporter = reporter;
     }
 
@@ -41,8 +42,9 @@ class NonOutputBuffer implements OutputBuffer {
     @Override
     public void printAvailable(Connection conn, List<PrintStream> printStreams) throws SQLException {
         fetchAvailable(conn, s -> {
-            for (PrintStream ps : printStreams)
+            for (PrintStream ps : printStreams) {
                 ps.println(s);
+            }
         });
     }
 

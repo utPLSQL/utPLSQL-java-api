@@ -15,18 +15,17 @@ public enum OptionalFeatures {
     private final Version minVersion;
     private final Version maxVersion;
 
-    OptionalFeatures( String minVersion, String maxVersion )
-    {
+    OptionalFeatures(String minVersion, String maxVersion) {
         this.minVersion = minVersion != null ? Version.create(minVersion) : null;
         this.maxVersion = maxVersion != null ? Version.create(maxVersion) : null;
     }
 
-    public boolean isAvailableFor(Version version ) {
+    public boolean isAvailableFor(Version version) {
 
         try {
             return (minVersion == null || version.isGreaterOrEqualThan(minVersion)) &&
                     (maxVersion == null || maxVersion.isGreaterOrEqualThan(version));
-        } catch ( InvalidVersionException e ) {
+        } catch (InvalidVersionException e) {
             return false; // We have no optional features for invalid versions
         }
     }

@@ -19,6 +19,7 @@ class DefaultOutputBuffer extends AbstractOutputBuffer {
 
     /**
      * Creates a new DefaultOutputBuffer.
+     *
      * @param reporter the reporter to be used
      */
     DefaultOutputBuffer(Reporter reporter) {

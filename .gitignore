@@ -1,6 +1,9 @@
 # IntelliJ
 *.iml
-.idea/
+
+.idea/*
+!/.idea/codeStyles
+!/.idea/dictionaries
 
 # Maven
 target/
@@ -21,3 +24,4 @@ buildNumber.properties
 #Exclude CoverageHTMLReporter resources as they are managed by maven
 src/main/resources/CoverageHTMLReporter/
 /gradle.properties
+

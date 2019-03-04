@@ -3,7 +3,8 @@ package org.utplsql.api.reporter;
 import org.utplsql.api.Version;
 import org.utplsql.api.exception.InvalidVersionException;
 
-/** This enum defines default reporters, added and maintained by the utPLSQL team,
+/**
+ * This enum defines default reporters, added and maintained by the utPLSQL team,
  * and information since (and maybe until) which version they exist
  *
  * @author pesse
@@ -22,7 +23,7 @@ public enum CoreReporters {
     private final Version since;
     private final Version until;
 
-    CoreReporters(Version since, Version until ) {
+    CoreReporters(Version since, Version until) {
         this.since = since;
         this.until = until;
     }
@@ -35,18 +36,20 @@ public enum CoreReporters {
         return until;
     }
 
-    /** Checks whether a CoreReporter is valid for the given databaseVersion
+    /**
+     * Checks whether a CoreReporter is valid for the given databaseVersion
      *
      * @param databaseVersion Database-Version
      * @return true or false
      */
-    public boolean isAvailableFor( Version databaseVersion ) {
+    public boolean isAvailableFor(Version databaseVersion) {
         try {
             if ((since == null || databaseVersion.isGreaterOrEqualThan(since))
-                    && (until == null || databaseVersion.isLessOrEqualThan(until)))
+                    && (until == null || databaseVersion.isLessOrEqualThan(until))) {
                 return true;
+            }
+        } catch (InvalidVersionException ignored) {
         }
-        catch ( InvalidVersionException ignored ) { }
 
         return false;
     }

@@ -20,7 +20,8 @@ import javax.annotation.Nullable;
  */
 public class EnvironmentVariableUtil {
 
-    private EnvironmentVariableUtil() {}
+    private EnvironmentVariableUtil() {
+    }
 
     /**
      * Returns the value for a given key from environment (see class description)

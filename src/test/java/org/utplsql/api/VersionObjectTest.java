@@ -11,10 +11,10 @@ class VersionObjectTest {
     void versionPatternRecognitionFull() {
         Version v = Version.create("v3.1.3.1234");
 
-        assertEquals(3, (long)v.getMajor());
-        assertEquals(1, (long)v.getMinor());
-        assertEquals(3, (long)v.getBugfix());
-        assertEquals(1234, (long)v.getBuild());
+        assertEquals(3, (long) v.getMajor());
+        assertEquals(1, (long) v.getMinor());
+        assertEquals(3, (long) v.getBugfix());
+        assertEquals(1234, (long) v.getBuild());
         assertTrue(v.isValid());
         assertEquals("3.1.3.1234", v.getNormalizedString());
     }
@@ -23,10 +23,10 @@ class VersionObjectTest {
     void versionPatternRecognitionDevelop() {
         Version v = Version.create("v3.1.3.2140-develop");
 
-        assertEquals(3, (long)v.getMajor());
-        assertEquals(1, (long)v.getMinor());
-        assertEquals(3, (long)v.getBugfix());
-        assertEquals(2140, (long)v.getBuild());
+        assertEquals(3, (long) v.getMajor());
+        assertEquals(1, (long) v.getMinor());
+        assertEquals(3, (long) v.getBugfix());
+        assertEquals(2140, (long) v.getBuild());
         assertTrue(v.isValid());
         assertEquals("3.1.3.2140", v.getNormalizedString());
     }
@@ -35,8 +35,8 @@ class VersionObjectTest {
     void versionPatternRecognitionPartial() {
         Version v = Version.create("3.1.etc");
 
-        assertEquals(3, (long)v.getMajor());
-        assertEquals(1, (long)v.getMinor());
+        assertEquals(3, (long) v.getMajor());
+        assertEquals(1, (long) v.getMinor());
         assertNull(v.getBugfix());
         assertNull(v.getBuild());
         assertTrue(v.isValid());
@@ -56,8 +56,7 @@ class VersionObjectTest {
     }
 
     @Test
-    void versionCompareTo()
-    {
+    void versionCompareTo() {
         Version base = Version.create("2.3.4.5");
 
         // Less than
@@ -80,8 +79,7 @@ class VersionObjectTest {
     }
 
     @Test
-    void isGreaterOrEqualThan() throws InvalidVersionException
-    {
+    void isGreaterOrEqualThan() throws InvalidVersionException {
         Version base = Version.create("2.3.4.5");
 
         assertTrue(base.isGreaterOrEqualThan(Version.create("1")));
@@ -101,30 +99,26 @@ class VersionObjectTest {
     }
 
     @Test
-    void isGreaterOrEqualThanFails()
-    {
+    void isGreaterOrEqualThanFails() {
         // Given version is invalid
         try {
             Version.create("2.3.4.5").isGreaterOrEqualThan(Version.create("aerfvf"));
             fail("Given Version is invalid - not recognized");
-        }
-        catch ( InvalidVersionException ignored ) {
+        } catch (InvalidVersionException ignored) {
         }
 
         // Base version is invalid
         try {
             Version.create("erefs").isGreaterOrEqualThan(Version.create("1.2.3"));
             fail("Base version is invalid - not recognized");
-        }
-        catch ( InvalidVersionException ignored ) {
+        } catch (InvalidVersionException ignored) {
         }
 
         // Both versions are invalid
         try {
             Version.create("erefs").isGreaterOrEqualThan(Version.create("aerfvf"));
             fail("Both versions are invalid - not recognized");
-        }
-        catch ( InvalidVersionException ignored ) {
+        } catch (InvalidVersionException ignored) {
         }
     }
 }

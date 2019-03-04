@@ -5,15 +5,16 @@ import org.utplsql.api.TestRunnerOptions;
 import java.sql.Connection;
 import java.sql.SQLException;
 
-/** Provides the call to run tests for the most actual Framework version.
+/**
+ * Provides the call to run tests for the most actual Framework version.
  * Includes fail on error
  *
- * @author  pesse
+ * @author pesse
  */
 class ActualTestRunnerStatement extends AbstractTestRunnerStatement {
 
-    public ActualTestRunnerStatement(TestRunnerOptions options, Connection connection ) throws SQLException {
-        super( options, connection);
+    public ActualTestRunnerStatement(TestRunnerOptions options, Connection connection) throws SQLException {
+        super(options, connection);
     }
 
     @Override

@@ -10,7 +10,7 @@ public class SomeTestsFailedException extends SQLException {
 
     public static final int ERROR_CODE = 20213;
 
-    public SomeTestsFailedException(String reason, @Nullable  Throwable cause) {
+    public SomeTestsFailedException(String reason, @Nullable Throwable cause) {
         super(reason, cause);
     }
 
