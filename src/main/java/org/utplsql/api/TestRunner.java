@@ -127,7 +127,12 @@ public class TestRunner {
     }
 
     private void handleException(Throwable e) throws SQLException {
-        if (e instanceof SQLException) {
+        // Just pass exceptions already categorized
+        if ( e instanceof UtPLSQLNotInstalledException ) throw (UtPLSQLNotInstalledException)e;
+        else if ( e instanceof SomeTestsFailedException ) throw (SomeTestsFailedException)e;
+        else if ( e instanceof OracleCreateStatmenetStuckException ) throw (OracleCreateStatmenetStuckException)e;
+        // Categorize exceptions
+        else if (e instanceof SQLException) {
             SQLException sqlException = (SQLException) e;
             if (sqlException.getErrorCode() == SomeTestsFailedException.ERROR_CODE) {
                 throw new SomeTestsFailedException(sqlException.getMessage(), e);
@@ -173,6 +178,23 @@ public class TestRunner {
             options.reporterList.add(new DocumentationReporter().init(conn));
         }
 
+        TestRunnerStatement testRunnerStatement = null;
+        try {
+            testRunnerStatement = initStatementWithTimeout(conn);
+            logger.info("Running tests");
+            testRunnerStatement.execute();
+            logger.info("Running tests finished.");
+            testRunnerStatement.close();
+        } catch (OracleCreateStatmenetStuckException e) {
+            // Don't close statement in this case for it will be stuck, too
+            throw e;
+        } catch (SQLException e) {
+            if (testRunnerStatement != null) testRunnerStatement.close();
+            handleException(e);
+        }
+    }
+
+    private TestRunnerStatement initStatementWithTimeout( Connection conn ) throws OracleCreateStatmenetStuckException, SQLException {
         ExecutorService executor = Executors.newSingleThreadExecutor();
         Callable<TestRunnerStatement> callable = () -> compatibilityProxy.getTestRunnerStatement(options, conn);
         Future<TestRunnerStatement> future = executor.submit(callable);
@@ -181,21 +203,17 @@ public class TestRunner {
         TestRunnerStatement testRunnerStatement = null;
         try {
             testRunnerStatement = future.get(2, TimeUnit.SECONDS);
-            logger.info("Running tests");
-            testRunnerStatement.execute();
-            logger.info("Running tests finished.");
-            testRunnerStatement.close();
         } catch (TimeoutException e) {
+            logger.error("Detected Oracle driver stuck during Statement initialization");
             executor.shutdownNow();
             throw new OracleCreateStatmenetStuckException(e);
+        } catch (InterruptedException e) {
+            handleException(e);
         } catch (ExecutionException e) {
             handleException(e.getCause());
-        } catch (Exception e) {
-            if (testRunnerStatement != null) testRunnerStatement.close();
-            handleException(e);
         }
 
-        executor.shutdown();
+        return testRunnerStatement;
     }
 
     /**
