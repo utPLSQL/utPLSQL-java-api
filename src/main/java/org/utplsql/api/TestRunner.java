@@ -5,6 +5,7 @@ import org.slf4j.LoggerFactory;
 import org.utplsql.api.compatibility.CompatibilityProxy;
 import org.utplsql.api.db.DatabaseInformation;
 import org.utplsql.api.db.DefaultDatabaseInformation;
+import org.utplsql.api.exception.OracleCreateStatmenetStuckException;
 import org.utplsql.api.exception.SomeTestsFailedException;
 import org.utplsql.api.exception.UtPLSQLNotInstalledException;
 import org.utplsql.api.reporter.DocumentationReporter;
@@ -16,6 +17,7 @@ import java.sql.Connection;
 import java.sql.SQLException;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.concurrent.*;
 
 /**
  * Created by Vinicius Avellar on 12/04/2017.
@@ -124,6 +126,21 @@ public class TestRunner {
         }
     }
 
+    private void handleException(Throwable e) throws SQLException {
+        if (e instanceof SQLException) {
+            SQLException sqlException = (SQLException) e;
+            if (sqlException.getErrorCode() == SomeTestsFailedException.ERROR_CODE) {
+                throw new SomeTestsFailedException(sqlException.getMessage(), e);
+            } else if (((SQLException) e).getErrorCode() == UtPLSQLNotInstalledException.ERROR_CODE) {
+                throw new UtPLSQLNotInstalledException(sqlException);
+            } else {
+                throw sqlException;
+            }
+        } else {
+            throw new SQLException("Unknown exception, wrapping: " + e.getMessage(), e);
+        }
+    }
+
     public void run(Connection conn) throws SQLException {
 
         logger.info("TestRunner initialized");
@@ -156,19 +173,29 @@ public class TestRunner {
             options.reporterList.add(new DocumentationReporter().init(conn));
         }
 
-        try (TestRunnerStatement testRunnerStatement = compatibilityProxy.getTestRunnerStatement(options, conn)) {
+        ExecutorService executor = Executors.newSingleThreadExecutor();
+        Callable<TestRunnerStatement> callable = () -> compatibilityProxy.getTestRunnerStatement(options, conn);
+        Future<TestRunnerStatement> future = executor.submit(callable);
+
+        // We want to leave the statement open in case of stuck scenario
+        TestRunnerStatement testRunnerStatement = null;
+        try {
+            testRunnerStatement = future.get(2, TimeUnit.SECONDS);
             logger.info("Running tests");
             testRunnerStatement.execute();
             logger.info("Running tests finished.");
-        } catch (SQLException e) {
-            if (e.getErrorCode() == SomeTestsFailedException.ERROR_CODE) {
-                throw new SomeTestsFailedException(e.getMessage(), e);
-            } else if (e.getErrorCode() == UtPLSQLNotInstalledException.ERROR_CODE) {
-                throw new UtPLSQLNotInstalledException(e);
-            } else {
-                throw e;
-            }
+            testRunnerStatement.close();
+        } catch (TimeoutException e) {
+            executor.shutdownNow();
+            throw new OracleCreateStatmenetStuckException(e);
+        } catch (ExecutionException e) {
+            handleException(e.getCause());
+        } catch (Exception e) {
+            if (testRunnerStatement != null) testRunnerStatement.close();
+            handleException(e);
         }
+
+        executor.shutdown();
     }
 
     /**
