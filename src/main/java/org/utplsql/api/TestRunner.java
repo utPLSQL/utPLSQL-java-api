@@ -5,6 +5,7 @@ import org.slf4j.LoggerFactory;
 import org.utplsql.api.compatibility.CompatibilityProxy;
 import org.utplsql.api.db.DatabaseInformation;
 import org.utplsql.api.db.DefaultDatabaseInformation;
+import org.utplsql.api.exception.OracleCreateStatmenetStuckException;
 import org.utplsql.api.exception.SomeTestsFailedException;
 import org.utplsql.api.exception.UtPLSQLNotInstalledException;
 import org.utplsql.api.reporter.DocumentationReporter;
@@ -16,6 +17,7 @@ import java.sql.Connection;
 import java.sql.SQLException;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.concurrent.*;
 
 /**
  * Created by Vinicius Avellar on 12/04/2017.
@@ -124,6 +126,26 @@ public class TestRunner {
         }
     }
 
+    private void handleException(Throwable e) throws SQLException {
+        // Just pass exceptions already categorized
+        if ( e instanceof UtPLSQLNotInstalledException ) throw (UtPLSQLNotInstalledException)e;
+        else if ( e instanceof SomeTestsFailedException ) throw (SomeTestsFailedException)e;
+        else if ( e instanceof OracleCreateStatmenetStuckException ) throw (OracleCreateStatmenetStuckException)e;
+        // Categorize exceptions
+        else if (e instanceof SQLException) {
+            SQLException sqlException = (SQLException) e;
+            if (sqlException.getErrorCode() == SomeTestsFailedException.ERROR_CODE) {
+                throw new SomeTestsFailedException(sqlException.getMessage(), e);
+            } else if (((SQLException) e).getErrorCode() == UtPLSQLNotInstalledException.ERROR_CODE) {
+                throw new UtPLSQLNotInstalledException(sqlException);
+            } else {
+                throw sqlException;
+            }
+        } else {
+            throw new SQLException("Unknown exception, wrapping: " + e.getMessage(), e);
+        }
+    }
+
     public void run(Connection conn) throws SQLException {
 
         logger.info("TestRunner initialized");
@@ -156,19 +178,42 @@ public class TestRunner {
             options.reporterList.add(new DocumentationReporter().init(conn));
         }
 
-        try (TestRunnerStatement testRunnerStatement = compatibilityProxy.getTestRunnerStatement(options, conn)) {
+        TestRunnerStatement testRunnerStatement = null;
+        try {
+            testRunnerStatement = initStatementWithTimeout(conn);
             logger.info("Running tests");
             testRunnerStatement.execute();
             logger.info("Running tests finished.");
+            testRunnerStatement.close();
+        } catch (OracleCreateStatmenetStuckException e) {
+            // Don't close statement in this case for it will be stuck, too
+            throw e;
         } catch (SQLException e) {
-            if (e.getErrorCode() == SomeTestsFailedException.ERROR_CODE) {
-                throw new SomeTestsFailedException(e.getMessage(), e);
-            } else if (e.getErrorCode() == UtPLSQLNotInstalledException.ERROR_CODE) {
-                throw new UtPLSQLNotInstalledException(e);
-            } else {
-                throw e;
-            }
+            if (testRunnerStatement != null) testRunnerStatement.close();
+            handleException(e);
         }
+    }
+
+    private TestRunnerStatement initStatementWithTimeout( Connection conn ) throws OracleCreateStatmenetStuckException, SQLException {
+        ExecutorService executor = Executors.newSingleThreadExecutor();
+        Callable<TestRunnerStatement> callable = () -> compatibilityProxy.getTestRunnerStatement(options, conn);
+        Future<TestRunnerStatement> future = executor.submit(callable);
+
+        // We want to leave the statement open in case of stuck scenario
+        TestRunnerStatement testRunnerStatement = null;
+        try {
+            testRunnerStatement = future.get(2, TimeUnit.SECONDS);
+        } catch (TimeoutException e) {
+            logger.error("Detected Oracle driver stuck during Statement initialization");
+            executor.shutdownNow();
+            throw new OracleCreateStatmenetStuckException(e);
+        } catch (InterruptedException e) {
+            handleException(e);
+        } catch (ExecutionException e) {
+            handleException(e.getCause());
+        }
+
+        return testRunnerStatement;
     }
 
     /**
