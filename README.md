@@ -40,14 +40,14 @@ To use the java-api library, add this to the `<dependencies>` section of your `p
 <dependency>
     <groupId>org.utplsql</groupId>
     <artifactId>java-api</artifactId>
-    <version>3.1.2</version>
+    <version>3.1.6</version>
     <scope>compile</scope>
 </dependency>
 ```
 
 ## Compatibility
 The latest Java-API is always compatible with all database frameworks of the same major version.
-For example API-3.0.4 is compatible with database framework 3.0.0-3.1.2 but not with database framework 2.x.
+For example API-3.0.4 is compatible with database framework 3.0.0-3.1.* but not with database framework 2.x.
 
 It is although recommended to always use the latest release of the API to build your tools for utPLSQL.
 
