@@ -5,7 +5,7 @@ val deployerJars by configurations.creating
 
 group = "org.utplsql"
 val mavenArtifactId = "java-api"
-version = "3.1.6"
+version = "3.1.7-SNAPSHOT"
 
 val coverageResourcesVersion = "1.0.1"
 val ojdbcVersion = "12.2.0.1"
