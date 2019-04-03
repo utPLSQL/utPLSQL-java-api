@@ -131,7 +131,7 @@ class OutputBufferIT extends AbstractDatabaseTest {
     void sonarReporterHasEncodingSet() throws SQLException, InvalidVersionException {
         CompatibilityProxy proxy = new CompatibilityProxy(newConnection());
 
-        if (proxy.getDatabaseVersion().isGreaterOrEqualThan(Version.V3_1_2)) {
+        if (proxy.getUtPlsqlVersion().isGreaterOrEqualThan(Version.V3_1_2)) {
             Reporter reporter = new DefaultReporter(CoreReporters.UT_SONAR_TEST_REPORTER.name(), null).init(getConnection());
 
             TestRunner tr = new TestRunner()

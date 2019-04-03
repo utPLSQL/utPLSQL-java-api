@@ -14,7 +14,7 @@ class OptionalFeaturesIT extends AbstractDatabaseTest {
 
 
     private Version getDatabaseVersion() throws SQLException {
-        return new CompatibilityProxy(getConnection()).getDatabaseVersion();
+        return new CompatibilityProxy(getConnection()).getUtPlsqlVersion();
     }
 
     @Test

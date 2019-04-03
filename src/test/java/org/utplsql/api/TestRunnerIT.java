@@ -3,6 +3,9 @@ package org.utplsql.api;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.function.Executable;
 import org.utplsql.api.compatibility.CompatibilityProxy;
+import org.utplsql.api.compatibility.OptionalFeatures;
+import org.utplsql.api.db.DatabaseInformation;
+import org.utplsql.api.db.DefaultDatabaseInformation;
 import org.utplsql.api.exception.InvalidVersionException;
 import org.utplsql.api.exception.SomeTestsFailedException;
 import org.utplsql.api.reporter.CoreReporters;
@@ -31,9 +34,11 @@ class TestRunnerIT extends AbstractDatabaseTest {
      */
     @Test
     void runWithoutCompatibilityCheck() throws SQLException, InvalidVersionException {
-        CompatibilityProxy proxy = new CompatibilityProxy(getConnection());
 
-        if (proxy.getDatabaseVersion().isGreaterOrEqualThan(Version.V3_0_3)) {
+        DatabaseInformation databaseInformation = new DefaultDatabaseInformation();
+
+        // We can only test this for the versions of the latest TestRunnerStatement-Change
+        if ( OptionalFeatures.CLIENT_CHARACTER_SET.isAvailableFor(databaseInformation.getUtPlsqlFrameworkVersion(getConnection())) ) {
             new TestRunner()
                     .skipCompatibilityCheck(true)
                     .run(getConnection());
@@ -65,7 +70,7 @@ class TestRunnerIT extends AbstractDatabaseTest {
 
         CompatibilityProxy proxy = new CompatibilityProxy(conn);
 
-        if (proxy.getDatabaseVersion().isGreaterOrEqualThan(Version.V3_0_3)) {
+        if (proxy.getUtPlsqlVersion().isGreaterOrEqualThan(Version.V3_0_3)) {
             Executable throwingTestRunner = () -> new TestRunner()
                     .failOnErrors(true)
                     .run(conn);
