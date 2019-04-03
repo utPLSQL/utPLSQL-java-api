@@ -27,8 +27,12 @@ public class Version implements Comparable<Version> {
     public final static Version V3_1_0 = new Version("3.1.0", 3, 1, 0, null, true);
     public final static Version V3_1_1 = new Version("3.1.1", 3, 1, 1, null, true);
     public final static Version V3_1_2 = new Version("3.1.2", 3, 1, 2, null, true);
+    public final static Version V3_1_3 = new Version("3.1.3", 3, 1, 3, null, true);
+    public final static Version V3_1_4 = new Version("3.1.4", 3, 1, 4, null, true);
+    public final static Version V3_1_5 = new Version("3.1.5", 3, 1, 5, null, true);
+    public final static Version V3_1_6 = new Version("3.1.6", 3, 1, 6, null, true);
     private final static Map<String, Version> knownVersions =
-            Stream.of(V3_0_0, V3_0_1, V3_0_2, V3_0_3, V3_0_4, V3_1_0, V3_1_1, V3_1_2)
+            Stream.of(V3_0_0, V3_0_1, V3_0_2, V3_0_3, V3_0_4, V3_1_0, V3_1_1, V3_1_2, V3_1_3, V3_1_4, V3_1_5, V3_1_6)
                     .collect(toMap(Version::toString, Function.identity()));
 
     private final String origString;
