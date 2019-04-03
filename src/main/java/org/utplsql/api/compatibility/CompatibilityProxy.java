@@ -35,6 +35,16 @@ public class CompatibilityProxy {
         this(conn, null, null);
     }
 
+    @Deprecated
+    public CompatibilityProxy(Connection conn, boolean skipCompatibilityCheck ) throws SQLException {
+        this(conn, Version.LATEST);
+    }
+
+    @Deprecated
+    public CompatibilityProxy(Connection conn, boolean skipCompatibilityCheck, @Nullable  DatabaseInformation databaseInformation ) throws SQLException {
+        this(conn, Version.LATEST, databaseInformation);
+    }
+
     public CompatibilityProxy(Connection conn, @Nullable DatabaseInformation databaseInformation) throws SQLException {
         this(conn, null, databaseInformation);
     }
