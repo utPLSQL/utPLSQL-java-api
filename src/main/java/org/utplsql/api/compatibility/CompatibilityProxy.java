@@ -25,7 +25,6 @@ import java.util.Objects;
 public class CompatibilityProxy {
 
     public static final String UTPLSQL_COMPATIBILITY_VERSION = "3";
-    private static final String UTPLSQL_API_VERSION = "3.1.1";
     private final DatabaseInformation databaseInformation;
     private Version databaseVersion;
     private boolean compatible = false;
@@ -88,7 +87,7 @@ public class CompatibilityProxy {
      * Just prepare the proxy to expect compatibility, expecting the database framework to be the same version as the API
      */
     private void doExpectCompatibility() {
-        databaseVersion = Version.create(UTPLSQL_API_VERSION);
+        databaseVersion = Version.LATEST;
         compatible = true;
     }
 
