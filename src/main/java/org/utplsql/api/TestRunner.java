@@ -118,6 +118,17 @@ public class TestRunner {
         return this;
     }
 
+    public TestRunner randomTestOrder(boolean randomTestOrder ) {
+        this.options.randomTestOrder = randomTestOrder;
+        return this;
+    }
+
+    public TestRunner randomTestOrderSeed( Integer seed ) {
+        this.options.randomTestOrderSeed = seed;
+        if ( seed != null ) this.options.randomTestOrder = true;
+        return this;
+    }
+
     private void delayedAddReporters() {
         if (reporterFactory != null) {
             reporterNames.forEach(this::addReporter);

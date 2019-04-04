@@ -25,4 +25,6 @@ public class TestRunnerOptions {
     public boolean failOnErrors = false;
     public boolean skipCompatibilityCheck = false;
     public String clientCharacterSet = Charset.defaultCharset().toString();
+    public boolean randomTestOrder = false;
+    public Integer randomTestOrderSeed;
 }

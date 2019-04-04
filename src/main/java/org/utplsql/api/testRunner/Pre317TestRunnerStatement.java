@@ -11,9 +11,9 @@ import java.sql.SQLException;
  *
  * @author pesse
  */
-class ActualTestRunnerStatement extends AbstractTestRunnerStatement {
+class Pre317TestRunnerStatement extends AbstractTestRunnerStatement {
 
-    public ActualTestRunnerStatement(TestRunnerOptions options, Connection connection) throws SQLException {
+    public Pre317TestRunnerStatement(TestRunnerOptions options, Connection connection) throws SQLException {
         super(options, connection);
     }
 
@@ -22,7 +22,6 @@ class ActualTestRunnerStatement extends AbstractTestRunnerStatement {
         // Workaround because Oracle JDBC doesn't support passing boolean to stored procedures.
         String colorConsoleStr = Boolean.toString(options.colorConsole);
         String failOnErrors = Boolean.toString(options.failOnErrors);
-        String randomExecutionOrder = Boolean.toString(options.randomTestOrder);
 
         return
                 "BEGIN " +
@@ -36,9 +35,7 @@ class ActualTestRunnerStatement extends AbstractTestRunnerStatement {
                         "a_include_objects      => ?, " +
                         "a_exclude_objects      => ?, " +
                         "a_fail_on_errors       => " + failOnErrors + ", " +
-                        "a_client_character_set => ?" +
-                        //(options.randomTestOrderSeed != null ) ?
-                        "); " +
+                        "a_client_character_set => ?); " +
                         "END;";
     }
 

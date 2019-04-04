@@ -31,8 +31,20 @@ class TestRunnerStatementProviderIT extends AbstractDatabaseTest {
     }
 
     @Test
-    void testGettingActualVersion() throws SQLException {
+    void testGettingPre317Version_from_312() throws SQLException {
         TestRunnerStatement stmt = TestRunnerStatementProvider.getCompatibleTestRunnerStatement(Version.V3_1_2, new TestRunnerOptions(), getConnection());
+        assertEquals(Pre317TestRunnerStatement.class, stmt.getClass());
+    }
+
+    @Test
+    void testGettingPre317Version_from_316() throws SQLException {
+        TestRunnerStatement stmt = TestRunnerStatementProvider.getCompatibleTestRunnerStatement(Version.V3_1_6, new TestRunnerOptions(), getConnection());
+        assertEquals(Pre317TestRunnerStatement.class, stmt.getClass());
+    }
+
+    @Test
+    void testGettingActualVersion_from_latest() throws SQLException {
+        TestRunnerStatement stmt = TestRunnerStatementProvider.getCompatibleTestRunnerStatement(Version.LATEST, new TestRunnerOptions(), getConnection());
         assertEquals(ActualTestRunnerStatement.class, stmt.getClass());
     }
 }

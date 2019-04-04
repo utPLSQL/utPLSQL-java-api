@@ -78,4 +78,14 @@ class TestRunnerIT extends AbstractDatabaseTest {
         }
     }
 
+    @Test
+    void runWithRandomExecutionOrder() throws SQLException {
+        CompatibilityProxy proxy = new CompatibilityProxy(getConnection());
+
+        new TestRunner()
+                .randomTestOrder(true)
+                .randomTestOrderSeed(123)
+                .run(getConnection());
+    }
+
 }
