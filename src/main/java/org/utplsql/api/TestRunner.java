@@ -157,7 +157,7 @@ public class TestRunner {
         } else {
             compatibilityProxy = new CompatibilityProxy(conn, databaseInformation);
         }
-        logger.info("Running on utPLSQL {}", compatibilityProxy.getUtPlsqlVersion());
+        logger.info("Running on utPLSQL {}", compatibilityProxy.getVersionDescription());
 
         if (reporterFactory == null) {
             reporterFactory = ReporterFactory.createDefault(compatibilityProxy);
