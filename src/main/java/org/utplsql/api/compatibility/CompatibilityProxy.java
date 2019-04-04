@@ -155,6 +155,14 @@ public class CompatibilityProxy {
 
     public Version getRealDbPlsqlVersion() { return realDbPlsqlVersion; }
 
+    public String getVersionDescription() {
+        if ( utPlsqlVersion != realDbPlsqlVersion ) {
+            return realDbPlsqlVersion.toString() + " (Assumed: " + utPlsqlVersion.toString();
+        } else {
+            return utPlsqlVersion.toString();
+        }
+    }
+
     /**
      * Returns a TestRunnerStatement compatible with the current framework
      *
