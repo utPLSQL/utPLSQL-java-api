@@ -38,7 +38,7 @@ class TestRunnerIT extends AbstractDatabaseTest {
         DatabaseInformation databaseInformation = new DefaultDatabaseInformation();
 
         // We can only test this for the versions of the latest TestRunnerStatement-Change
-        if ( OptionalFeatures.CLIENT_CHARACTER_SET.isAvailableFor(databaseInformation.getUtPlsqlFrameworkVersion(getConnection())) ) {
+        if ( OptionalFeatures.RANDOM_EXECUTION_ORDER.isAvailableFor(databaseInformation.getUtPlsqlFrameworkVersion(getConnection())) ) {
             new TestRunner()
                     .skipCompatibilityCheck(true)
                     .run(getConnection());
