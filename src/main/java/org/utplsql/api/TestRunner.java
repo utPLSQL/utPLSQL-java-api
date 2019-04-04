@@ -129,6 +129,8 @@ public class TestRunner {
         return this;
     }
 
+    public TestRunnerOptions getOptions() { return options; }
+
     private void delayedAddReporters() {
         if (reporterFactory != null) {
             reporterNames.forEach(this::addReporter);
