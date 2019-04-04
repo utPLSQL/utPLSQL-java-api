@@ -4,6 +4,7 @@ import org.junit.jupiter.api.Test;
 import org.utplsql.api.AbstractDatabaseTest;
 import org.utplsql.api.Version;
 import org.utplsql.api.compatibility.CompatibilityProxy;
+import org.utplsql.api.exception.InvalidVersionException;
 import org.utplsql.api.reporter.CoreReporters;
 import org.utplsql.api.reporter.Reporter;
 import org.utplsql.api.reporter.ReporterFactory;
@@ -30,15 +31,19 @@ public class OutputBufferProviderIT extends AbstractDatabaseTest {
     }
 
     @Test
-    void testGettingActualVersion() throws SQLException {
+    void testGettingActualVersion() throws SQLException, InvalidVersionException {
         CompatibilityProxy proxy = new CompatibilityProxy(getConnection(), Version.LATEST);
-        ReporterFactory reporterFactory = ReporterFactory.createDefault(proxy);
 
-        Reporter r = reporterFactory.createReporter(CoreReporters.UT_DOCUMENTATION_REPORTER.name());
-        r.init(getConnection(), proxy, reporterFactory);
+        // We can only test new behaviour with DB-Version >= 3.1.0
+        if ( proxy.getRealDbPlsqlVersion().isGreaterOrEqualThan(Version.V3_1_0)) {
+            ReporterFactory reporterFactory = ReporterFactory.createDefault(proxy);
 
-        OutputBuffer buffer = proxy.getOutputBuffer(r, getConnection());
+            Reporter r = reporterFactory.createReporter(CoreReporters.UT_DOCUMENTATION_REPORTER.name());
+            r.init(getConnection(), proxy, reporterFactory);
 
-        assertThat(buffer, instanceOf(DefaultOutputBuffer.class));
+            OutputBuffer buffer = proxy.getOutputBuffer(r, getConnection());
+
+            assertThat(buffer, instanceOf(DefaultOutputBuffer.class));
+        }
     }
 }
