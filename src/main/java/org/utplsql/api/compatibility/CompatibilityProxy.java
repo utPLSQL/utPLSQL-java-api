@@ -11,6 +11,7 @@ import org.utplsql.api.reporter.Reporter;
 import org.utplsql.api.testRunner.TestRunnerStatement;
 import org.utplsql.api.testRunner.TestRunnerStatementProvider;
 
+import javax.annotation.Nullable;
 import java.sql.Connection;
 import java.sql.SQLException;
 import java.util.Objects;
@@ -25,30 +26,42 @@ import java.util.Objects;
 public class CompatibilityProxy {
 
     public static final String UTPLSQL_COMPATIBILITY_VERSION = "3";
-    private static final String UTPLSQL_API_VERSION = "3.1.1";
     private final DatabaseInformation databaseInformation;
-    private Version databaseVersion;
+    private Version utPlsqlVersion;
+    private Version realDbPlsqlVersion;
     private boolean compatible = false;
 
     public CompatibilityProxy(Connection conn) throws SQLException {
-        this(conn, false, null);
+        this(conn, null, null);
     }
 
-    public CompatibilityProxy(Connection conn, DatabaseInformation databaseInformation) throws SQLException {
-        this(conn, false, databaseInformation);
-    }
-
-    public CompatibilityProxy(Connection conn, boolean skipCompatibilityCheck) throws SQLException {
+    @Deprecated
+    public CompatibilityProxy(Connection conn, boolean skipCompatibilityCheck ) throws SQLException {
         this(conn, skipCompatibilityCheck, null);
     }
 
-    public CompatibilityProxy(Connection conn, boolean skipCompatibilityCheck, DatabaseInformation databaseInformation) throws SQLException {
+    @Deprecated
+    public CompatibilityProxy(Connection conn, boolean skipCompatibilityCheck, @Nullable  DatabaseInformation databaseInformation ) throws SQLException {
+        this(conn, skipCompatibilityCheck ? Version.LATEST : null, databaseInformation);
+    }
+
+    public CompatibilityProxy(Connection conn, @Nullable DatabaseInformation databaseInformation) throws SQLException {
+        this(conn, null, databaseInformation);
+    }
+
+    public CompatibilityProxy(Connection conn, @Nullable Version assumedUtPlsVersion) throws SQLException {
+        this(conn, assumedUtPlsVersion, null);
+    }
+
+    public CompatibilityProxy(Connection conn, @Nullable Version assumedUtPlsqlVersion, @Nullable DatabaseInformation databaseInformation) throws SQLException {
         this.databaseInformation = (databaseInformation != null)
                 ? databaseInformation
                 : new DefaultDatabaseInformation();
 
-        if (skipCompatibilityCheck) {
-            doExpectCompatibility();
+        realDbPlsqlVersion = this.databaseInformation.getUtPlsqlFrameworkVersion(conn);
+        if ( assumedUtPlsqlVersion != null ) {
+            utPlsqlVersion = assumedUtPlsqlVersion;
+            compatible = utPlsqlVersion.getNormalizedString().startsWith(UTPLSQL_COMPATIBILITY_VERSION);
         } else {
             doCompatibilityCheckWithDatabase(conn);
         }
@@ -62,18 +75,18 @@ public class CompatibilityProxy {
      * @throws SQLException
      */
     private void doCompatibilityCheckWithDatabase(Connection conn) throws SQLException {
-        databaseVersion = databaseInformation.getUtPlsqlFrameworkVersion(conn);
+        utPlsqlVersion = realDbPlsqlVersion;
         Version clientVersion = Version.create(UTPLSQL_COMPATIBILITY_VERSION);
 
-        if (databaseVersion == null) {
+        if (utPlsqlVersion == null) {
             throw new DatabaseNotCompatibleException("Could not get database version", clientVersion, null, null);
         }
 
-        if (databaseVersion.getMajor() == null) {
-            throw new DatabaseNotCompatibleException("Illegal database version: " + databaseVersion.toString(), clientVersion, databaseVersion, null);
+        if (utPlsqlVersion.getMajor() == null) {
+            throw new DatabaseNotCompatibleException("Illegal database version: " + utPlsqlVersion.toString(), clientVersion, utPlsqlVersion, null);
         }
 
-        if (OptionalFeatures.FRAMEWORK_COMPATIBILITY_CHECK.isAvailableFor(databaseVersion)) {
+        if (OptionalFeatures.FRAMEWORK_COMPATIBILITY_CHECK.isAvailableFor(utPlsqlVersion)) {
             try {
                 compatible = versionCompatibilityCheck(conn, UTPLSQL_COMPATIBILITY_VERSION, null);
             } catch (SQLException e) {
@@ -82,14 +95,6 @@ public class CompatibilityProxy {
         } else {
             compatible = versionCompatibilityCheckPre303(UTPLSQL_COMPATIBILITY_VERSION);
         }
-    }
-
-    /**
-     * Just prepare the proxy to expect compatibility, expecting the database framework to be the same version as the API
-     */
-    private void doExpectCompatibility() {
-        databaseVersion = Version.create(UTPLSQL_API_VERSION);
-        compatible = true;
     }
 
     /**
@@ -121,10 +126,10 @@ public class CompatibilityProxy {
     private boolean versionCompatibilityCheckPre303(String requested) {
         Version requestedVersion = Version.create(requested);
 
-        Objects.requireNonNull(databaseVersion.getMajor(), "Illegal database Version: " + databaseVersion.toString());
-        return databaseVersion.getMajor().equals(requestedVersion.getMajor())
+        Objects.requireNonNull(utPlsqlVersion.getMajor(), "Illegal database Version: " + utPlsqlVersion.toString());
+        return utPlsqlVersion.getMajor().equals(requestedVersion.getMajor())
                 && (requestedVersion.getMinor() == null
-                || requestedVersion.getMinor().equals(databaseVersion.getMinor()));
+                || requestedVersion.getMinor().equals(utPlsqlVersion.getMinor()));
     }
 
     /**
@@ -133,7 +138,7 @@ public class CompatibilityProxy {
      */
     public void failOnNotCompatible() throws DatabaseNotCompatibleException {
         if (!isCompatible()) {
-            throw new DatabaseNotCompatibleException(databaseVersion);
+            throw new DatabaseNotCompatibleException(utPlsqlVersion);
         }
     }
 
@@ -141,8 +146,21 @@ public class CompatibilityProxy {
         return compatible;
     }
 
-    public Version getDatabaseVersion() {
-        return databaseVersion;
+    @Deprecated
+    public Version getDatabaseVersion() { return utPlsqlVersion; }
+
+    public Version getUtPlsqlVersion() {
+        return utPlsqlVersion;
+    }
+
+    public Version getRealDbPlsqlVersion() { return realDbPlsqlVersion; }
+
+    public String getVersionDescription() {
+        if ( utPlsqlVersion != realDbPlsqlVersion ) {
+            return realDbPlsqlVersion.toString() + " (Assumed: " + utPlsqlVersion.toString() + ")";
+        } else {
+            return utPlsqlVersion.toString();
+        }
     }
 
     /**
@@ -154,7 +172,7 @@ public class CompatibilityProxy {
      * @throws SQLException
      */
     public TestRunnerStatement getTestRunnerStatement(TestRunnerOptions options, Connection conn) throws SQLException {
-        return TestRunnerStatementProvider.getCompatibleTestRunnerStatement(databaseVersion, options, conn);
+        return TestRunnerStatementProvider.getCompatibleTestRunnerStatement(utPlsqlVersion, options, conn);
     }
 
     /**
@@ -166,6 +184,6 @@ public class CompatibilityProxy {
      * @throws SQLException
      */
     public OutputBuffer getOutputBuffer(Reporter reporter, Connection conn) throws SQLException {
-        return OutputBufferProvider.getCompatibleOutputBuffer(databaseVersion, reporter, conn);
+        return OutputBufferProvider.getCompatibleOutputBuffer(utPlsqlVersion, reporter, conn);
     }
 }

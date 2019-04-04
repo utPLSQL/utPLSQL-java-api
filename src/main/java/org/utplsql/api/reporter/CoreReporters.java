@@ -11,14 +11,18 @@ import org.utplsql.api.exception.InvalidVersionException;
  */
 public enum CoreReporters {
 
+    UT_COVERAGE_COBERTURA_REPORTER(Version.V3_1_0, null),
     UT_COVERAGE_HTML_REPORTER(Version.V3_0_0, null),
-    UT_DOCUMENTATION_REPORTER(Version.V3_0_0, null),
-    UT_TEAMCITY_REPORTER(Version.V3_0_0, null),
-    UT_XUNIT_REPORTER(Version.V3_0_0, null),
-    UT_COVERALLS_REPORTER(Version.V3_0_0, null),
     UT_COVERAGE_SONAR_REPORTER(Version.V3_0_0, null),
+    UT_COVERALLS_REPORTER(Version.V3_0_0, null),
+    UT_DEBUG_REPORTER(Version.V3_1_4, null),
+    UT_DOCUMENTATION_REPORTER(Version.V3_0_0, null),
+    UT_JUNIT_REPORTER(Version.V3_1_0, null),
+    UT_REALTIME_REPORTER(Version.V3_1_4, null),
     UT_SONAR_TEST_REPORTER(Version.V3_0_0, null),
-    UT_COVERAGE_COBERTURA_REPORTER(Version.V3_1_0, null);
+    UT_TEAMCITY_REPORTER(Version.V3_0_0, null),
+    UT_TFS_JUNIT_REPORTER(Version.V3_1_0, null),
+    UT_XUNIT_REPORTER(Version.V3_0_0, null);
 
     private final Version since;
     private final Version until;
