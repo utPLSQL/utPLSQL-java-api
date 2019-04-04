@@ -1,6 +1,7 @@
 package org.utplsql.api;
 
 import org.junit.jupiter.api.Test;
+import org.omg.CORBA.DynAnyPackage.Invalid;
 import org.utplsql.api.compatibility.CompatibilityProxy;
 import org.utplsql.api.compatibility.OptionalFeatures;
 import org.utplsql.api.exception.InvalidVersionException;
@@ -47,6 +48,17 @@ class OptionalFeaturesIT extends AbstractDatabaseTest {
         boolean available = OptionalFeatures.CUSTOM_REPORTERS.isAvailableFor(getConnection());
 
         if (getDatabaseVersion().isGreaterOrEqualThan(Version.V3_1_0)) {
+            assertTrue(available);
+        } else {
+            assertFalse(available);
+        }
+    }
+
+    @Test
+    void clientCharset() throws SQLException, InvalidVersionException {
+        boolean available = OptionalFeatures.CLIENT_CHARACTER_SET.isAvailableFor(getConnection());
+
+        if (getDatabaseVersion().isGreaterOrEqualThan(Version.V3_1_2)) {
             assertTrue(available);
         } else {
             assertFalse(available);
