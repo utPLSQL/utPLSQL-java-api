@@ -37,12 +37,12 @@ public class CompatibilityProxy {
 
     @Deprecated
     public CompatibilityProxy(Connection conn, boolean skipCompatibilityCheck ) throws SQLException {
-        this(conn, Version.LATEST);
+        this(conn, skipCompatibilityCheck, null);
     }
 
     @Deprecated
     public CompatibilityProxy(Connection conn, boolean skipCompatibilityCheck, @Nullable  DatabaseInformation databaseInformation ) throws SQLException {
-        this(conn, Version.LATEST, databaseInformation);
+        this(conn, skipCompatibilityCheck ? Version.LATEST : null, databaseInformation);
     }
 
     public CompatibilityProxy(Connection conn, @Nullable DatabaseInformation databaseInformation) throws SQLException {
@@ -157,7 +157,7 @@ public class CompatibilityProxy {
 
     public String getVersionDescription() {
         if ( utPlsqlVersion != realDbPlsqlVersion ) {
-            return realDbPlsqlVersion.toString() + " (Assumed: " + utPlsqlVersion.toString();
+            return realDbPlsqlVersion.toString() + " (Assumed: " + utPlsqlVersion.toString() + ")";
         } else {
             return utPlsqlVersion.toString();
         }
