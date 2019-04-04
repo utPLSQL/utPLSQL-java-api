@@ -7,44 +7,76 @@ import org.utplsql.api.Version;
 
 import java.sql.SQLException;
 
+import static org.hamcrest.CoreMatchers.containsString;
+import static org.hamcrest.CoreMatchers.not;
+import static org.hamcrest.MatcherAssert.assertThat;
+import static org.hamcrest.core.IsInstanceOf.instanceOf;
 import static org.junit.jupiter.api.Assertions.assertEquals;
 
 class TestRunnerStatementProviderIT extends AbstractDatabaseTest {
 
+    AbstractTestRunnerStatement getTestRunnerStatementForVersion( Version version ) throws SQLException {
+        return (AbstractTestRunnerStatement)TestRunnerStatementProvider.getCompatibleTestRunnerStatement(version, new TestRunnerOptions(), getConnection());
+    }
+
     @Test
     void testGettingPre303Version() throws SQLException {
-        TestRunnerStatement stmt = TestRunnerStatementProvider.getCompatibleTestRunnerStatement(Version.V3_0_2, new TestRunnerOptions(), getConnection());
+        AbstractTestRunnerStatement stmt = getTestRunnerStatementForVersion(Version.V3_0_2);
         assertEquals(Pre303TestRunnerStatement.class, stmt.getClass());
+        assertThat(stmt.getSql(), not(containsString("a_fail_on_errors")));
+        assertThat(stmt.getSql(), not(containsString("a_client_character_set")));
+        assertThat(stmt.getSql(), not(containsString("a_random_test_order")));
+        assertThat(stmt.getSql(), not(containsString("a_random_test_order_seed")));
     }
 
 
     @Test
     void testGettingPre312Version_from_303() throws SQLException {
-        TestRunnerStatement stmt = TestRunnerStatementProvider.getCompatibleTestRunnerStatement(Version.V3_0_3, new TestRunnerOptions(), getConnection());
+        AbstractTestRunnerStatement stmt = getTestRunnerStatementForVersion(Version.V3_0_3);
         assertEquals(Pre312TestRunnerStatement.class, stmt.getClass());
+        assertThat(stmt.getSql(), containsString("a_fail_on_errors"));
+        assertThat(stmt.getSql(), not(containsString("a_client_character_set")));
+        assertThat(stmt.getSql(), not(containsString("a_random_test_order")));
+        assertThat(stmt.getSql(), not(containsString("a_random_test_order_seed")));
     }
 
     @Test
     void testGettingPre312Version_from_311() throws SQLException {
-        TestRunnerStatement stmt = TestRunnerStatementProvider.getCompatibleTestRunnerStatement(Version.V3_1_1, new TestRunnerOptions(), getConnection());
-        assertEquals(Pre312TestRunnerStatement.class, stmt.getClass());
+        AbstractTestRunnerStatement stmt = getTestRunnerStatementForVersion(Version.V3_1_1);
+        assertThat(stmt, instanceOf(Pre312TestRunnerStatement.class));
+        assertThat(stmt.getSql(), containsString("a_fail_on_errors"));
+        assertThat(stmt.getSql(), not(containsString("a_client_character_set")));
+        assertThat(stmt.getSql(), not(containsString("a_random_test_order")));
+        assertThat(stmt.getSql(), not(containsString("a_random_test_order_seed")));
     }
 
     @Test
     void testGettingPre317Version_from_312() throws SQLException {
-        TestRunnerStatement stmt = TestRunnerStatementProvider.getCompatibleTestRunnerStatement(Version.V3_1_2, new TestRunnerOptions(), getConnection());
-        assertEquals(Pre317TestRunnerStatement.class, stmt.getClass());
+        AbstractTestRunnerStatement stmt = getTestRunnerStatementForVersion(Version.V3_1_2);
+        assertThat(stmt, instanceOf(Pre317TestRunnerStatement.class));
+        assertThat(stmt.getSql(), containsString("a_fail_on_errors"));
+        assertThat(stmt.getSql(), containsString("a_client_character_set"));
+        assertThat(stmt.getSql(), not(containsString("a_random_test_order")));
+        assertThat(stmt.getSql(), not(containsString("a_random_test_order_seed")));
     }
 
     @Test
     void testGettingPre317Version_from_316() throws SQLException {
-        TestRunnerStatement stmt = TestRunnerStatementProvider.getCompatibleTestRunnerStatement(Version.V3_1_6, new TestRunnerOptions(), getConnection());
-        assertEquals(Pre317TestRunnerStatement.class, stmt.getClass());
+        AbstractTestRunnerStatement stmt = getTestRunnerStatementForVersion(Version.V3_1_6);
+        assertThat(stmt, instanceOf(Pre317TestRunnerStatement.class));
+        assertThat(stmt.getSql(), containsString("a_fail_on_errors"));
+        assertThat(stmt.getSql(), containsString("a_client_character_set"));
+        assertThat(stmt.getSql(), not(containsString("a_random_test_order")));
+        assertThat(stmt.getSql(), not(containsString("a_random_test_order_seed")));
     }
 
     @Test
     void testGettingActualVersion_from_latest() throws SQLException {
-        TestRunnerStatement stmt = TestRunnerStatementProvider.getCompatibleTestRunnerStatement(Version.LATEST, new TestRunnerOptions(), getConnection());
-        assertEquals(ActualTestRunnerStatement.class, stmt.getClass());
+        AbstractTestRunnerStatement stmt = getTestRunnerStatementForVersion(Version.LATEST);
+        assertThat(stmt, instanceOf(ActualTestRunnerStatement.class));
+        assertThat(stmt.getSql(), containsString("a_fail_on_errors"));
+        assertThat(stmt.getSql(), containsString("a_client_character_set"));
+        assertThat(stmt.getSql(), containsString("a_random_test_order"));
+        assertThat(stmt.getSql(), containsString("a_random_test_order_seed"));
     }
 }
