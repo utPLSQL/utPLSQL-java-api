@@ -38,7 +38,7 @@ class TestRunnerIT extends AbstractDatabaseTest {
         DatabaseInformation databaseInformation = new DefaultDatabaseInformation();
 
         // We can only test this for the versions of the latest TestRunnerStatement-Change
-        if ( OptionalFeatures.CLIENT_CHARACTER_SET.isAvailableFor(databaseInformation.getUtPlsqlFrameworkVersion(getConnection())) ) {
+        if ( OptionalFeatures.RANDOM_EXECUTION_ORDER.isAvailableFor(databaseInformation.getUtPlsqlFrameworkVersion(getConnection())) ) {
             new TestRunner()
                     .skipCompatibilityCheck(true)
                     .run(getConnection());
@@ -76,6 +76,16 @@ class TestRunnerIT extends AbstractDatabaseTest {
                     .run(conn);
             assertThrows(SomeTestsFailedException.class, throwingTestRunner);
         }
+    }
+
+    @Test
+    void runWithRandomExecutionOrder() throws SQLException {
+        CompatibilityProxy proxy = new CompatibilityProxy(getConnection());
+
+        new TestRunner()
+                .randomTestOrder(true)
+                .randomTestOrderSeed(123)
+                .run(getConnection());
     }
 
 }
