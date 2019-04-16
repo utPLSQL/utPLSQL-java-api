@@ -1,26 +1,25 @@
 package org.utplsql.api;
 
 import com.zaxxer.hikari.HikariDataSource;
-import org.junit.jupiter.api.AfterAll;
 import org.junit.jupiter.api.AfterEach;
-import org.junit.jupiter.api.BeforeAll;
 import org.junit.jupiter.api.BeforeEach;
 
 import javax.sql.DataSource;
+import java.io.Closeable;
 import java.sql.Connection;
 import java.sql.DriverManager;
 import java.sql.SQLException;
 import java.util.ArrayList;
 import java.util.List;
 
-public abstract class AbstractDatabaseTest {
+public abstract class AbstractDatabaseTest implements Closeable {
 
     private static String sUrl;
     private static String sUser;
     private static String sPass;
 
     static {
-        sUrl = EnvironmentVariableUtil.getEnvValue("DB_URL", "192.168.99.100:1521:XE");
+        sUrl = EnvironmentVariableUtil.getEnvValue("DB_URL", "localhost:1521:XE");
         sUser = EnvironmentVariableUtil.getEnvValue("DB_USER", "app");
         sPass = EnvironmentVariableUtil.getEnvValue("DB_PASS", "app");
     }
@@ -31,9 +30,10 @@ public abstract class AbstractDatabaseTest {
 
     public AbstractDatabaseTest() {
         this.dataSource = new HikariDataSource();
-        dataSource.setJdbcUrl("jdbc:oracle:thins:@" + sUrl);
+        dataSource.setJdbcUrl("jdbc:oracle:thin:@" + sUrl);
         dataSource.setUsername(sUser);
         dataSource.setPassword(sPass);
+        dataSource.setDriverClassName("oracle.jdbc.driver.OracleDriver");
     }
 
     public DataSource getDataSource() {
@@ -42,14 +42,6 @@ public abstract class AbstractDatabaseTest {
 
     public static String getUser() {
         return sUser;
-    }
-
-    @BeforeAll
-    public void setupDataSource() {
-        this.dataSource = new HikariDataSource();
-        dataSource.setJdbcUrl("jdbc:oracle:thins:@" + sUrl);
-        dataSource.setUsername(sUser);
-        dataSource.setPassword(sPass);
     }
 
     @BeforeEach
@@ -78,8 +70,8 @@ public abstract class AbstractDatabaseTest {
         }
     }
 
-    @AfterAll
-    public void teardownDatasource() {
+    @Override
+    public void close() {
         dataSource.close();
     }
 }

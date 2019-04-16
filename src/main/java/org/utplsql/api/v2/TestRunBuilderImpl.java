@@ -1,100 +1,114 @@
 package org.utplsql.api.v2;
 
 import org.utplsql.api.FileMapperOptions;
-import org.utplsql.api.reporter.Reporter;
 
 import java.nio.charset.Charset;
 import java.util.ArrayList;
+import java.util.Collections;
 import java.util.List;
+import java.util.Objects;
+
+import static java.util.Collections.emptyList;
 
 /**
  * Created by Pavel Kaplya on 11.02.2019.
  */
-public class TestRunBuilderImpl /*implements TestRunBuilder*/ {
+class TestRunBuilderImpl implements TestRunBuilder {
     private List<String> pathList = new ArrayList<>();
-    private List<Reporter> reporterList = new ArrayList<>();
     private boolean colorConsole = false;
     private List<String> coverageSchemes;
-    private List<String> sourceFiles;
-    private List<String> testFiles = new ArrayList<>();
-    private List<String> includeObjects = new ArrayList<>();
-    private List<String> excludeObjects = new ArrayList<>();
+    private List<String> includeObjects;
+    private List<String> excludeObjects;
     private FileMapperOptions sourceMappingOptions;
     private FileMapperOptions testMappingOptions;
     private boolean failOnErrors = false;
     private boolean skipCompatibilityCheck = false;
-    private String clientCharacterSet = Charset.defaultCharset().toString();
+    private Charset clientCharacterSet = Charset.defaultCharset();
 
+    private final UtplsqlSession utplsqlSession;
 
-    public TestRunBuilderImpl addPath(String path) {
-        this.pathList.add(path);
-        return this;
+    TestRunBuilderImpl(UtplsqlSession utplsqlSession) {
+        this.utplsqlSession = utplsqlSession;
     }
 
+    @Override
     public TestRunBuilderImpl paths(List<String> paths) {
-        this.pathList.addAll(paths);
+        this.pathList.addAll(paths != null ? paths : emptyList());
         return this;
     }
 
-    public TestRunBuilderImpl addReporter(Reporter reporter) {
-        this.reporterList.add(reporter);
-        return this;
-    }
-
+    @Override
     public TestRunBuilderImpl colorConsole(boolean colorConsole) {
         this.colorConsole = colorConsole;
         return this;
     }
 
-    public TestRunBuilderImpl addReporterList(List<Reporter> reporterList) {
-        this.reporterList.addAll(reporterList);
-        return this;
-    }
-
+    @Override
     public TestRunBuilderImpl addCoverageScheme(String coverageScheme) {
         this.coverageSchemes.add(coverageScheme);
         return this;
     }
 
-    public TestRunBuilderImpl includeObject(String obj) {
-        this.includeObjects.add(obj);
-        return this;
-    }
-
-    public TestRunBuilderImpl excludeObject(String obj) {
-        this.excludeObjects.add(obj);
-        return this;
-    }
-
+    @Override
     public TestRunBuilderImpl includeObjects(List<String> obj) {
-        this.includeObjects.addAll(obj);
+        this.includeObjects.addAll(obj != null ? obj : emptyList());
         return this;
     }
 
+    @Override
     public TestRunBuilderImpl excludeObjects(List<String> obj) {
-        this.excludeObjects.addAll(obj);
+        this.excludeObjects.addAll(obj != null ? obj : emptyList());
         return this;
     }
 
+    @Override
     public TestRunBuilderImpl sourceMappingOptions(FileMapperOptions mapperOptions) {
         this.sourceMappingOptions = mapperOptions;
         return this;
     }
 
+    @Override
     public TestRunBuilderImpl testMappingOptions(FileMapperOptions mapperOptions) {
         this.testMappingOptions = mapperOptions;
         return this;
     }
 
+    @Override
     public TestRunBuilderImpl failOnErrors(boolean failOnErrors) {
         this.failOnErrors = failOnErrors;
         return this;
     }
 
-    public TestRunBuilderImpl skipCompatibilityCheck( boolean skipCompatibilityCheck )
-    {
+    @Override
+    public TestRunBuilderImpl skipCompatibilityCheck(boolean skipCompatibilityCheck) {
         this.skipCompatibilityCheck = skipCompatibilityCheck;
         return this;
     }
-    
+
+    @Override
+    public TestRunBuilderImpl clientCharacterSet(Charset clientCharacterSet) {
+        Objects.requireNonNull(clientCharacterSet);
+        this.clientCharacterSet = clientCharacterSet;
+        return this;
+    }
+
+    @Override
+    public TestRun build() {
+        TestRunOptions options = new TestRunOptions(
+                colorConsole,
+                coverageSchemes != null ? new ArrayList<>(coverageSchemes) : emptyList(),
+                includeObjects != null ? new ArrayList<>(includeObjects) : emptyList(),
+                excludeObjects != null ? new ArrayList<>(excludeObjects) : emptyList(),
+                sourceMappingOptions,
+                testMappingOptions,
+                failOnErrors, skipCompatibilityCheck,
+                clientCharacterSet
+        );
+        return new TestRunImpl(
+                utplsqlSession,
+                pathList != null ? Collections.unmodifiableList(pathList) : emptyList(),
+                options
+        );
+    }
+
 }

@@ -1,29 +1,20 @@
 package org.utplsql.api.v2;
 
 import org.utplsql.api.FileMapperOptions;
-import org.utplsql.api.reporter.Reporter;
 
+import java.nio.charset.Charset;
 import java.util.List;
 
 /**
  * Created by Pavel Kaplya on 11.02.2019.
  */
 public interface TestRunBuilder {
-    TestRunBuilder addPath(String path);
 
     TestRunBuilder paths(List<String> paths);
 
-    TestRunBuilder addReporter(Reporter reporter);
-
     TestRunBuilder colorConsole(boolean colorConsole);
 
-    TestRunBuilder addReporterList(List<Reporter> reporterList);
-
     TestRunBuilder addCoverageScheme(String coverageScheme);
-
-    TestRunBuilder includeObject(String obj);
-
-    TestRunBuilder excludeObject(String obj);
 
     TestRunBuilder includeObjects(List<String> obj);
 
@@ -37,7 +28,7 @@ public interface TestRunBuilder {
 
     TestRunBuilder skipCompatibilityCheck(boolean skipCompatibilityCheck);
 
-    //TestRunBuilder paths(List<String> app);
+    TestRunBuilderImpl clientCharacterSet(Charset clientCharacterSet);
 
     TestRun build();
 }

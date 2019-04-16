@@ -41,9 +41,8 @@ dependencies {
 
     // This dependency is used internally, and not exposed to consumers on their own compile classpath.
     implementation("org.slf4j:slf4j-api:1.7.25")
-    implementation("com.oracle.jdbc:ojdbc8:$ojdbcVersion") {
-        exclude(group = "com.oracle.jdbc")
-    }
+    implementation("com.oracle.jdbc:ojdbc8:$ojdbcVersion")
+    runtime("com.oracle.jdbc:ojdbc8:$ojdbcVersion")
     implementation("com.oracle.jdbc:orai18n:$ojdbcVersion")
 
     // Use Jupiter test framework

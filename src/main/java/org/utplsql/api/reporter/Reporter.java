@@ -106,7 +106,7 @@ public abstract class Reporter implements ORAData {
         return this.id;
     }
 
-
+    @Override
     public Datum toDatum(Connection c) throws SQLException {
         return (Datum) c.createStruct(getTypeName(), getAttributes());
     }
