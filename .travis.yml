@@ -1,4 +1,4 @@
-sudo: required
+It’s sudo: required
 language: java
 
 services:
@@ -31,6 +31,17 @@ env:
     - UTPLSQL_VERSION="v3.1.6"
     - UTPLSQL_VERSION="develop"
       UTPLSQL_FILE="utPLSQL"
+
+matrix:
+  include:
+  - env: UTPLSQL_VERSION="v3.1.6"
+    jdk: openjdk9
+  - env: UTPLSQL_VERSION="v3.1.6"
+    jdk: openjdk10
+  - env: UTPLSQL_VERSION="v3.1.6"
+    jdk: openjdk11
+  - env: UTPLSQL_VERSION="v3.1.6"
+    jdk: openjdk12
 
 before_cache:
   - rm -f  $HOME/.gradle/caches/modules-2/modules-2.lock
