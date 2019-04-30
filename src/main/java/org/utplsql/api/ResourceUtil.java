@@ -1,6 +1,5 @@
 package org.utplsql.api;
 
-import com.sun.nio.zipfs.ZipPath;
 import org.utplsql.api.reporter.CoverageHTMLReporter;
 
 import java.io.IOException;
@@ -9,10 +8,7 @@ import java.net.URISyntaxException;
 import java.nio.file.*;
 import java.util.ArrayList;
 import java.util.Collections;
-import java.util.Enumeration;
 import java.util.List;
-import java.util.zip.ZipEntry;
-import java.util.zip.ZipFile;
 
 /**
  * Helper class for dealing with Resources
@@ -61,26 +57,10 @@ public class ResourceUtil {
 
         final List<Path> result = new ArrayList<>();
 
-        if (resourcePath instanceof ZipPath) {
-            try (ZipFile zf = new ZipFile(resourcePath.getFileSystem().toString())) {
+        Files.walk(resourcePath)
+                .filter(p -> !filesOnly || p.toFile().isFile())
+                .forEach(p -> result.add(p.subpath(relativeStartIndex, p.getNameCount())));
 
-                for (Enumeration list = zf.entries(); list.hasMoreElements(); ) {
-                    ZipEntry entry = (ZipEntry) list.nextElement();
-                    // Get entry-path with root element so we can compare it
-                    Path entryPath = resourcePath.getRoot().resolve(resourcePath.getFileSystem().getPath(entry.toString()));
-
-                    if (entryPath.startsWith(resourcePath) && (!filesOnly || !entry.isDirectory())) {
-                        result.add(entryPath.subpath(relativeStartIndex, entryPath.getNameCount()));
-                    }
-                }
-            }
-            resourcePath.getFileSystem().close();
-        } else {
-            Files.walk(resourcePath)
-                    .filter(p -> !filesOnly || p.toFile().isFile())
-                    .forEach(p -> result.add(p.subpath(relativeStartIndex, p.getNameCount())));
-
-        }
 
         return result;
     }
