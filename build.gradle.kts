@@ -1,14 +1,19 @@
 import de.undercouch.gradle.tasks.download.Download
 import org.gradle.api.tasks.testing.logging.TestExceptionFormat
 
-val deployerJars by configurations.creating
+val tag = System.getenv("TRAVIS_TAG")?.replaceFirst("^v".toRegex(), "")
 
 group = "org.utplsql"
 val mavenArtifactId = "java-api"
-version = "3.1.3-SNAPSHOT"
+val baseVersion = "3.1.7-SNAPSHOT"
+// if build is on tag like 3.1.7 or v3.1.7 then use tag as version replacing leading "v"
+version = if (tag != null && "^[0-9.]+$".toRegex().matches(tag)) tag else baseVersion
 
 val coverageResourcesVersion = "1.0.1"
 val ojdbcVersion = "12.2.0.1"
+val junitVersion = "5.4.1"
+
+val deployerJars by configurations.creating
 
 plugins {
     `java-library`
@@ -28,8 +33,8 @@ repositories {
         url = uri("https://www.oracle.com/content/secure/maven/content")
         credentials {
             // you may set this properties using gradle.properties file in the root of the project or in your GRADLE_HOME
-            username = if (project.hasProperty("ORACLE_OTN_USER")) project.property("ORACLE_OTN_USER") as String? else System.getenv("ORACLE_OTN_USER")
-            password = if (project.hasProperty("ORACLE_OTN_PASSWORD")) project.property("ORACLE_OTN_PASSWORD") as String? else System.getenv("ORACLE_OTN_PASSWORD")
+            username = (project.findProperty("ORACLE_OTN_USER") as String?) ?: System.getenv("ORACLE_OTN_USER")
+            password = (project.findProperty("ORACLE_OTN_PASSWORD") as String?) ?: System.getenv("ORACLE_OTN_PASSWORD")
         }
     }
     mavenCentral()
@@ -46,9 +51,11 @@ dependencies {
     implementation("com.oracle.jdbc:orai18n:$ojdbcVersion")
 
     // Use Jupiter test framework
-    testImplementation("org.junit.jupiter:junit-jupiter:5.4.0")
+    testImplementation("org.junit.jupiter:junit-jupiter:$junitVersion")
     testImplementation("org.hamcrest:hamcrest:2.1")
     testImplementation("com.zaxxer:HikariCP:3.3.1")
+
+    // deployer for packagecloud
     deployerJars("io.packagecloud.maven.wagon:maven-packagecloud-wagon:0.0.6")
 }
 
@@ -66,9 +73,10 @@ tasks {
     val intTest = create<Test>("intTest") {
         dependsOn(test)
         doFirst {
-            environment("DB_URL", System.getenv("DB_URL") ?: "localhost:1521/XE")
-            environment("DB_USER", System.getenv("DB_USER") ?: "app")
-            environment("DB_PASS", System.getenv("DB_PASS") ?: "app")
+            environment("DB_URL", (project.findProperty("DB_URL") as String?) ?: System.getenv("DB_URL")
+            ?: "localhost:1521/XE")
+            environment("DB_USER", (project.findProperty("DB_USER") as String?) ?: System.getenv("DB_USER") ?: "app")
+            environment("DB_PASS", (project.findProperty("DB_PASS") as String?) ?: System.getenv("DB_PASS") ?: "app")
         }
         useJUnitPlatform()
         include("**/*IT.class")

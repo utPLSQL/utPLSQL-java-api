@@ -2,6 +2,7 @@ package org.utplsql.api.v2;
 
 import org.utplsql.api.FileMapperOptions;
 
+import javax.annotation.Nullable;
 import java.nio.charset.Charset;
 import java.util.ArrayList;
 import java.util.Collections;
@@ -24,6 +25,9 @@ class TestRunBuilderImpl implements TestRunBuilder {
     private boolean failOnErrors = false;
     private boolean skipCompatibilityCheck = false;
     private Charset clientCharacterSet = Charset.defaultCharset();
+    private boolean randomTestOrder = false;
+    @Nullable
+    private Integer randomTestOrderSeed;
 
     private final UtplsqlSession utplsqlSession;
 
@@ -93,6 +97,18 @@ class TestRunBuilderImpl implements TestRunBuilder {
     }
 
     @Override
+    public TestRunBuilderImpl randomTestOrder(boolean randomTestOrder) {
+        this.randomTestOrder = randomTestOrder;
+        return this;
+    }
+
+    @Override
+    public TestRunBuilderImpl randomTestOrderSeed(@Nullable Integer randomTestOrderSeed) {
+        this.randomTestOrderSeed = randomTestOrderSeed;
+        return this;
+    }
+
+    @Override
     public TestRun build() {
         TestRunOptions options = new TestRunOptions(
                 colorConsole,
@@ -102,8 +118,9 @@ class TestRunBuilderImpl implements TestRunBuilder {
                 sourceMappingOptions,
                 testMappingOptions,
                 failOnErrors, skipCompatibilityCheck,
-                clientCharacterSet
-        );
+                clientCharacterSet,
+                randomTestOrder,
+                randomTestOrderSeed);
         return new TestRunImpl(
                 utplsqlSession,
                 pathList != null ? Collections.unmodifiableList(pathList) : emptyList(),

@@ -19,9 +19,8 @@ class CompatibilityIT extends AbstractDatabaseTest {
 
     @Test
     void skipCompatibilityCheck() throws SQLException {
-        CompatibilityProxy proxy = new CompatibilityProxy(getConnection(), true);
+        CompatibilityProxy proxy = new CompatibilityProxy(getConnection(), Version.LATEST);
         proxy.failOnNotCompatible();
         assertTrue(proxy.isCompatible());
-
     }
 }

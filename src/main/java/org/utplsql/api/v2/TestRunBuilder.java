@@ -2,6 +2,7 @@ package org.utplsql.api.v2;
 
 import org.utplsql.api.FileMapperOptions;
 
+import javax.annotation.Nullable;
 import java.nio.charset.Charset;
 import java.util.List;
 
@@ -29,6 +30,10 @@ public interface TestRunBuilder {
     TestRunBuilder skipCompatibilityCheck(boolean skipCompatibilityCheck);
 
     TestRunBuilderImpl clientCharacterSet(Charset clientCharacterSet);
+
+    TestRunBuilderImpl randomTestOrder(boolean randomTestOrder);
+
+    TestRunBuilderImpl randomTestOrderSeed(@Nullable Integer randomTestOrderSeed);
 
     TestRun build();
 }

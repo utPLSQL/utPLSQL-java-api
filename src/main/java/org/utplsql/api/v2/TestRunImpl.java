@@ -15,6 +15,7 @@ import org.utplsql.api.reporter.ReporterFactory;
 import org.utplsql.api.testRunner.TestRunnerStatement;
 import org.utplsql.api.v2.reporters.Reporter;
 
+import javax.annotation.Nullable;
 import java.nio.charset.Charset;
 import java.sql.SQLException;
 import java.util.ArrayList;
@@ -155,6 +156,17 @@ class TestRunImpl implements TestRun {
             @Override
             public Charset getClientCharacterSet() {
                 return options.getClientCharacterSet();
+            }
+
+            @Override
+            public boolean isRandomTestOrder() {
+                return options.isRandomTestOrder();
+            }
+
+            @Nullable
+            @Override
+            public Integer getRandomTestOrderSeed() {
+                return options.getRandomTestOrderSeed();
             }
         };
     }

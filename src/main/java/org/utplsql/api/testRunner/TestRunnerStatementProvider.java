@@ -35,6 +35,8 @@ public class TestRunnerStatementProvider {
                 stmt = new Pre303TestRunnerStatement(options, conn);
             } else if (databaseVersion.isLessThan(Version.V3_1_2)) {
                 stmt = new Pre312TestRunnerStatement(options, conn);
+            } else if (databaseVersion.isLessThan(Version.V3_1_7)) {
+                stmt = new Pre317TestRunnerStatement(options, conn);
             }
 
         } catch (InvalidVersionException ignored) {

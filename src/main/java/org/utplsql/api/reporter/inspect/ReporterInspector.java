@@ -31,7 +31,7 @@ public interface ReporterInspector {
 
         CompatibilityProxy proxy = new CompatibilityProxy(conn);
 
-        if (proxy.getDatabaseVersion().isGreaterOrEqualThan(Version.V3_1_0)) {
+        if (proxy.getUtPlsqlVersion().isGreaterOrEqualThan(Version.V3_1_0)) {
             return new ReporterInspector310(reporterFactory, conn);
         } else {
             return new ReporterInspectorPre310(reporterFactory, conn);

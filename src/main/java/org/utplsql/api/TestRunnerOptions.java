@@ -2,6 +2,7 @@ package org.utplsql.api;
 
 import org.utplsql.api.reporter.Reporter;
 
+import javax.annotation.Nullable;
 import java.nio.charset.Charset;
 import java.util.List;
 
@@ -30,4 +31,8 @@ public interface TestRunnerOptions {
     boolean isSkipCompatibilityCheck();
 
     Charset getClientCharacterSet();
+    boolean isRandomTestOrder();
+
+    @Nullable
+    Integer getRandomTestOrderSeed();
 }

@@ -23,6 +23,8 @@ class TestRunOptions  {
     private final boolean failOnErrors;
     private final boolean skipCompatibilityCheck;
     private final Charset clientCharacterSet;
+    private final boolean randomTestOrder;
+    private final Integer randomTestOrderSeed;
 
     TestRunOptions(boolean colorConsole,
                    List<String> coverageSchemes,
@@ -32,7 +34,9 @@ class TestRunOptions  {
                    @Nullable FileMapperOptions testMappingOptions,
                    boolean failOnErrors,
                    boolean skipCompatibilityCheck,
-                   Charset clientCharacterSet) {
+                   Charset clientCharacterSet,
+                   boolean randomTestOrder,
+                   Integer randomTestOrderSeed) {
         this.colorConsole = colorConsole;
         this.coverageSchemes = coverageSchemes;
         this.includeObjects = includeObjects;
@@ -42,6 +46,8 @@ class TestRunOptions  {
         this.failOnErrors = failOnErrors;
         this.skipCompatibilityCheck = skipCompatibilityCheck;
         this.clientCharacterSet = clientCharacterSet;
+        this.randomTestOrder = randomTestOrder;
+        this.randomTestOrderSeed = randomTestOrderSeed;
     }
 
     public boolean isColorConsole() {
@@ -80,5 +86,13 @@ class TestRunOptions  {
 
     public Charset getClientCharacterSet() {
         return clientCharacterSet;
+    }
+
+    public boolean isRandomTestOrder() {
+        return randomTestOrder;
+    }
+
+    public Integer getRandomTestOrderSeed() {
+        return randomTestOrderSeed;
     }
 }

@@ -21,7 +21,7 @@ class ReporterInspectorPre310 extends AbstractReporterInspector {
         registeredReporterFactoryMethods = reporterFactory.getRegisteredReporterInfo();
         initDefaultDescriptions();
 
-        Version databaseVersion = new CompatibilityProxy(connection).getDatabaseVersion();
+        Version databaseVersion = new CompatibilityProxy(connection).getUtPlsqlVersion();
         this.infos = Arrays.stream(CoreReporters.values())
                 .filter(r -> r.isAvailableFor(databaseVersion))
                 .map(this::getReporterInfo)

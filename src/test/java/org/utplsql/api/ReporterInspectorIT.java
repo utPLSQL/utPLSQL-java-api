@@ -39,7 +39,7 @@ class ReporterInspectorIT extends AbstractDatabaseTest {
         assertEquals(infos.get(CoreReporters.UT_TEAMCITY_REPORTER.name()).getType(), ReporterInfo.Type.SQL);
         assertEquals(infos.get(CoreReporters.UT_XUNIT_REPORTER.name()).getType(), ReporterInfo.Type.SQL);
 
-        if (CoreReporters.UT_COVERAGE_COBERTURA_REPORTER.isAvailableFor(proxy.getDatabaseVersion())) {
+        if (CoreReporters.UT_COVERAGE_COBERTURA_REPORTER.isAvailableFor(proxy.getUtPlsqlVersion())) {
             assertEquals(infos.get(CoreReporters.UT_COVERAGE_COBERTURA_REPORTER.name()).getType(), ReporterInfo.Type.SQL);
         }
     }
