@@ -68,13 +68,19 @@ tasks {
             exceptionFormat = TestExceptionFormat.FULL
             showStackTraces = true
         }
+        doFirst {
+            environment("DB_URL", (project.findProperty("DB_URL") as String?) ?: System.getenv("DB_URL")
+            ?: "localhost:1521/ORCLPDB1")
+            environment("DB_USER", (project.findProperty("DB_USER") as String?) ?: System.getenv("DB_USER") ?: "app")
+            environment("DB_PASS", (project.findProperty("DB_PASS") as String?) ?: System.getenv("DB_PASS") ?: "app")
+        }
     }
 
     val intTest = create<Test>("intTest") {
         dependsOn(test)
         doFirst {
             environment("DB_URL", (project.findProperty("DB_URL") as String?) ?: System.getenv("DB_URL")
-            ?: "localhost:1521/XE")
+            ?: "localhost:1521/ORCLPDB1")
             environment("DB_USER", (project.findProperty("DB_USER") as String?) ?: System.getenv("DB_USER") ?: "app")
             environment("DB_PASS", (project.findProperty("DB_PASS") as String?) ?: System.getenv("DB_PASS") ?: "app")
         }
