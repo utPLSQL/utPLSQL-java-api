@@ -15,7 +15,7 @@ public class ReporterFactoryImpl implements ReporterFactory {
 
     @Override
     public DocumentationReporter documentationReporter() {
-        return new DocumentationReporterImpl();
+        return new DocumentationReporterImpl(dataSource);
     }
 
     @Override
