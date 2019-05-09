@@ -11,7 +11,7 @@ version = if (tag != null && "^[0-9.]+$".toRegex().matches(tag)) tag else baseVe
 
 val coverageResourcesVersion = "1.0.1"
 val ojdbcVersion = "12.2.0.1"
-val junitVersion = "5.4.1"
+val junitVersion = "5.4.2"
 
 val deployerJars by configurations.creating
 
@@ -70,6 +70,26 @@ tasks {
         }
     }
 
+    // run tests using compiled jar + dependencies and tests classes
+    val binaryTest = create<Test>("binaryTest") {
+        dependsOn(jar, testClasses)
+
+        doFirst {
+            classpath = project.files("$buildDir/libs/java-api-$baseVersion.jar", "$buildDir/classes/java/test", configurations.testRuntimeClasspath)
+            testClassesDirs = sourceSets.getByName("test").output.classesDirs
+        }
+
+        useJUnitPlatform {
+            includeTags("binary")
+        }
+        testLogging {
+            events("passed", "skipped", "failed")
+            exceptionFormat = TestExceptionFormat.FULL
+            showStackTraces = true
+            showStandardStreams = true
+        }
+    }
+
     val intTest = create<Test>("intTest") {
         dependsOn(test)
         doFirst {
@@ -91,6 +111,7 @@ tasks {
     // add integration tests to the whole check
     named("check") {
         dependsOn(intTest)
+        dependsOn(binaryTest)
     }
 
     val coverageResourcesDirectory = "${project.buildDir}/resources/main/CoverageHTMLReporter"

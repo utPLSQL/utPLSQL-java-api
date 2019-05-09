@@ -1,7 +1,6 @@
 package org.utplsql.api;
 
 import org.junit.jupiter.api.Test;
-import org.omg.CORBA.DynAnyPackage.Invalid;
 import org.utplsql.api.compatibility.CompatibilityProxy;
 import org.utplsql.api.compatibility.OptionalFeatures;
 import org.utplsql.api.exception.InvalidVersionException;
