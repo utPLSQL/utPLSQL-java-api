@@ -1,18 +1,11 @@
 package org.utplsql.api;
 
-import com.sun.nio.zipfs.ZipPath;
-import org.utplsql.api.reporter.CoverageHTMLReporter;
-
 import java.io.IOException;
 import java.net.URI;
 import java.net.URISyntaxException;
 import java.nio.file.*;
-import java.util.ArrayList;
+import java.nio.file.attribute.BasicFileAttributes;
 import java.util.Collections;
-import java.util.Enumeration;
-import java.util.List;
-import java.util.zip.ZipEntry;
-import java.util.zip.ZipFile;
 
 /**
  * Helper class for dealing with Resources
@@ -25,63 +18,50 @@ public class ResourceUtil {
     }
 
     /**
-     * Returns the Path to a resource so it is walkable no matter if it's inside a jar or on the file system
+     * Copy directory from a jar file to the destination folder
      *
-     * @param resourceName The name of the resource
-     * @return Path to the resource, either in JAR or on file system
-     * @throws IOException
-     * @throws URISyntaxException
+     * @param resourceAsPath  The resource to get children from
+     * @param targetDirectory If set to true it will only return files, not directories
      */
-    public static Path getPathToResource(String resourceName) throws IOException, URISyntaxException {
-        URI uri = CoverageHTMLReporter.class.getResource(resourceName).toURI();
-        Path myPath;
-        if (uri.getScheme().equalsIgnoreCase("jar")) {
-            FileSystem fileSystem = FileSystems.newFileSystem(uri, Collections.emptyMap());
-            myPath = fileSystem.getPath(resourceName);
-        } else {
-            myPath = Paths.get(uri);
+    public static void copyResources(Path resourceAsPath, Path targetDirectory) {
+        String resourceName = "/" + resourceAsPath.toString();
+        try {
+            Files.createDirectories(targetDirectory);
+            URI uri = ResourceUtil.class.getResource(resourceName).toURI();
+            Path myPath;
+            if (uri.getScheme().equalsIgnoreCase("jar")) {
+                try (FileSystem fileSystem = FileSystems.newFileSystem(uri, Collections.emptyMap())) {
+                    myPath = fileSystem.getPath(resourceName);
+                    copyRecursive(myPath, targetDirectory);
+                }
+            } else {
+                myPath = Paths.get(uri);
+                copyRecursive(myPath, targetDirectory);
+            }
+        } catch (IOException | URISyntaxException e) {
+            throw new RuntimeException(e);
         }
-
-        return myPath;
     }
 
-    /**
-     * Returns the relative paths of all children of the given resource. Relative path begins from the first atom of the given path.
-     *
-     * @param resourceAsPath The resource to get children from
-     * @param filesOnly      If set to true it will only return files, not directories
-     * @return List of relative Paths to the children
-     * @throws IOException
-     * @throws URISyntaxException
-     */
-    public static List<Path> getListOfChildren(Path resourceAsPath, boolean filesOnly) throws IOException, URISyntaxException {
+    private static void copyRecursive(Path from, Path targetDirectory) throws IOException {
+        Files.walkFileTree(from, new SimpleFileVisitor<Path>() {
 
-        Path resourcePath = getPathToResource("/" + resourceAsPath.toString());
-        int relativeStartIndex = resourcePath.getNameCount() - resourceAsPath.getNameCount();
+            private Path currentTarget;
 
-        final List<Path> result = new ArrayList<>();
-
-        if (resourcePath instanceof ZipPath) {
-            try (ZipFile zf = new ZipFile(resourcePath.getFileSystem().toString())) {
-
-                for (Enumeration list = zf.entries(); list.hasMoreElements(); ) {
-                    ZipEntry entry = (ZipEntry) list.nextElement();
-                    // Get entry-path with root element so we can compare it
-                    Path entryPath = resourcePath.getRoot().resolve(resourcePath.getFileSystem().getPath(entry.toString()));
-
-                    if (entryPath.startsWith(resourcePath) && (!filesOnly || !entry.isDirectory())) {
-                        result.add(entryPath.subpath(relativeStartIndex, entryPath.getNameCount()));
-                    }
-                }
+            @Override
+            public FileVisitResult preVisitDirectory(Path dir, BasicFileAttributes attrs) throws IOException {
+                super.preVisitDirectory(dir, attrs);
+                currentTarget = targetDirectory.resolve(from.relativize(dir).toString());
+                Files.createDirectories(currentTarget);
+                return FileVisitResult.CONTINUE;
             }
-            resourcePath.getFileSystem().close();
-        } else {
-            Files.walk(resourcePath)
-                    .filter(p -> !filesOnly || p.toFile().isFile())
-                    .forEach(p -> result.add(p.subpath(relativeStartIndex, p.getNameCount())));
 
-        }
-
-        return result;
+            @Override
+            public FileVisitResult visitFile(Path file, BasicFileAttributes attrs) throws IOException {
+                super.visitFile(file, attrs);
+                Files.copy(file, targetDirectory.resolve(from.relativize(file).toString()), StandardCopyOption.REPLACE_EXISTING);
+                return FileVisitResult.CONTINUE;
+            }
+        });
     }
 }

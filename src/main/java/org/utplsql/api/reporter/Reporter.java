@@ -10,7 +10,6 @@ import org.slf4j.LoggerFactory;
 import org.utplsql.api.compatibility.CompatibilityProxy;
 import org.utplsql.api.outputBuffer.OutputBuffer;
 
-import javax.xml.bind.DatatypeConverter;
 import java.sql.Connection;
 import java.sql.SQLException;
 import java.util.concurrent.CountDownLatch;
@@ -121,5 +120,18 @@ public abstract class Reporter implements ORAData {
 
     public OutputBuffer getOutputBuffer() {
         return outputBuffer;
+    }
+
+    private static class DatatypeConverter {
+        private static final char[] hexCode = "0123456789ABCDEF".toCharArray();
+
+        static String printHexBinary(byte[] data) {
+            StringBuilder r = new StringBuilder(data.length * 2);
+            for (byte b : data) {
+                r.append(hexCode[(b >> 4) & 0xF]);
+                r.append(hexCode[(b & 0xF)]);
+            }
+            return r.toString();
+        }
     }
 }
