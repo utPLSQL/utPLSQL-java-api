@@ -6,7 +6,6 @@ import org.utplsql.api.Version;
 import org.utplsql.api.compatibility.CompatibilityProxy;
 import org.utplsql.api.db.DefaultDatabaseInformation;
 import org.utplsql.api.exception.InvalidVersionException;
-import org.utplsql.api.exception.UtplsqlException;
 import org.utplsql.api.reporter.inspect.ReporterInfo;
 import org.utplsql.api.reporter.inspect.ReporterInspector;
 import org.utplsql.api.v2.reporters.ReporterFactory;
@@ -21,10 +20,10 @@ import java.util.List;
  */
 public class UtplsqlSessionImpl implements UtplsqlSession {
 
-    private final DataSource dataSource;
+    private final UtplsqlDataSource dataSource;
 
     UtplsqlSessionImpl(DataSource dataSource) {
-        this.dataSource = dataSource;
+        this.dataSource = new UtplsqlDataSourceImpl(dataSource);
     }
 
     @Override
@@ -34,7 +33,7 @@ public class UtplsqlSessionImpl implements UtplsqlSession {
 
     @Override
     public ReporterFactory reporterFactory() {
-        return new ReporterFactoryImpl(dataSource);
+        return new ReporterFactoryImpl(this);
     }
 
     @Override
@@ -47,19 +46,20 @@ public class UtplsqlSessionImpl implements UtplsqlSession {
     }
 
     @Override
-    public Version getInstalledVersionInfo() throws SQLException {
+    public Version getInstalledVersionInfo() {
         try (OracleConnection connection = getConnection()) {
             return new DefaultDatabaseInformation().getUtPlsqlFrameworkVersion(connection);
+        } catch (SQLException e) {
+            throw new RuntimeException(e);
         }
     }
 
     @Override
     public OracleConnection getConnection() throws SQLException {
-        return dataSource.getConnection().unwrap(OracleConnection.class);
+        return dataSource.getConnection();
     }
 
-    @Override
-    public DataSource getDataSource() {
+    public UtplsqlDataSource getDataSource() {
         return dataSource;
     }
 
@@ -67,7 +67,7 @@ public class UtplsqlSessionImpl implements UtplsqlSession {
         try (OracleConnection conn = getConnection()) {
             new CompatibilityProxy(conn, false);
         } catch (SQLException e) {
-            throw new UtplsqlException(e);
+            throw new RuntimeException(e);
         }
     }
 }

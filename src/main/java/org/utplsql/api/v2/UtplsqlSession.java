@@ -6,7 +6,6 @@ import org.utplsql.api.exception.InvalidVersionException;
 import org.utplsql.api.reporter.inspect.ReporterInfo;
 import org.utplsql.api.v2.reporters.ReporterFactory;
 
-import javax.sql.DataSource;
 import java.sql.SQLException;
 import java.util.List;
 
@@ -15,7 +14,7 @@ import java.util.List;
  */
 public interface UtplsqlSession {
 
-    DataSource getDataSource();
+    UtplsqlDataSource getDataSource();
 
     TestRunBuilder createTestRun();
 
@@ -23,7 +22,7 @@ public interface UtplsqlSession {
 
     List<ReporterInfo> getAvailableReporters() throws SQLException, InvalidVersionException;
 
-    Version getInstalledVersionInfo() throws SQLException;
+    Version getInstalledVersionInfo();
 
     OracleConnection getConnection() throws SQLException;
 }

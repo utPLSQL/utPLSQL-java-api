@@ -1,6 +1,10 @@
 package org.utplsql.api.v2.reporters;
 
-import javax.sql.DataSource;
+import org.utplsql.api.Version;
+import org.utplsql.api.exception.InvalidVersionException;
+import org.utplsql.api.exception.UtplsqlException;
+import org.utplsql.api.v2.UtplsqlSession;
+
 import java.io.OutputStream;
 import java.util.List;
 
@@ -8,14 +12,28 @@ import java.util.List;
  * Created by Pavel Kaplya on 16.03.2019.
  */
 public class ReporterFactoryImpl implements ReporterFactory {
-    private final DataSource dataSource;
-    public ReporterFactoryImpl(DataSource dataSource) {
-        this.dataSource = dataSource;
+    private final UtplsqlSession session;
+
+    public ReporterFactoryImpl(UtplsqlSession session) {
+        this.session = session;
+    }
+
+    private TextOutputFetcher outputFetcher() {
+        try {
+            final Version installedVersion = session.getInstalledVersionInfo();
+            if (installedVersion.isGreaterOrEqualThan(Version.V3_1_0)) {
+                return new DefaultOutputFetcher();
+            } else {
+                return new Pre310OutputFetcherImpl();
+            }
+        } catch (InvalidVersionException e) {
+            throw new UtplsqlException(e);
+        }
     }
 
     @Override
     public DocumentationReporter documentationReporter() {
-        return new DocumentationReporterImpl(dataSource);
+        return new DocumentationReporterImpl(session.getDataSource(), outputFetcher());
     }
 
     @Override

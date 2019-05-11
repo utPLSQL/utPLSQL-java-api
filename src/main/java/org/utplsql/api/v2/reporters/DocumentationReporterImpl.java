@@ -1,12 +1,13 @@
 package org.utplsql.api.v2.reporters;
 
+import oracle.jdbc.OracleConnection;
+import org.utplsql.api.exception.ReporterConsumedException;
 import org.utplsql.api.reporter.CoreReporters;
 import org.utplsql.api.reporter.Reporter;
+import org.utplsql.api.v2.UtplsqlDataSource;
 
-import javax.sql.DataSource;
-import java.io.PrintStream;
-import java.sql.Connection;
 import java.sql.SQLException;
+import java.util.ArrayList;
 import java.util.List;
 import java.util.function.Consumer;
 
@@ -17,10 +18,13 @@ public class DocumentationReporterImpl extends AbstractReporter implements Docum
 
     private final static String REPORTER_NAME = CoreReporters.UT_DOCUMENTATION_REPORTER.name();
     private final org.utplsql.api.reporter.DocumentationReporter reporterObject;
+    private final TextOutputFetcher fetcher;
+    private volatile boolean consumed = false;
 
-    DocumentationReporterImpl(DataSource dataSource) {
+    DocumentationReporterImpl(UtplsqlDataSource dataSource, TextOutputFetcher fetcher) {
         super(REPORTER_NAME, dataSource);
         this.reporterObject = new org.utplsql.api.reporter.DocumentationReporter();
+        this.fetcher = fetcher;
     }
 
     @Override
@@ -29,22 +33,30 @@ public class DocumentationReporterImpl extends AbstractReporter implements Docum
     }
 
     @Override
-    public void printAvailable(PrintStream ps) {
-        return reporterObject.getOutputBuffer().printAvailable();
+    public void fetchAvailable(Consumer<String> onLineFetched) {
+        synchronized (this) {
+            if (!consumed) {
+                consumed = true;
+            } else {
+                throw new ReporterConsumedException();
+            }
+        }
+        try {
+            reporterObject.waitInit();
+        } catch (InterruptedException e) {
+            return;
+        }
+        try (OracleConnection conn = dataSource.getConnection()) {
+            fetcher.fetchLine(conn, reporterObject, onLineFetched);
+        } catch (SQLException e) {
+            throw new RuntimeException(e);
+        }
     }
 
     @Override
-    public void printAvailable(Connection conn, List<PrintStream> printStreams) throws SQLException {
-
-    }
-
-    @Override
-    public void fetchAvailable(Connection conn, Consumer<String> onLineFetched) throws SQLException {
-
-    }
-
-    @Override
-    public List<String> fetchAll(Connection conn) throws SQLException {
-        return null;
+    public List<String> fetchAll() {
+        List<String> output = new ArrayList<>();
+        fetchAvailable(output::add);
+        return output;
     }
 }

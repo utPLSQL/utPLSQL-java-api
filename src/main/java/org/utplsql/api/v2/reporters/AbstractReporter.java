@@ -1,6 +1,6 @@
 package org.utplsql.api.v2.reporters;
 
-import javax.sql.DataSource;
+import org.utplsql.api.v2.UtplsqlDataSource;
 
 /**
  * Created by Pavel Kaplya on 16.03.2019.
@@ -8,9 +8,9 @@ import javax.sql.DataSource;
 public abstract class AbstractReporter implements Reporter {
 
     private final String name;
-    protected final DataSource dataSource;
+    protected final UtplsqlDataSource dataSource;
 
-    protected AbstractReporter(String name, DataSource dataSource) {
+    protected AbstractReporter(String name, UtplsqlDataSource dataSource) {
         this.name = name;
         this.dataSource = dataSource;
     }

@@ -23,7 +23,6 @@ import java.util.Collections;
 import java.util.List;
 import java.util.Objects;
 import java.util.concurrent.CompletableFuture;
-import java.util.concurrent.Future;
 import java.util.stream.Collectors;
 
 /**
@@ -52,53 +51,56 @@ class TestRunImpl implements TestRun {
     }
 
     @Override
-    public Future<TestRunResults> execute() throws UtplsqlConfigurationException {
+    public CompletableFuture<TestRunResults> executeAsync() throws UtplsqlConfigurationException {
         if (reporters.isEmpty()) {
             throw new UtplsqlConfigurationException("Reporter list is empty");
         }
 
-        return CompletableFuture.supplyAsync(() -> {
-            try (OracleConnection conn = utplsqlSession.getConnection()) {
+        return CompletableFuture.supplyAsync(this::execute);
 
-                DefaultDatabaseInformation defaultDatabaseInformation = new DefaultDatabaseInformation();
-                CompatibilityProxy compatibilityProxy = new CompatibilityProxy(conn, options.isSkipCompatibilityCheck(), defaultDatabaseInformation);
-                logger.info("Running on utPLSQL {}", compatibilityProxy.getDatabaseVersion());
+    }
 
-                // First of all check version compatibility
-                compatibilityProxy.failOnNotCompatible();
+    @Override
+    public TestRunResults execute() {
+        try (OracleConnection conn = utplsqlSession.getConnection()) {
 
-                logger.info("TestRun initialized");
+            DefaultDatabaseInformation defaultDatabaseInformation = new DefaultDatabaseInformation();
+            CompatibilityProxy compatibilityProxy = new CompatibilityProxy(conn, options.isSkipCompatibilityCheck(), defaultDatabaseInformation);
+            logger.info("Running on utPLSQL {}", compatibilityProxy.getDatabaseVersion());
 
-                if (reporters.isEmpty()) {
-                    reporters.add(utplsqlSession.reporterFactory().documentationReporter());
-                }
+            // First of all check version compatibility
+            compatibilityProxy.failOnNotCompatible();
 
-                ReporterFactory reporterORADataFactory = ReporterFactory.createDefault(compatibilityProxy);
-                for (Reporter reporter : reporters) {
-                    reporter.getReporterObject().init(conn, compatibilityProxy, reporterORADataFactory);
-                }
+            logger.info("TestRun initialized");
 
-                String currentSchema = defaultDatabaseInformation.getCurrentSchema(conn);
-                try (TestRunnerStatement testRunnerStatement = compatibilityProxy.getTestRunnerStatement(getOptions(currentSchema), conn)) {
-                    logger.info("Running tests");
-                    testRunnerStatement.execute();
-                    logger.info("Running tests finished.");
-                } catch (SQLException e) {
-                    if (e.getErrorCode() == SomeTestsFailedException.ERROR_CODE) {
-                        throw new SomeTestsFailedException(e.getMessage(), e);
-                    } else if (e.getErrorCode() == UtPLSQLNotInstalledException.ERROR_CODE) {
-                        throw new UtPLSQLNotInstalledException(e);
-                    } else {
-                        throw e;
-                    }
-                }
-
-                return new TestRunResultsImpl();
-            } catch (SQLException e) {
-                throw new RuntimeException(e);
+            if (reporters.isEmpty()) {
+                reporters.add(utplsqlSession.reporterFactory().documentationReporter());
             }
-        });
 
+            ReporterFactory reporterORADataFactory = ReporterFactory.createDefault(compatibilityProxy);
+            for (Reporter reporter : reporters) {
+                reporter.getReporterObject().init(conn, compatibilityProxy, reporterORADataFactory);
+            }
+
+            String currentSchema = defaultDatabaseInformation.getCurrentSchema(conn);
+            try (TestRunnerStatement testRunnerStatement = compatibilityProxy.getTestRunnerStatement(getOptions(currentSchema), conn)) {
+                logger.info("Running tests");
+                testRunnerStatement.execute();
+                logger.info("Running tests finished.");
+            } catch (SQLException e) {
+                if (e.getErrorCode() == SomeTestsFailedException.ERROR_CODE) {
+                    throw new SomeTestsFailedException(e.getMessage(), e);
+                } else if (e.getErrorCode() == UtPLSQLNotInstalledException.ERROR_CODE) {
+                    throw new UtPLSQLNotInstalledException(e);
+                } else {
+                    throw e;
+                }
+            }
+
+            return new TestRunResultsImpl();
+        } catch (SQLException e) {
+            throw new RuntimeException(e);
+        }
     }
 
     private TestRunnerOptions getOptions(String currentSchema) {
