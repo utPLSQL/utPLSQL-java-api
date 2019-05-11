@@ -11,6 +11,7 @@ import org.utplsql.api.v2.reporters.DocumentationReporter;
 import org.utplsql.api.v2.reporters.ReporterFactory;
 
 import java.sql.SQLException;
+import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
 import java.util.concurrent.CompletableFuture;
@@ -41,15 +42,16 @@ class ApiV2UsageTest extends AbstractDatabaseTest {
 
         CompletableFuture<TestRunResults> testRunResults = testRun.executeAsync();
 
-        final CompletableFuture<List<String>> future = CompletableFuture.supplyAsync(documentationReporter::fetchAll);
+        final CompletableFuture<List<String>> future = CompletableFuture.supplyAsync(documentationReporter::getFullReport);
 
         TestRunResults results = testRunResults.join();
 
-        List<String> allOutput = documentationReporter2.fetchAll();
+        List<String> allOutput = new ArrayList<>();
+        documentationReporter2.onReportLine(allOutput::add);
 
         assertEquals(future.get(), allOutput);
 
-        assertThrows(ReporterConsumedException.class, documentationReporter2::fetchAll);
+        assertThrows(ReporterConsumedException.class, documentationReporter2::getFullReport);
     }
 
     @Test

@@ -14,13 +14,13 @@ public interface TextualReporter {
      *
      * @param onLineFetched the callback to be called
      */
-    void fetchAvailable(Consumer<String> onLineFetched);
+    void onReportLine(Consumer<String> onLineFetched);
 
     /**
      * Get all lines from output buffer and return it as a list of strings.
      *
      * @return the lines
      */
-    List<String> fetchAll();
+    List<String> getFullReport();
 
 }

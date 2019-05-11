@@ -33,7 +33,7 @@ public class DocumentationReporterImpl extends AbstractReporter implements Docum
     }
 
     @Override
-    public void fetchAvailable(Consumer<String> onLineFetched) {
+    public void onReportLine(Consumer<String> onLineFetched) {
         synchronized (this) {
             if (!consumed) {
                 consumed = true;
@@ -54,9 +54,9 @@ public class DocumentationReporterImpl extends AbstractReporter implements Docum
     }
 
     @Override
-    public List<String> fetchAll() {
+    public List<String> getFullReport() {
         List<String> output = new ArrayList<>();
-        fetchAvailable(output::add);
+        onReportLine(output::add);
         return output;
     }
 }
