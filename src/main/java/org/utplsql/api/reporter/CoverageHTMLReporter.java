@@ -28,7 +28,7 @@ public class CoverageHTMLReporter extends DefaultReporter {
      * @param targetDirectory Directory where the assets should be stored
      * @throws RuntimeException
      */
-    static void writeReportAssetsTo(Path targetDirectory) throws RuntimeException {
+    protected static void writeReportAssetsTo(Path targetDirectory) throws RuntimeException {
         ResourceUtil.copyResources(Paths.get("CoverageHTMLReporter"), targetDirectory);
     }
 
