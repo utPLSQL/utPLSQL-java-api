@@ -74,4 +74,15 @@ class OptionalFeaturesIT extends AbstractDatabaseTest {
             assertFalse(available);
         }
     }
+
+    @Test
+    void tags() throws SQLException, InvalidVersionException {
+        boolean available = OptionalFeatures.TAGS.isAvailableFor(getConnection());
+
+        if (getDatabaseVersion().isGreaterOrEqualThan(Version.V3_1_7)) {
+            assertTrue(available);
+        } else {
+            assertFalse(available);
+        }
+    }
 }
