@@ -37,7 +37,7 @@ class EnvironmentVariableUtilTest {
     @Test
     void testGetVariableFromDefault() {
 
-        assertEquals("defaultValue", EnvironmentVariableUtil.getEnvValue("RANDOM" + String.valueOf(System.currentTimeMillis()), "defaultValue"));
+        assertEquals("defaultValue", EnvironmentVariableUtil.getEnvValue("RANDOM" + System.currentTimeMillis(), "defaultValue"));
     }
 
 }

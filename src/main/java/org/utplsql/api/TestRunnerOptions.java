@@ -1,10 +1,12 @@
 package org.utplsql.api;
 
-import com.sun.deploy.util.OrderedHashSet;
 import org.utplsql.api.reporter.Reporter;
 
 import java.nio.charset.Charset;
-import java.util.*;
+import java.util.ArrayList;
+import java.util.LinkedHashSet;
+import java.util.List;
+import java.util.Set;
 
 /**
  * Holds the various possible options of TestRunner
