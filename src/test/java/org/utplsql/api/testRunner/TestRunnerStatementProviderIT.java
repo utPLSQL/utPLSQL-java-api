@@ -27,6 +27,7 @@ class TestRunnerStatementProviderIT extends AbstractDatabaseTest {
         assertThat(stmt.getSql(), not(containsString("a_client_character_set")));
         assertThat(stmt.getSql(), not(containsString("a_random_test_order")));
         assertThat(stmt.getSql(), not(containsString("a_random_test_order_seed")));
+        assertThat(stmt.getSql(), not(containsString("a_tags")));
     }
 
 
@@ -38,6 +39,7 @@ class TestRunnerStatementProviderIT extends AbstractDatabaseTest {
         assertThat(stmt.getSql(), not(containsString("a_client_character_set")));
         assertThat(stmt.getSql(), not(containsString("a_random_test_order")));
         assertThat(stmt.getSql(), not(containsString("a_random_test_order_seed")));
+        assertThat(stmt.getSql(), not(containsString("a_tags")));
     }
 
     @Test
@@ -48,6 +50,7 @@ class TestRunnerStatementProviderIT extends AbstractDatabaseTest {
         assertThat(stmt.getSql(), not(containsString("a_client_character_set")));
         assertThat(stmt.getSql(), not(containsString("a_random_test_order")));
         assertThat(stmt.getSql(), not(containsString("a_random_test_order_seed")));
+        assertThat(stmt.getSql(), not(containsString("a_tags")));
     }
 
     @Test
@@ -58,6 +61,7 @@ class TestRunnerStatementProviderIT extends AbstractDatabaseTest {
         assertThat(stmt.getSql(), containsString("a_client_character_set"));
         assertThat(stmt.getSql(), not(containsString("a_random_test_order")));
         assertThat(stmt.getSql(), not(containsString("a_random_test_order_seed")));
+        assertThat(stmt.getSql(), not(containsString("a_tags")));
     }
 
     @Test
@@ -68,6 +72,7 @@ class TestRunnerStatementProviderIT extends AbstractDatabaseTest {
         assertThat(stmt.getSql(), containsString("a_client_character_set"));
         assertThat(stmt.getSql(), not(containsString("a_random_test_order")));
         assertThat(stmt.getSql(), not(containsString("a_random_test_order_seed")));
+        assertThat(stmt.getSql(), not(containsString("a_tags")));
     }
 
     @Test
@@ -78,5 +83,6 @@ class TestRunnerStatementProviderIT extends AbstractDatabaseTest {
         assertThat(stmt.getSql(), containsString("a_client_character_set"));
         assertThat(stmt.getSql(), containsString("a_random_test_order"));
         assertThat(stmt.getSql(), containsString("a_random_test_order_seed"));
+        assertThat(stmt.getSql(), containsString("a_tags"));
     }
 }
