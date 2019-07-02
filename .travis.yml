@@ -35,6 +35,7 @@ matrix:
   include:
   - env: UTPLSQL_VERSION="v3.1.6"
     jdk: openjdk9
+    script: source install-jdk.sh 2019-06-25
   - env: UTPLSQL_VERSION="v3.1.6"
     jdk: openjdk10
   - env: UTPLSQL_VERSION="v3.1.6"
