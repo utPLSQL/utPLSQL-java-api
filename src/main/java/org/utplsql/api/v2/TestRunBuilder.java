@@ -30,11 +30,11 @@ public interface TestRunBuilder {
 
     TestRunBuilder skipCompatibilityCheck(boolean skipCompatibilityCheck);
 
-    TestRunBuilderImpl clientCharacterSet(Charset clientCharacterSet);
+    TestRunBuilder clientCharacterSet(Charset clientCharacterSet);
 
-    TestRunBuilderImpl randomTestOrder(boolean randomTestOrder);
+    TestRunBuilder randomTestOrder(boolean randomTestOrder);
 
-    TestRunBuilderImpl randomTestOrderSeed(@Nullable Integer randomTestOrderSeed);
+    TestRunBuilder randomTestOrderSeed(@Nullable Integer randomTestOrderSeed);
 
     TestRunBuilder tags(Set<String> tags);
 
