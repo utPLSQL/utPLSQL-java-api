@@ -3,6 +3,8 @@ package org.utplsql.api;
 
 import oracle.jdbc.OracleConnection;
 import oracle.jdbc.OracleTypes;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 import java.sql.*;
 import java.util.ArrayList;
@@ -10,6 +12,8 @@ import java.util.List;
 import java.util.Map;
 
 public final class FileMapper {
+
+    private static final Logger logger = LoggerFactory.getLogger(FileMapper.class);
 
     private FileMapper() {
     }
@@ -47,8 +51,14 @@ public final class FileMapper {
             callableStatement.setString(++paramIdx, mapperOptions.getObjectOwner());
         }
 
+        logger.debug("Building fileMappingArray");
+        Object[] filePathsArray = mapperOptions.getFilePaths().toArray();
+        for ( Object elem : filePathsArray ) {
+            logger.debug("Path: " + elem);
+        }
+
         callableStatement.setArray(
-                ++paramIdx, oraConn.createOracleArray(CustomTypes.UT_VARCHAR2_LIST, mapperOptions.getFilePaths().toArray()));
+                ++paramIdx, oraConn.createOracleArray(CustomTypes.UT_VARCHAR2_LIST, filePathsArray));
 
         if (mapperOptions.getTypeMappings() == null) {
             callableStatement.setNull(++paramIdx, Types.ARRAY, CustomTypes.UT_KEY_VALUE_PAIRS);

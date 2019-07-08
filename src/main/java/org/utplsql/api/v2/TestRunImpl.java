@@ -18,10 +18,7 @@ import org.utplsql.api.v2.reporters.Reporter;
 import javax.annotation.Nullable;
 import java.nio.charset.Charset;
 import java.sql.SQLException;
-import java.util.ArrayList;
-import java.util.Collections;
-import java.util.List;
-import java.util.Objects;
+import java.util.*;
 import java.util.concurrent.CompletableFuture;
 import java.util.stream.Collectors;
 
@@ -170,6 +167,13 @@ class TestRunImpl implements TestRun {
             public Integer getRandomTestOrderSeed() {
                 return options.getRandomTestOrderSeed();
             }
+
+            @Override
+            public Set<String> getTags() { return options.getTags(); }
+
+            @Override
+            public String getTagsAsString() { return options.getTagsAsString(); }
+
         };
     }
 

@@ -88,4 +88,11 @@ class TestRunnerIT extends AbstractDatabaseTest {
                 .run(getConnection());
     }
 
+    @Test
+    void runWithTags() throws SQLException {
+        new TestRunner()
+                .addTag("none")
+                .run(getConnection());
+    }
+
 }

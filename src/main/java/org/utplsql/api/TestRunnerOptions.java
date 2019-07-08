@@ -5,6 +5,7 @@ import org.utplsql.api.reporter.Reporter;
 import javax.annotation.Nullable;
 import java.nio.charset.Charset;
 import java.util.List;
+import java.util.Set;
 
 /**
  * Created by Pavel Kaplya on 16.03.2019.
@@ -35,4 +36,8 @@ public interface TestRunnerOptions {
 
     @Nullable
     Integer getRandomTestOrderSeed();
+
+    Set<String> getTags();
+
+    String getTagsAsString();
 }

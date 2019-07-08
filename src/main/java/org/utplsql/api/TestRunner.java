@@ -16,6 +16,7 @@ import org.utplsql.api.testRunner.TestRunnerStatement;
 import java.sql.Connection;
 import java.sql.SQLException;
 import java.util.ArrayList;
+import java.util.Collection;
 import java.util.List;
 import java.util.concurrent.*;
 
@@ -126,6 +127,16 @@ public class TestRunner {
     public TestRunner randomTestOrderSeed( Integer seed ) {
         this.options.randomTestOrderSeed = seed;
         if ( seed != null ) this.options.randomTestOrder = true;
+        return this;
+    }
+
+    public TestRunner addTag( String tag ) {
+        this.options.tags.add(tag);
+        return this;
+    }
+
+    public TestRunner addTags(Collection<String> tags) {
+        this.options.tags.addAll(tags);
         return this;
     }
 

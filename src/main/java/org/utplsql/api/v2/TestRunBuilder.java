@@ -5,6 +5,7 @@ import org.utplsql.api.FileMapperOptions;
 import javax.annotation.Nullable;
 import java.nio.charset.Charset;
 import java.util.List;
+import java.util.Set;
 
 /**
  * Created by Pavel Kaplya on 11.02.2019.
@@ -34,6 +35,8 @@ public interface TestRunBuilder {
     TestRunBuilderImpl randomTestOrder(boolean randomTestOrder);
 
     TestRunBuilderImpl randomTestOrderSeed(@Nullable Integer randomTestOrderSeed);
+
+    TestRunBuilder tags(Set<String> tags);
 
     TestRun build();
 }

@@ -5,6 +5,7 @@ import org.utplsql.api.FileMapperOptions;
 import javax.annotation.Nullable;
 import java.nio.charset.Charset;
 import java.util.List;
+import java.util.Set;
 
 /**
  * Holds the various possible options of TestRunner
@@ -25,6 +26,7 @@ class TestRunOptions  {
     private final Charset clientCharacterSet;
     private final boolean randomTestOrder;
     private final Integer randomTestOrderSeed;
+    private final Set<String> tags;
 
     TestRunOptions(boolean colorConsole,
                    List<String> coverageSchemes,
@@ -36,7 +38,8 @@ class TestRunOptions  {
                    boolean skipCompatibilityCheck,
                    Charset clientCharacterSet,
                    boolean randomTestOrder,
-                   Integer randomTestOrderSeed) {
+                   Integer randomTestOrderSeed,
+                   Set<String> tags) {
         this.colorConsole = colorConsole;
         this.coverageSchemes = coverageSchemes;
         this.includeObjects = includeObjects;
@@ -48,6 +51,7 @@ class TestRunOptions  {
         this.clientCharacterSet = clientCharacterSet;
         this.randomTestOrder = randomTestOrder;
         this.randomTestOrderSeed = randomTestOrderSeed;
+        this.tags = tags;
     }
 
     public boolean isColorConsole() {
@@ -94,5 +98,11 @@ class TestRunOptions  {
 
     public Integer getRandomTestOrderSeed() {
         return randomTestOrderSeed;
+    }
+
+    public Set<String> getTags() { return tags; }
+
+    public String getTagsAsString() {
+        return String.join(",", tags);
     }
 }

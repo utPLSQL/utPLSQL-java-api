@@ -5,7 +5,9 @@ import org.utplsql.api.reporter.Reporter;
 import javax.annotation.Nullable;
 import java.nio.charset.Charset;
 import java.util.ArrayList;
+import java.util.LinkedHashSet;
 import java.util.List;
+import java.util.Set;
 
 /**
  * Holds the various possible options of TestRunner
@@ -27,6 +29,7 @@ public class TestRunnerOptionsImpl implements TestRunnerOptions {
     boolean randomTestOrder = false;
     @Nullable
     Integer randomTestOrderSeed;
+    public final Set<String> tags = new LinkedHashSet<>();
 
     @Override
     public List<String> getPathList() {
@@ -92,5 +95,11 @@ public class TestRunnerOptionsImpl implements TestRunnerOptions {
     @Nullable
     public Integer getRandomTestOrderSeed() {
         return randomTestOrderSeed;
+    }
+
+    public Set<String> getTags() { return tags; }
+
+    public String getTagsAsString() {
+        return String.join(",", tags);
     }
 }

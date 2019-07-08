@@ -39,7 +39,8 @@ class ActualTestRunnerStatement extends AbstractTestRunnerStatement {
                         "a_fail_on_errors         => " + failOnErrors + ", " +
                         "a_client_character_set   => ?, " +
                         "a_random_test_order      => " + randomExecutionOrder + ", " +
-                        "a_random_test_order_seed => ?"+
+                        "a_random_test_order_seed => ?, "+
+                        "a_tags => ?"+
                         "); " +
                         "END;";
     }
@@ -53,6 +54,12 @@ class ActualTestRunnerStatement extends AbstractTestRunnerStatement {
             callableStatement.setNull(++curParamIdx, Types.INTEGER);
         } else {
             callableStatement.setInt(++curParamIdx, options.getRandomTestOrderSeed());
+        }
+
+        if ( options.getTags().size() == 0 ) {
+            callableStatement.setNull(++curParamIdx, Types.VARCHAR);
+        } else {
+            callableStatement.setString(++curParamIdx, options.getTagsAsString());
         }
 
         return curParamIdx;
