@@ -4,7 +4,9 @@ import org.utplsql.api.reporter.Reporter;
 
 import java.nio.charset.Charset;
 import java.util.ArrayList;
+import java.util.LinkedHashSet;
 import java.util.List;
+import java.util.Set;
 
 /**
  * Holds the various possible options of TestRunner
@@ -27,4 +29,9 @@ public class TestRunnerOptions {
     public String clientCharacterSet = Charset.defaultCharset().toString();
     public boolean randomTestOrder = false;
     public Integer randomTestOrderSeed;
+    public final Set<String> tags = new LinkedHashSet<>();
+
+    public String getTagsAsString() {
+        return String.join(",", tags);
+    }
 }
