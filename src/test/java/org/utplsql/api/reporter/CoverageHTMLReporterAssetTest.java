@@ -30,6 +30,7 @@ class CoverageHTMLReporterAssetTest {
         Path targetPath = tempDir.resolve(TEST_FOLDER);
 
         // Act
+        System.out.println(CoverageHTMLReporter.class.toString());
         CoverageHTMLReporter.writeReportAssetsTo(targetPath);
 
         testFileExists(Paths.get("colorbox", "border.png"));
