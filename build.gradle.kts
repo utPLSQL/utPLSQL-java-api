@@ -75,7 +75,7 @@ tasks {
         dependsOn(jar, testClasses)
 
         doFirst {
-            classpath = project.files("$buildDir/libs/java-api-$baseVersion.jar", "$buildDir/classes/java/test", configurations.testRuntimeClasspath)
+            classpath = project.files("$buildDir/libs/java-api-$version.jar", "$buildDir/classes/java/test", configurations.testRuntimeClasspath)
             testClassesDirs = sourceSets.getByName("test").output.classesDirs
         }
 
