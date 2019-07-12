@@ -40,7 +40,7 @@ To use the java-api library, add this to the `<dependencies>` section of your `p
 <dependency>
     <groupId>org.utplsql</groupId>
     <artifactId>java-api</artifactId>
-    <version>3.1.6</version>
+    <version>3.1.7</version>
     <scope>compile</scope>
 </dependency>
 ```
@@ -100,7 +100,7 @@ You can also ask it for the database-version.
 ```java
 try (Connection conn = DriverManager.getConnection(url)) {
    CompatiblityProxy proxy = new CompatibilityProxy( conn );
-   Version version = proxy.getDatabaseVersion();
+   Version version = proxy.getUtPlsqlVersion();
 } catch (SQLException e) {
     e.printStackTrace();
 }
