@@ -1,6 +1,11 @@
-package org.utplsql.api;
+package org.utplsql.api.testRunner;
 
 import org.junit.jupiter.api.Test;
+import org.utplsql.api.AbstractDatabaseTest;
+import org.utplsql.api.FileMapperOptions;
+import org.utplsql.api.FileMapping;
+import org.utplsql.api.KeyValuePair;
+import org.utplsql.api.testRunner.FileMapper;
 
 import java.sql.SQLException;
 import java.util.ArrayList;

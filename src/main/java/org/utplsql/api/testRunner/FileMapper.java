@@ -1,10 +1,14 @@
-package org.utplsql.api;
+package org.utplsql.api.testRunner;
 
 
 import oracle.jdbc.OracleConnection;
 import oracle.jdbc.OracleTypes;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+import org.utplsql.api.CustomTypes;
+import org.utplsql.api.FileMapperOptions;
+import org.utplsql.api.FileMapping;
+import org.utplsql.api.KeyValuePair;
 
 import java.sql.*;
 import java.util.ArrayList;
@@ -21,7 +25,7 @@ public final class FileMapper {
     /**
      * Call the database api to build the custom file mappings.
      */
-    public static Array buildFileMappingArray(
+    private static Array buildFileMappingArray(
             Connection conn, FileMapperOptions mapperOptions) throws SQLException {
         OracleConnection oraConn = conn.unwrap(OracleConnection.class);
 
@@ -95,7 +99,7 @@ public final class FileMapper {
         return callableStatement.getArray(1);
     }
 
-    public static List<FileMapping> buildFileMappingList(
+    static List<FileMapping> buildFileMappingList(
             Connection conn, FileMapperOptions mapperOptions) throws SQLException {
         java.sql.Array fileMappings = buildFileMappingArray(conn, mapperOptions);
 
