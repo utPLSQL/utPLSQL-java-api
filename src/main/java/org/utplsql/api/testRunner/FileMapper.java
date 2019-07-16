@@ -64,7 +64,7 @@ public final class FileMapper {
         callableStatement.setArray(
                 ++paramIdx, oraConn.createOracleArray(CustomTypes.UT_VARCHAR2_LIST, filePathsArray));
 
-        if (mapperOptions.getTypeMappings() == null) {
+        if (mapperOptions.getTypeMappings() == null || mapperOptions.getTypeMappings().size() == 0) {
             callableStatement.setNull(++paramIdx, Types.ARRAY, CustomTypes.UT_KEY_VALUE_PAIRS);
         } else {
             callableStatement.setArray(
