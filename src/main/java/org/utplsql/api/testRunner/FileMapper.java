@@ -15,7 +15,7 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.Map;
 
-public final class FileMapper {
+final class FileMapper {
 
     private static final Logger logger = LoggerFactory.getLogger(FileMapper.class);
 
