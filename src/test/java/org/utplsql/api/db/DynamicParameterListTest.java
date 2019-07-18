@@ -25,7 +25,7 @@ public class DynamicParameterListTest {
                 .add("a_num_array", numArr, "MY_NUM_ARR", mockedConn)
                 .build();
 
-        assertEquals("a_object_owner = ?, a_num_param = ?, a_num_array = ?", parameterList.getSql());
+        assertEquals("a_object_owner => ?, a_num_param => ?, a_num_array => ?", parameterList.getSql());
 
         parameterList.setParamsStartWithIndex(mockedStatement, 5);
 

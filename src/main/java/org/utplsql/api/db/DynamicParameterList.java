@@ -77,7 +77,7 @@ public class DynamicParameterList {
 
     public String getSql() {
         return params.keySet().stream()
-                .map(e -> e + " = ?")
+                .map(e -> e + " => ?")
                 .collect(Collectors.joining(", "));
     }
 
