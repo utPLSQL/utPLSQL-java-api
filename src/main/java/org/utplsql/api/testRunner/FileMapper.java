@@ -9,11 +9,11 @@ import org.utplsql.api.CustomTypes;
 import org.utplsql.api.FileMapperOptions;
 import org.utplsql.api.FileMapping;
 import org.utplsql.api.KeyValuePair;
+import org.utplsql.api.db.DynamicParameterList;
+import org.utplsql.api.db.DynamicParameterListBuilder;
 
 import java.sql.*;
-import java.util.ArrayList;
-import java.util.List;
-import java.util.Map;
+import java.util.*;
 
 final class FileMapper {
 
@@ -34,66 +34,38 @@ final class FileMapper {
         typeMap.put(CustomTypes.UT_KEY_VALUE_PAIR, KeyValuePair.class);
         conn.setTypeMap(typeMap);
 
+        logger.debug("Building fileMappingArray");
+        final Object[] filePathsArray = mapperOptions.getFilePaths().toArray();
+        for ( Object elem : filePathsArray ) {
+            logger.debug("Path: " + elem);
+        }
+        Object[] typeMapArray = null;
+        if ( mapperOptions.getTypeMappings() != null ) {
+            typeMapArray = mapperOptions.getTypeMappings().toArray();
+        }
+
+        DynamicParameterList parameterList =  DynamicParameterListBuilder.create()
+                .add("a_file_paths", filePathsArray, CustomTypes.UT_VARCHAR2_LIST, oraConn)
+                .onlyAddIfNotEmpty()
+                .add("a_object_owner", mapperOptions.getObjectOwner())
+                .add("a_file_to_object_type_mapping", typeMapArray, CustomTypes.UT_KEY_VALUE_PAIRS, oraConn)
+                .add("a_regex_pattern", mapperOptions.getRegexPattern())
+                .add("a_object_owner_subexpression", mapperOptions.getOwnerSubExpression())
+                .add("a_object_name_subexpression", mapperOptions.getNameSubExpression())
+                .add("a_object_type_subexpression", mapperOptions.getTypeSubExpression())
+                .build();
+
         CallableStatement callableStatement = conn.prepareCall(
                 "BEGIN " +
                         "? := ut_file_mapper.build_file_mappings(" +
-                        "a_object_owner                => ?, " +
-                        "a_file_paths                  => ?, " +
-                        "a_file_to_object_type_mapping => ?, " +
-                        "a_regex_pattern               => ?, " +
-                        "a_object_owner_subexpression  => ?, " +
-                        "a_object_name_subexpression   => ?, " +
-                        "a_object_type_subexpression   => ?); " +
+                        parameterList.getSql() +
+                        "); " +
                         "END;");
 
         int paramIdx = 0;
         callableStatement.registerOutParameter(++paramIdx, OracleTypes.ARRAY, CustomTypes.UT_FILE_MAPPINGS);
 
-        if (mapperOptions.getObjectOwner() == null) {
-            callableStatement.setNull(++paramIdx, Types.VARCHAR);
-        } else {
-            callableStatement.setString(++paramIdx, mapperOptions.getObjectOwner());
-        }
-
-        logger.debug("Building fileMappingArray");
-        Object[] filePathsArray = mapperOptions.getFilePaths().toArray();
-        for ( Object elem : filePathsArray ) {
-            logger.debug("Path: " + elem);
-        }
-
-        callableStatement.setArray(
-                ++paramIdx, oraConn.createOracleArray(CustomTypes.UT_VARCHAR2_LIST, filePathsArray));
-
-        if (mapperOptions.getTypeMappings() == null || mapperOptions.getTypeMappings().size() == 0) {
-            callableStatement.setNull(++paramIdx, Types.ARRAY, CustomTypes.UT_KEY_VALUE_PAIRS);
-        } else {
-            callableStatement.setArray(
-                    ++paramIdx, oraConn.createOracleArray(CustomTypes.UT_KEY_VALUE_PAIRS, mapperOptions.getTypeMappings().toArray()));
-        }
-
-        if (mapperOptions.getRegexPattern() == null) {
-            callableStatement.setNull(++paramIdx, Types.VARCHAR);
-        } else {
-            callableStatement.setString(++paramIdx, mapperOptions.getRegexPattern());
-        }
-
-        if (mapperOptions.getOwnerSubExpression() == null) {
-            callableStatement.setNull(++paramIdx, Types.INTEGER);
-        } else {
-            callableStatement.setInt(++paramIdx, mapperOptions.getOwnerSubExpression());
-        }
-
-        if (mapperOptions.getNameSubExpression() == null) {
-            callableStatement.setNull(++paramIdx, Types.INTEGER);
-        } else {
-            callableStatement.setInt(++paramIdx, mapperOptions.getNameSubExpression());
-        }
-
-        if (mapperOptions.getTypeSubExpression() == null) {
-            callableStatement.setNull(++paramIdx, Types.INTEGER);
-        } else {
-            callableStatement.setInt(++paramIdx, mapperOptions.getTypeSubExpression());
-        }
+        parameterList.setParamsStartWithIndex(callableStatement, ++paramIdx);
 
         callableStatement.execute();
         return callableStatement.getArray(1);
