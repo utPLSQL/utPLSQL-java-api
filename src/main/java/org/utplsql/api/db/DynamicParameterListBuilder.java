@@ -19,15 +19,21 @@ public class DynamicParameterListBuilder {
     }
 
     public DynamicParameterListBuilder add( String identifier, String value ) {
-        params.put(identifier, new DynamicParameterList.DynamicStringParameter(value));
+        if ( addIfNullOrEmpty || (value != null && !value.isEmpty()) ) {
+            params.put(identifier, new DynamicParameterList.DynamicStringParameter(value));
+        }
         return this;
     }
     public DynamicParameterListBuilder add( String identifier, Integer value ) {
-        params.put(identifier, new DynamicParameterList.DynamicIntegerParameter(value));
+        if ( addIfNullOrEmpty || (value != null)) {
+            params.put(identifier, new DynamicParameterList.DynamicIntegerParameter(value));
+        }
         return this;
     }
     public DynamicParameterListBuilder add(String identifier, Object[] value, String customTypeName, OracleConnection oraConnection ) {
-        params.put(identifier, new DynamicParameterList.DynamicArrayParameter(value, customTypeName, oraConnection));
+        if ( addIfNullOrEmpty || (value != null && value.length > 0 )) {
+            params.put(identifier, new DynamicParameterList.DynamicArrayParameter(value, customTypeName, oraConnection));
+        }
         return this;
     }
 

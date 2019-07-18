@@ -10,7 +10,7 @@ import java.util.stream.Collectors;
 
 public class DynamicParameterList {
 
-    LinkedHashMap<String, DynamicParameter> params;
+    private LinkedHashMap<String, DynamicParameter> params;
 
     interface DynamicParameter {
         void setParam( CallableStatement statement, int index ) throws SQLException;
