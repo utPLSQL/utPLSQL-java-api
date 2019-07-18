@@ -1,29 +1,37 @@
 package org.utplsql.api.db;
 
+import oracle.jdbc.OracleConnection;
 import org.junit.jupiter.api.Test;
 
-import java.util.ArrayList;
+import java.sql.CallableStatement;
+import java.sql.SQLException;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.mockito.Mockito.mock;
+import static org.mockito.Mockito.verify;
 
 public class DynamicParameterListTest {
 
     @Test
-    void firstTest() {
+    void callWithThreeDifferentTypes() throws SQLException {
 
-        final ArrayList<Object> resultArray = new ArrayList<>();
+        CallableStatement mockedStatement = mock(CallableStatement.class);
+        OracleConnection mockedConn = mock(OracleConnection.class);
+
+        Object[] numArr = new Object[]{1, 2};
 
         DynamicParameterList parameterList = DynamicParameterListBuilder.create()
-                .addParameter("a_object_owner", i -> resultArray.add(i + ": MyOwner"))
-                .addParameter("a_num_param", i -> resultArray.add( i + ": 123"))
+                .add("a_object_owner", "MyOwner")
+                .add("a_num_param", 123)
+                .add("a_num_array", numArr, "MY_NUM_ARR", mockedConn)
                 .build();
 
-        parameterList.applyFromIndex(5);
-        assertEquals("a_object_owner = ?, a_num_param = ?", parameterList.getSql());
+        assertEquals("a_object_owner = ?, a_num_param = ?, a_num_array = ?", parameterList.getSql());
 
-        ArrayList<Object> expectedList = new ArrayList<>();
-        expectedList.add("5: MyOwner");
-        expectedList.add("6: 123");
-        assertEquals( expectedList, resultArray);
+        parameterList.setParamsStartWithIndex(mockedStatement, 5);
+        verify(mockedStatement).setString(5, "MyOwner");
+        verify(mockedStatement).setInt(6, 123);
+        verify(mockedConn).createOracleArray("MY_NUM_ARR", numArr);
+        verify(mockedStatement).setArray(7, null);
     }
 }
