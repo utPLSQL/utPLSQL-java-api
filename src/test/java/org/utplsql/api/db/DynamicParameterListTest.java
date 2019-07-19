@@ -19,7 +19,7 @@ public class DynamicParameterListTest {
 
         Object[] numArr = new Object[]{1, 2};
 
-        DynamicParameterList parameterList = DynamicParameterListBuilder.create()
+        DynamicParameterList parameterList = DynamicParameterList.builder()
                 .add("a_object_owner", "MyOwner")
                 .add("a_num_param", 123)
                 .add("a_num_array", numArr, "MY_NUM_ARR", mockedConn)
@@ -41,7 +41,7 @@ public class DynamicParameterListTest {
         CallableStatement mockedStatement = mock(CallableStatement.class);
         OracleConnection mockedConn = mock(OracleConnection.class);
 
-        DynamicParameterList parameterList = DynamicParameterListBuilder.create()
+        DynamicParameterList parameterList = DynamicParameterList.builder()
                 .onlyAddIfNotEmpty()
                 .add("a_object_owner", (String)null)
                 .add("a_num_param", (Integer)null)

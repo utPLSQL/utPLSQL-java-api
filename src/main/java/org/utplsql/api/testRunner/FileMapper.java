@@ -10,7 +10,6 @@ import org.utplsql.api.FileMapperOptions;
 import org.utplsql.api.FileMapping;
 import org.utplsql.api.KeyValuePair;
 import org.utplsql.api.db.DynamicParameterList;
-import org.utplsql.api.db.DynamicParameterListBuilder;
 
 import java.sql.*;
 import java.util.*;
@@ -44,7 +43,7 @@ final class FileMapper {
             typeMapArray = mapperOptions.getTypeMappings().toArray();
         }
 
-        DynamicParameterList parameterList =  DynamicParameterListBuilder.create()
+        DynamicParameterList parameterList =  DynamicParameterList.builder()
                 .add("a_file_paths", filePathsArray, CustomTypes.UT_VARCHAR2_LIST, oraConn)
                 .onlyAddIfNotEmpty()
                 .add("a_object_owner", mapperOptions.getObjectOwner())
