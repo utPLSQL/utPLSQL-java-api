@@ -65,7 +65,7 @@ public class DynamicParameterList {
      * <pre>
      *  DynamicParameterList.builder()
      *      .add("parameter1", "StringParameter")
-     *      .add("parameter2", 123)
+     *      .addIfNotEmpty("parameter2", 123)
      *      .build();
      * </pre>
      *
@@ -74,32 +74,43 @@ public class DynamicParameterList {
     public static class DynamicParameterListBuilder {
 
         private LinkedHashMap<String, DynamicParameterList.DynamicParameter> params = new LinkedHashMap<>();
-        private boolean addIfNullOrEmpty = true;
 
         private DynamicParameterListBuilder() {
 
         }
 
-        public DynamicParameterListBuilder onlyAddIfNotEmpty() {
-            addIfNullOrEmpty = false;
+        public DynamicParameterListBuilder add(String identifier, String value ) {
+            params.put(identifier, new DynamicParameterList.DynamicStringParameter(value));
             return this;
         }
 
-        public DynamicParameterListBuilder add(String identifier, String value ) {
-            if ( addIfNullOrEmpty || (value != null && !value.isEmpty()) ) {
-                params.put(identifier, new DynamicParameterList.DynamicStringParameter(value));
+        public DynamicParameterListBuilder addIfNotEmpty(String identifier, String value ) {
+            if ( value != null && !value.isEmpty() ) {
+                add(identifier, value);
             }
             return this;
         }
+
         public DynamicParameterListBuilder add(String identifier, Integer value ) {
-            if ( addIfNullOrEmpty || (value != null)) {
-                params.put(identifier, new DynamicParameterList.DynamicIntegerParameter(value));
+            params.put(identifier, new DynamicParameterList.DynamicIntegerParameter(value));
+            return this;
+        }
+
+        public DynamicParameterListBuilder addIfNotEmpty(String identifier, Integer value ) {
+            if ( value != null) {
+                add(identifier, value);
             }
             return this;
         }
+
         public DynamicParameterListBuilder add(String identifier, Object[] value, String customTypeName, OracleConnection oraConnection ) {
-            if ( addIfNullOrEmpty || (value != null && value.length > 0 )) {
-                params.put(identifier, new DynamicParameterList.DynamicArrayParameter(value, customTypeName, oraConnection));
+            params.put(identifier, new DynamicParameterList.DynamicArrayParameter(value, customTypeName, oraConnection));
+            return this;
+        }
+
+        public DynamicParameterListBuilder addIfNotEmpty(String identifier, Object[] value, String customTypeName, OracleConnection oraConnection ) {
+            if ( value != null && value.length > 0 ) {
+                add(identifier, value, customTypeName, oraConnection);
             }
             return this;
         }

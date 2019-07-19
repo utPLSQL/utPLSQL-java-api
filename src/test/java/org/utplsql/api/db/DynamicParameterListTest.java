@@ -42,10 +42,9 @@ public class DynamicParameterListTest {
         OracleConnection mockedConn = mock(OracleConnection.class);
 
         DynamicParameterList parameterList = DynamicParameterList.builder()
-                .onlyAddIfNotEmpty()
-                .add("a_object_owner", (String)null)
-                .add("a_num_param", (Integer)null)
-                .add("a_num_array", new Object[]{}, "MY_NUM_ARR", mockedConn)
+                .addIfNotEmpty("a_object_owner", (String)null)
+                .addIfNotEmpty("a_num_param", (Integer)null)
+                .addIfNotEmpty("a_num_array", new Object[]{}, "MY_NUM_ARR", mockedConn)
                 .build();
 
         assertEquals("", parameterList.getSql());

@@ -45,13 +45,12 @@ final class FileMapper {
 
         DynamicParameterList parameterList =  DynamicParameterList.builder()
                 .add("a_file_paths", filePathsArray, CustomTypes.UT_VARCHAR2_LIST, oraConn)
-                .onlyAddIfNotEmpty()
-                .add("a_object_owner", mapperOptions.getObjectOwner())
-                .add("a_file_to_object_type_mapping", typeMapArray, CustomTypes.UT_KEY_VALUE_PAIRS, oraConn)
-                .add("a_regex_pattern", mapperOptions.getRegexPattern())
-                .add("a_object_owner_subexpression", mapperOptions.getOwnerSubExpression())
-                .add("a_object_name_subexpression", mapperOptions.getNameSubExpression())
-                .add("a_object_type_subexpression", mapperOptions.getTypeSubExpression())
+                .addIfNotEmpty("a_object_owner", mapperOptions.getObjectOwner())
+                .addIfNotEmpty("a_file_to_object_type_mapping", typeMapArray, CustomTypes.UT_KEY_VALUE_PAIRS, oraConn)
+                .addIfNotEmpty("a_regex_pattern", mapperOptions.getRegexPattern())
+                .addIfNotEmpty("a_object_owner_subexpression", mapperOptions.getOwnerSubExpression())
+                .addIfNotEmpty("a_object_name_subexpression", mapperOptions.getNameSubExpression())
+                .addIfNotEmpty("a_object_type_subexpression", mapperOptions.getTypeSubExpression())
                 .build();
 
         CallableStatement callableStatement = conn.prepareCall(
