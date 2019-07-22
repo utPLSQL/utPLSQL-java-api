@@ -51,6 +51,7 @@ public class DynamicTestRunnerStatement implements TestRunnerStatement {
          */
         return DynamicParameterList.builder()
                 .addIfNotEmpty("a_paths", options.pathList.toArray(), CustomTypes.UT_VARCHAR2_LIST, oracleConnection)
+                .addIfNotEmpty("a_reporters", options.reporterList.toArray(), CustomTypes.UT_REPORTERS, oracleConnection)
                 .build();
     }
 
