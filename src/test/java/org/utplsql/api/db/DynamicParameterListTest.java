@@ -59,6 +59,20 @@ public class DynamicParameterListTest {
             verify(conn).createOracleArray("MY_TYPE", numArr);
             verify(stmt).setArray(3, null);
         }
+
+        @Test
+        void can_add_boolean() throws SQLException {
+            CallableStatement stmt = mock(CallableStatement.class);
+
+            DynamicParameterList paramList = DynamicParameterList.builder()
+                    .add("a_bool", true)
+                    .build();
+
+            assertEquals("a_param => (case ? when 1 then true else false)", paramList.getSql());
+
+            paramList.setParamsStartWithIndex(stmt, 3);
+            verify(stmt).setInt(3, 1);
+        }
     }
 
     @Nested

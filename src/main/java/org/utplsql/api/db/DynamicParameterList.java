@@ -115,6 +115,18 @@ public class DynamicParameterList {
             return this;
         }
 
+        public DynamicParameterListBuilder add(String identifier, Boolean value) {
+            params.put(identifier, null);
+            return this;
+        }
+
+        public DynamicParameterListBuilder addIfNotEmpty(String identifier, Boolean value) {
+            if ( value != null ) {
+                add(identifier, value);
+            }
+            return this;
+        }
+
         public DynamicParameterList build() {
             return new DynamicParameterList(params);
         }
