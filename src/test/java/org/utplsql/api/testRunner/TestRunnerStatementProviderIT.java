@@ -36,13 +36,13 @@ class TestRunnerStatementProviderIT extends AbstractDatabaseTest {
         return options;
     }
 
-    AbstractTestRunnerStatement getTestRunnerStatementForVersion( Version version ) throws SQLException {
-        return (AbstractTestRunnerStatement)TestRunnerStatementProvider.getCompatibleTestRunnerStatement(version, getCompletelyFilledOptions(), getConnection());
+    TestRunnerStatement getTestRunnerStatementForVersion( Version version ) throws SQLException {
+        return TestRunnerStatementProvider.getCompatibleTestRunnerStatement(version, getCompletelyFilledOptions(), getConnection());
     }
 
     @Test
     void testGettingPre303Version() throws SQLException {
-        AbstractTestRunnerStatement stmt = getTestRunnerStatementForVersion(Version.V3_0_2);
+        TestRunnerStatement stmt = getTestRunnerStatementForVersion(Version.V3_0_2);
         assertEquals(Pre303TestRunnerStatement.class, stmt.getClass());
         assertThat(stmt.getSql(), not(containsString("a_fail_on_errors")));
         assertThat(stmt.getSql(), not(containsString("a_client_character_set")));
@@ -54,7 +54,7 @@ class TestRunnerStatementProviderIT extends AbstractDatabaseTest {
 
     @Test
     void testGettingPre312Version_from_303() throws SQLException {
-        AbstractTestRunnerStatement stmt = getTestRunnerStatementForVersion(Version.V3_0_3);
+        TestRunnerStatement stmt = getTestRunnerStatementForVersion(Version.V3_0_3);
         assertEquals(Pre312TestRunnerStatement.class, stmt.getClass());
         assertThat(stmt.getSql(), containsString("a_fail_on_errors"));
         assertThat(stmt.getSql(), not(containsString("a_client_character_set")));
@@ -65,7 +65,7 @@ class TestRunnerStatementProviderIT extends AbstractDatabaseTest {
 
     @Test
     void testGettingPre312Version_from_311() throws SQLException {
-        AbstractTestRunnerStatement stmt = getTestRunnerStatementForVersion(Version.V3_1_1);
+        TestRunnerStatement stmt = getTestRunnerStatementForVersion(Version.V3_1_1);
         assertThat(stmt, instanceOf(Pre312TestRunnerStatement.class));
         assertThat(stmt.getSql(), containsString("a_fail_on_errors"));
         assertThat(stmt.getSql(), not(containsString("a_client_character_set")));
@@ -76,7 +76,7 @@ class TestRunnerStatementProviderIT extends AbstractDatabaseTest {
 
     @Test
     void testGettingPre317Version_from_312() throws SQLException {
-        AbstractTestRunnerStatement stmt = getTestRunnerStatementForVersion(Version.V3_1_2);
+        TestRunnerStatement stmt = getTestRunnerStatementForVersion(Version.V3_1_2);
         assertThat(stmt, instanceOf(Pre317TestRunnerStatement.class));
         assertThat(stmt.getSql(), containsString("a_fail_on_errors"));
         assertThat(stmt.getSql(), containsString("a_client_character_set"));
@@ -87,7 +87,7 @@ class TestRunnerStatementProviderIT extends AbstractDatabaseTest {
 
     @Test
     void testGettingPre317Version_from_316() throws SQLException {
-        AbstractTestRunnerStatement stmt = getTestRunnerStatementForVersion(Version.V3_1_6);
+        TestRunnerStatement stmt = getTestRunnerStatementForVersion(Version.V3_1_6);
         assertThat(stmt, instanceOf(Pre317TestRunnerStatement.class));
         assertThat(stmt.getSql(), containsString("a_fail_on_errors"));
         assertThat(stmt.getSql(), containsString("a_client_character_set"));
@@ -98,7 +98,7 @@ class TestRunnerStatementProviderIT extends AbstractDatabaseTest {
 
     @Test
     void testGettingActualVersion_from_latest() throws SQLException {
-        AbstractTestRunnerStatement stmt = getTestRunnerStatementForVersion(Version.LATEST);
+        TestRunnerStatement stmt = getTestRunnerStatementForVersion(Version.LATEST);
         assertThat(stmt, instanceOf(ActualTestRunnerStatement.class));
         assertThat(stmt.getSql(), containsString("a_fail_on_errors"));
         assertThat(stmt.getSql(), containsString("a_client_character_set"));
