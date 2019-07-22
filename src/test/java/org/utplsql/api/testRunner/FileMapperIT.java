@@ -1,6 +1,12 @@
-package org.utplsql.api;
+package org.utplsql.api.testRunner;
 
+import org.junit.jupiter.api.Nested;
 import org.junit.jupiter.api.Test;
+import org.utplsql.api.AbstractDatabaseTest;
+import org.utplsql.api.FileMapperOptions;
+import org.utplsql.api.FileMapping;
+import org.utplsql.api.KeyValuePair;
+import org.utplsql.api.testRunner.FileMapper;
 
 import java.sql.SQLException;
 import java.util.ArrayList;
@@ -43,6 +49,39 @@ class FileMapperIT extends AbstractDatabaseTest {
         assertEquals(owner, fileMapping.getObjectOwner());
         assertEquals(name, fileMapping.getObjectName());
         assertEquals(type, fileMapping.getObjectType());
+    }
+
+    @Nested
+    class Default_type_mapping {
+
+        void checkTypeMapping( List<KeyValuePair> typeMappings ) throws SQLException {
+            List<String> filePaths = java.util.Arrays.asList(
+                    "/award_bonus.prc",
+                    "/betwnstr.fnc",
+                    "/package_body.pkb",
+                    "/type_body.tpb",
+                    "/trigger.trg");
+            FileMapperOptions mapperOptions = new FileMapperOptions(filePaths);
+            mapperOptions.setTypeMappings(typeMappings);
+
+            List<FileMapping> fileMappings = FileMapper.buildFileMappingList(getConnection(), mapperOptions);
+
+            assertEquals("PROCEDURE", fileMappings.get(0).getObjectType());
+            assertEquals("FUNCTION", fileMappings.get(1).getObjectType());
+            assertEquals("PACKAGE BODY", fileMappings.get(2).getObjectType());
+            assertEquals("TYPE BODY", fileMappings.get(3).getObjectType());
+            assertEquals("TRIGGER", fileMappings.get(4).getObjectType());
+        }
+
+        @Test
+        void is_used_on_null_parameter() throws SQLException {
+            checkTypeMapping(null);
+        }
+
+        @Test
+        void is_used_on_empty_parameter() throws SQLException {
+            checkTypeMapping(new ArrayList<>());
+        }
     }
 
 }

@@ -38,6 +38,7 @@ repositories {
         }
     }
     mavenCentral()
+    jcenter()
 }
 
 dependencies {
@@ -54,6 +55,9 @@ dependencies {
     // Use Jupiter test framework
     testImplementation("org.junit.jupiter:junit-jupiter:$junitVersion")
     testImplementation("org.hamcrest:hamcrest:2.1")
+
+    // Mockito
+    testImplementation("org.mockito:mockito-core:3.0.0")
 
     // deployer for packagecloud
     deployerJars("io.packagecloud.maven.wagon:maven-packagecloud-wagon:0.0.6")

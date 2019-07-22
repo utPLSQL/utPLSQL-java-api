@@ -2,7 +2,6 @@ package org.utplsql.api.testRunner;
 
 import oracle.jdbc.OracleConnection;
 import org.utplsql.api.CustomTypes;
-import org.utplsql.api.FileMapper;
 import org.utplsql.api.FileMapping;
 import org.utplsql.api.TestRunnerOptions;
 
