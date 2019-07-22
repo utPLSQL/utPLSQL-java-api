@@ -11,7 +11,7 @@ version = if (tag != null && "^[0-9.]+$".toRegex().matches(tag)) tag else baseVe
 
 val coverageResourcesVersion = "1.0.1"
 val ojdbcVersion = "12.2.0.1"
-val junitVersion = "5.4.2"
+val junitVersion = "5.5.0"
 
 val deployerJars by configurations.creating
 
@@ -19,7 +19,7 @@ plugins {
     `java-library`
     `maven-publish`
     maven
-    id("de.undercouch.download") version "3.4.3"
+    id("de.undercouch.download") version "4.0.0"
 }
 
 java {
@@ -46,7 +46,7 @@ dependencies {
     api("com.google.code.findbugs:jsr305:3.0.2")
 
     // This dependency is used internally, and not exposed to consumers on their own compile classpath.
-    implementation("org.slf4j:slf4j-api:1.7.25")
+    implementation("org.slf4j:slf4j-api:1.7.26")
     implementation("com.oracle.jdbc:ojdbc8:$ojdbcVersion") {
         exclude(group = "com.oracle.jdbc")
     }
