@@ -32,7 +32,7 @@ abstract class AbstractTestRunnerStatement implements TestRunnerStatement {
         createStatement();
     }
 
-    protected abstract String getSql();
+    public abstract String getSql();
 
     protected int createStatement() throws SQLException {
 

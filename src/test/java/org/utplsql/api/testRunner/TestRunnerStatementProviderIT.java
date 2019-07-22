@@ -19,7 +19,7 @@ import static org.junit.jupiter.api.Assertions.assertEquals;
 
 class TestRunnerStatementProviderIT extends AbstractDatabaseTest {
 
-    TestRunnerOptions getCompletelyFilledOptions() {
+    public static TestRunnerOptions getCompletelyFilledOptions() {
         TestRunnerOptions options = new TestRunnerOptions();
         options.pathList.add("path");
         options.reporterList.add(ReporterFactory.createEmpty().createReporter(CoreReporters.UT_DOCUMENTATION_REPORTER.name()));
