@@ -68,7 +68,7 @@ public class DynamicParameterListTest {
                     .add("a_bool", true)
                     .build();
 
-            assertEquals("a_param => (case ? when 1 then true else false)", paramList.getSql());
+            assertEquals("a_bool => (case ? when 1 then true else false)", paramList.getSql());
 
             paramList.setParamsStartWithIndex(stmt, 3);
             verify(stmt).setInt(3, 1);

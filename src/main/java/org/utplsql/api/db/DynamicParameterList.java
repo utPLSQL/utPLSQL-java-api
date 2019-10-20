@@ -20,6 +20,10 @@ public class DynamicParameterList {
 
     interface DynamicParameter {
         void setParam( CallableStatement statement, int index ) throws SQLException;
+
+        default String getSql( String key ) {
+            return key + " => ?";
+        }
     }
 
     private DynamicParameterList(LinkedHashMap<String, DynamicParameter> params) {
@@ -33,8 +37,8 @@ public class DynamicParameterList {
      * @return comma-separated list of parameter identifiers
      */
     public String getSql() {
-        return params.keySet().stream()
-                .map(e -> e + " => ?")
+        return params.entrySet().stream()
+                .map(e ->  e.getValue().getSql(e.getKey()))
                 .collect(Collectors.joining(", "));
     }
 
@@ -116,7 +120,7 @@ public class DynamicParameterList {
         }
 
         public DynamicParameterListBuilder add(String identifier, Boolean value) {
-            params.put(identifier, null);
+            params.put(identifier, new DynamicBoolParameter(value));
             return this;
         }
 
@@ -164,6 +168,28 @@ public class DynamicParameterList {
             } else {
                 statement.setInt(index, value);
             }
+        }
+    }
+
+    private static class DynamicBoolParameter implements DynamicParameter {
+        private final Boolean value;
+
+        DynamicBoolParameter( Boolean value ) {
+            this.value = value;
+        }
+
+        @Override
+        public void setParam(CallableStatement statement, int index) throws SQLException {
+            if ( value == null ) {
+                statement.setNull(index, Types.BOOLEAN);
+            } else {
+                statement.setInt(index, (value)?1:0);
+            }
+        }
+
+        @Override
+        public String getSql(String key) {
+            return key + " => (case ? when 1 then true else false)";
         }
     }
 
