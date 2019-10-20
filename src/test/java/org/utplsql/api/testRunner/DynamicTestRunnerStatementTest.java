@@ -55,7 +55,12 @@ public class DynamicTestRunnerStatementTest {
         verify(oracleConnection).createOracleArray(CustomTypes.UT_REPORTERS, options.reporterList.toArray());
 
         assertThat(testRunnerStatement.getSql(), containsString("a_color_console => (case ? when 1 then true else false)"));
-        verify(callableStatement).setArray(1, null);
-        verify(oracleConnection).createOracleArray(CustomTypes.UT_VARCHAR2_LIST, options.pathList.toArray());
+        verify(callableStatement).setInt(3, 0);
+
+        assertThat(testRunnerStatement.getSql(), containsString("a_coverage_schemes => ?"));
+        verify(callableStatement).setArray(4, null);
+        verify(oracleConnection).createOracleArray(CustomTypes.UT_VARCHAR2_LIST, options.coverageSchemes.toArray());
+
+
     }
 }
