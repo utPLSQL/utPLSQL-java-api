@@ -3,26 +3,48 @@ package org.utplsql.api.testRunner;
 import oracle.jdbc.OracleConnection;
 import org.junit.jupiter.api.Test;
 import org.utplsql.api.CustomTypes;
+import org.utplsql.api.FileMapping;
 import org.utplsql.api.TestRunnerOptions;
 import org.utplsql.api.Version;
 
+import java.sql.Array;
 import java.sql.CallableStatement;
 import java.sql.SQLException;
+import java.util.List;
 import java.util.concurrent.Callable;
 
 import static org.hamcrest.CoreMatchers.containsString;
 import static org.hamcrest.MatcherAssert.assertThat;
-import static org.mockito.Mockito.mock;
-import static org.mockito.Mockito.verify;
+import static org.mockito.Mockito.*;
 
 public class DynamicTestRunnerStatementTest {
 
     @Test
     void explore() throws SQLException {
+        // Expectation objects
+        Object[] expectedSourceFileMapping = new Object[]{new FileMapping("source", "owner", "source", "PACKAGE")};
+        Object[] expectedTestFileMapping = new Object[]{new FileMapping("test", "owner", "test", "PACKAGE")};
 
+        // Mock some internals. This is not pretty, but a first step
         OracleConnection oracleConnection = mock(OracleConnection.class);
+        when(oracleConnection.unwrap(OracleConnection.class))
+                .thenReturn(oracleConnection);
         CallableStatement callableStatement = mock(CallableStatement.class);
 
+        // FileMapper mocks
+        CallableStatement fileMapperStatement = mock(CallableStatement.class);
+        when(
+                oracleConnection.prepareCall(argThat(
+                        a -> a.startsWith("BEGIN ? := ut_file_mapper.build_file_mappings("))
+                ))
+                .thenReturn(fileMapperStatement);
+        Array fileMapperArray = mock(Array.class);
+        when(fileMapperStatement.getArray(1))
+                .thenReturn(fileMapperArray);
+        when(fileMapperArray.getArray())
+                .thenReturn(expectedSourceFileMapping);
+
+        // Act
         TestRunnerOptions options = TestRunnerStatementProviderIT.getCompletelyFilledOptions();
 
         DynamicTestRunnerStatement testRunnerStatement = DynamicTestRunnerStatement
@@ -60,6 +82,10 @@ public class DynamicTestRunnerStatementTest {
         assertThat(testRunnerStatement.getSql(), containsString("a_coverage_schemes => ?"));
         verify(callableStatement).setArray(4, null);
         verify(oracleConnection).createOracleArray(CustomTypes.UT_VARCHAR2_LIST, options.coverageSchemes.toArray());
+
+        assertThat(testRunnerStatement.getSql(), containsString("a_source_file_mappings => ?"));
+        verify(callableStatement).setArray(5, null);
+        verify(oracleConnection).createOracleArray(CustomTypes.UT_FILE_MAPPINGS, expectedSourceFileMapping);
 
 
     }

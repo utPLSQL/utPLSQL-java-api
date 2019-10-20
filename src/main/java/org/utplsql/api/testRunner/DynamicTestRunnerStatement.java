@@ -2,6 +2,7 @@ package org.utplsql.api.testRunner;
 
 import oracle.jdbc.OracleConnection;
 import org.utplsql.api.CustomTypes;
+import org.utplsql.api.FileMapping;
 import org.utplsql.api.TestRunnerOptions;
 import org.utplsql.api.Version;
 import org.utplsql.api.db.DynamicParameterList;
@@ -9,6 +10,7 @@ import org.utplsql.api.db.DynamicParameterList;
 import java.sql.CallableStatement;
 import java.sql.Connection;
 import java.sql.SQLException;
+import java.util.List;
 
 public class DynamicTestRunnerStatement implements TestRunnerStatement {
 
@@ -49,11 +51,16 @@ public class DynamicTestRunnerStatement implements TestRunnerStatement {
                         "); " +
                         "END;";
          */
+
+        Object[] sourceMappings = (options.sourceMappingOptions!=null)
+                ?FileMapper.buildFileMappingList(oracleConnection, options.sourceMappingOptions).toArray()
+                :null;
         return DynamicParameterList.builder()
                 .addIfNotEmpty("a_paths", options.pathList.toArray(), CustomTypes.UT_VARCHAR2_LIST, oracleConnection)
                 .addIfNotEmpty("a_reporters", options.reporterList.toArray(), CustomTypes.UT_REPORTERS, oracleConnection)
                 .addIfNotEmpty("a_color_console", options.colorConsole)
                 .addIfNotEmpty("a_coverage_schemes", options.coverageSchemes.toArray(), CustomTypes.UT_VARCHAR2_LIST, oracleConnection)
+                .addIfNotEmpty("a_source_file_mappings", sourceMappings, CustomTypes.UT_FILE_MAPPINGS, oracleConnection)
                 .build();
     }
 

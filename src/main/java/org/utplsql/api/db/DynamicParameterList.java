@@ -210,7 +210,8 @@ public class DynamicParameterList {
                 statement.setNull(index, Types.ARRAY, customTypeName);
             } else {
                 statement.setArray(
-                        index, oraConnection.createOracleArray(customTypeName, value)
+                        index,
+                        oraConnection.createOracleArray(customTypeName, value)
                 );
             }
         }
