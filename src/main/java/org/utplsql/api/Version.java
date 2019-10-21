@@ -167,10 +167,14 @@ public class Version implements Comparable<Version> {
     }
 
     private int compareToWithNulls(@Nullable Integer i1, @Nullable Integer i2) {
+        return compareToWithNulls(i1, i2, false);
+    }
+
+    private int compareToWithNulls(@Nullable Integer i1, @Nullable Integer i2, boolean nullMeansEqual) {
         if (i1 == null && i2 == null) {
             return 0;
         } else if (i1 == null) {
-            return -1;
+            return nullMeansEqual ? 0 : -1;
         } else if (i2 == null) {
             return 1;
         } else {
@@ -180,26 +184,30 @@ public class Version implements Comparable<Version> {
 
     @Override
     public int compareTo(Version o) {
+        return compareTo(o, false);
+    }
+
+    public int compareTo(Version o, boolean nullMeansEqual) {
         int curResult;
 
         if (isValid() && o.isValid()) {
 
-            curResult = compareToWithNulls(getMajor(), o.getMajor());
+            curResult = compareToWithNulls(getMajor(), o.getMajor(), nullMeansEqual);
             if (curResult != 0) {
                 return curResult;
             }
 
-            curResult = compareToWithNulls(getMinor(), o.getMinor());
+            curResult = compareToWithNulls(getMinor(), o.getMinor(), nullMeansEqual);
             if (curResult != 0) {
                 return curResult;
             }
 
-            curResult = compareToWithNulls(getBugfix(), o.getBugfix());
+            curResult = compareToWithNulls(getBugfix(), o.getBugfix(), nullMeansEqual);
             if (curResult != 0) {
                 return curResult;
             }
 
-            curResult = compareToWithNulls(getBuild(), o.getBuild());
+            curResult = compareToWithNulls(getBuild(), o.getBuild(), nullMeansEqual);
             if (curResult != 0) {
                 return curResult;
             }
@@ -220,6 +228,7 @@ public class Version implements Comparable<Version> {
 
     /**
      * Compares this version to a given version and returns true if this version is greater or equal than the given one
+     * If one of the version parts of the base version is null, this level is assumed equal no matter the comparing level's version part
      * Throws an InvalidVersionException if either this or the given version are invalid
      *
      * @param v Version to compare with
@@ -230,7 +239,7 @@ public class Version implements Comparable<Version> {
 
         versionsAreValid(v);
 
-        return compareTo(v) >= 0;
+        return compareTo(v, true) >= 0;
     }
 
 
@@ -240,11 +249,20 @@ public class Version implements Comparable<Version> {
         return compareTo(v) > 0;
     }
 
+    /**
+     * Compares this version to a given version and returns true if this version is less or equal than the given one
+     * If one of the version parts of the base version is null, this level is assumed equal no matter the comparing level's version part
+     * Throws an InvalidVersionException if either this or the given version are invalid
+     *
+     * @param v Version to compare with
+     * @return
+     * @throws InvalidVersionException
+     */
     public boolean isLessOrEqualThan(Version v) throws InvalidVersionException {
 
         versionsAreValid(v);
 
-        return compareTo(v) <= 0;
+        return compareTo(v, true) <= 0;
     }
 
     public boolean isLessThan(Version v) throws InvalidVersionException {
