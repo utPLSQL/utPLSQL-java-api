@@ -1,7 +1,10 @@
 package org.utplsql.api.testRunner;
 
 import oracle.jdbc.OracleConnection;
+import org.hamcrest.Matcher;
+import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
+import org.mockito.verification.VerificationMode;
 import org.utplsql.api.CustomTypes;
 import org.utplsql.api.FileMapping;
 import org.utplsql.api.TestRunnerOptions;
@@ -13,41 +16,58 @@ import java.sql.SQLException;
 
 import static org.hamcrest.CoreMatchers.containsString;
 import static org.hamcrest.MatcherAssert.assertThat;
+import static org.hamcrest.Matchers.not;
 import static org.mockito.Mockito.*;
 
 public class DynamicTestRunnerStatementTest {
 
-    @Test
-    void explore() throws SQLException {
-        // Expectation objects
-        Object[] expectedFileMapping = new Object[]{new FileMapping("someFile", "owner", "object", "PACKAGE")};
+    private DynamicTestRunnerStatement testRunnerStatement;
+    private CallableStatement callableStatement;
+    private OracleConnection oracleConnection;
+    private TestRunnerOptions options;
+    private Object[] expectedFileMapping;
 
-        // Mock some internals. This is not pretty, but a first step
+    private OracleConnection getMockedOracleConnection( Object[] expectedFileMapping ) throws SQLException {
         OracleConnection oracleConnection = mock(OracleConnection.class);
         when(oracleConnection.unwrap(OracleConnection.class))
                 .thenReturn(oracleConnection);
-        CallableStatement callableStatement = mock(CallableStatement.class);
+        mockFileMapper(oracleConnection, expectedFileMapping);
+        return oracleConnection;
+    }
 
-        // FileMapper mocks
+    private void mockFileMapper( OracleConnection mockedOracleConnection, Object[] expectedFileMapping ) throws SQLException {
+        Array fileMapperArray = mock(Array.class);
         CallableStatement fileMapperStatement = mock(CallableStatement.class);
+
+        when(fileMapperArray.getArray())
+                .thenReturn(expectedFileMapping);
+        when(fileMapperStatement.getArray(1))
+                .thenReturn(fileMapperArray);
         when(
-                oracleConnection.prepareCall(argThat(
+                mockedOracleConnection.prepareCall(argThat(
                         a -> a.startsWith("BEGIN ? := ut_file_mapper.build_file_mappings("))
                 ))
                 .thenReturn(fileMapperStatement);
-        Array fileMapperArray = mock(Array.class);
-        when(fileMapperStatement.getArray(1))
-                .thenReturn(fileMapperArray);
-        when(fileMapperArray.getArray())
-                .thenReturn(expectedFileMapping);
+    }
 
-        // Act
-        TestRunnerOptions options = TestRunnerStatementProviderIT.getCompletelyFilledOptions();
+    private Matcher<String> doesOrDoesNotContainString( String string, boolean shouldBeThere ) {
+        return (shouldBeThere)
+                ? containsString(string)
+                : not(containsString(string));
+    }
 
-        DynamicTestRunnerStatement testRunnerStatement = DynamicTestRunnerStatement
-                .forVersion(Version.V3_1_7, oracleConnection, options, callableStatement);
+    private VerificationMode doesOrDoesNotGetCalled( boolean shouldBeThere ) {
+        return (shouldBeThere)
+                ? times(1)
+                : never();
+    }
 
-        // Assert all parameters are set appropriately
+    private void initTestRunnerStatementForVersion( Version version ) throws SQLException {
+        testRunnerStatement = DynamicTestRunnerStatement
+                .forVersion(version, oracleConnection, options, callableStatement);
+    }
+
+    private void checkBaseParameters() throws SQLException {
         assertThat(testRunnerStatement.getSql(), containsString("a_paths => ?"));
         verify(callableStatement).setArray(1, null);
         verify(oracleConnection).createOracleArray(CustomTypes.UT_VARCHAR2_LIST, options.pathList.toArray());
@@ -77,20 +97,160 @@ public class DynamicTestRunnerStatementTest {
         assertThat(testRunnerStatement.getSql(), containsString("a_exclude_objects => ?"));
         verify(callableStatement).setArray(8, null);
         verify(oracleConnection).createOracleArray(CustomTypes.UT_VARCHAR2_LIST, options.includeObjects.toArray());
+    }
 
-        assertThat(testRunnerStatement.getSql(), containsString("a_fail_on_errors => (case ? when 1 then true else false)"));
-        verify(callableStatement).setInt(9, 1);
+    private void checkFailOnError( boolean shouldBeThere ) throws SQLException {
+        assertThat(testRunnerStatement.getSql(), doesOrDoesNotContainString("a_fail_on_errors => (case ? when 1 then true else false)", shouldBeThere));
+        verify(callableStatement, doesOrDoesNotGetCalled(shouldBeThere)).setInt(9, 1);
+    }
 
-        assertThat(testRunnerStatement.getSql(), containsString("a_client_character_set => ?"));
-        verify(callableStatement).setString(10, "UTF8");
+    private void checkClientCharacterSet( boolean shouldBeThere ) throws SQLException {
+        assertThat(testRunnerStatement.getSql(), doesOrDoesNotContainString("a_client_character_set => ?", shouldBeThere));
+        verify(callableStatement, doesOrDoesNotGetCalled(shouldBeThere)).setString(10, "UTF8");
+    }
 
-        assertThat(testRunnerStatement.getSql(), containsString("a_random_test_order => (case ? when 1 then true else false)"));
-        verify(callableStatement).setInt(11, 1);
+    private void checkRandomTestOrder( boolean shouldBeThere ) throws SQLException {
+        assertThat(testRunnerStatement.getSql(), doesOrDoesNotContainString("a_random_test_order => (case ? when 1 then true else false)", shouldBeThere));
+        verify(callableStatement, doesOrDoesNotGetCalled(shouldBeThere)).setInt(11, 1);
+        assertThat(testRunnerStatement.getSql(), doesOrDoesNotContainString("a_random_test_order_seed => ?", shouldBeThere));
+        verify(callableStatement, doesOrDoesNotGetCalled(shouldBeThere)).setInt(12, 123);
+    }
 
-        assertThat(testRunnerStatement.getSql(), containsString("a_random_test_order_seed => ?"));
-        verify(callableStatement).setInt(12, 123);
+    private void checkTags( boolean shouldBeThere ) throws SQLException {
+        assertThat(testRunnerStatement.getSql(), doesOrDoesNotContainString("a_tags => ?", shouldBeThere));
+        verify(callableStatement, doesOrDoesNotGetCalled(shouldBeThere)).setString(13, "WIP,long_running");
+    }
 
-        assertThat(testRunnerStatement.getSql(), containsString("a_tags => ?"));
-        verify(callableStatement).setString(13, "WIP,long_running");
+    @BeforeEach
+    void initParameters() throws SQLException {
+        expectedFileMapping = new Object[]{new FileMapping("someFile", "owner", "object", "PACKAGE")};
+
+        // Mock some internals. This is not pretty, but a first step
+        oracleConnection = getMockedOracleConnection(expectedFileMapping);
+        callableStatement = mock(CallableStatement.class);
+
+        // Act
+        options = TestRunnerStatementProviderIT.getCompletelyFilledOptions();
+    }
+
+    @Test
+    void version_3_0_2_parameters() throws SQLException {
+        initTestRunnerStatementForVersion(Version.V3_0_2);
+
+        checkBaseParameters();
+        checkFailOnError(false);
+        checkClientCharacterSet(false);
+        checkRandomTestOrder(false);
+        checkTags(false);
+    }
+
+    @Test
+    void version_3_0_3_parameters() throws SQLException {
+        initTestRunnerStatementForVersion(Version.V3_0_3);
+
+        checkBaseParameters();
+        checkFailOnError(true);
+        checkClientCharacterSet(false);
+        checkRandomTestOrder(false);
+        checkTags(false);
+    }
+
+    @Test
+    void version_3_0_4_parameters() throws SQLException {
+        initTestRunnerStatementForVersion(Version.V3_0_4);
+
+        checkBaseParameters();
+        checkFailOnError(true);
+        checkClientCharacterSet(false);
+        checkRandomTestOrder(false);
+        checkTags(false);
+    }
+
+    @Test
+    void version_3_1_0_parameters() throws SQLException {
+        initTestRunnerStatementForVersion(Version.V3_1_0);
+
+        checkBaseParameters();
+        checkFailOnError(true);
+        checkClientCharacterSet(false);
+        checkRandomTestOrder(false);
+        checkTags(false);
+    }
+
+    @Test
+    void version_3_1_1_parameters() throws SQLException {
+        initTestRunnerStatementForVersion(Version.V3_1_1);
+
+        checkBaseParameters();
+        checkFailOnError(true);
+        checkClientCharacterSet(false);
+        checkRandomTestOrder(false);
+        checkTags(false);
+    }
+
+    @Test
+    void version_3_1_2_parameters() throws SQLException {
+        initTestRunnerStatementForVersion(Version.V3_1_2);
+
+        checkBaseParameters();
+        checkFailOnError(true);
+        checkClientCharacterSet(true);
+        checkRandomTestOrder(false);
+        checkTags(false);
+    }
+
+    @Test
+    void version_3_1_3_parameters() throws SQLException {
+        initTestRunnerStatementForVersion(Version.V3_1_3);
+
+        checkBaseParameters();
+        checkFailOnError(true);
+        checkClientCharacterSet(true);
+        checkRandomTestOrder(false);
+        checkTags(false);
+    }
+
+    @Test
+    void version_3_1_4_parameters() throws SQLException {
+        initTestRunnerStatementForVersion(Version.V3_1_4);
+
+        checkBaseParameters();
+        checkFailOnError(true);
+        checkClientCharacterSet(true);
+        checkRandomTestOrder(false);
+        checkTags(false);
+    }
+
+    @Test
+    void version_3_1_5_parameters() throws SQLException {
+        initTestRunnerStatementForVersion(Version.V3_1_5);
+
+        checkBaseParameters();
+        checkFailOnError(true);
+        checkClientCharacterSet(true);
+        checkRandomTestOrder(false);
+        checkTags(false);
+    }
+
+    @Test
+    void version_3_1_6_parameters() throws SQLException {
+        initTestRunnerStatementForVersion(Version.V3_1_6);
+
+        checkBaseParameters();
+        checkFailOnError(true);
+        checkClientCharacterSet(true);
+        checkRandomTestOrder(false);
+        checkTags(false);
+    }
+
+    @Test
+    void version_3_1_7_parameters() throws SQLException {
+        initTestRunnerStatementForVersion(Version.V3_1_7);
+
+        checkBaseParameters();
+        checkFailOnError(true);
+        checkClientCharacterSet(true);
+        checkRandomTestOrder(true);
+        checkTags(true);
     }
 }
