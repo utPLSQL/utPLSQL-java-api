@@ -253,4 +253,15 @@ public class DynamicTestRunnerStatementTest {
         checkRandomTestOrder(true);
         checkTags(true);
     }
+
+    @Test
+    void version_3_1_8_parameters() throws SQLException {
+        initTestRunnerStatementForVersion(Version.V3_1_8);
+
+        checkBaseParameters();
+        checkFailOnError(true);
+        checkClientCharacterSet(true);
+        checkRandomTestOrder(true);
+        checkTags(true);
+    }
 }
