@@ -189,7 +189,7 @@ public class DynamicParameterList {
 
         @Override
         public String getSql(String key) {
-            return key + " => (case ? when 1 then true else false)";
+            return key + " => (case ? when 1 then true else false end)";
         }
     }
 
