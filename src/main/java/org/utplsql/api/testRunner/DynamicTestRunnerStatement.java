@@ -32,25 +32,6 @@ public class DynamicTestRunnerStatement implements TestRunnerStatement {
     }
 
     private DynamicParameterList initParameterList() throws SQLException {
-        /*
-        "BEGIN " +
-                        "ut_runner.run(" +
-                        "a_paths                  => ?, " +
-                        "a_reporters              => ?, " +
-                        "a_color_console          => " + colorConsoleStr + ", " +
-                        "a_coverage_schemes       => ?, " +
-                        "a_source_file_mappings   => ?, " +
-                        "a_test_file_mappings     => ?, " +
-                        "a_include_objects        => ?, " +
-                        "a_exclude_objects        => ?, " +
-                        "a_fail_on_errors         => " + failOnErrors + ", " +
-                        "a_client_character_set   => ?, " +
-                        "a_random_test_order      => " + randomExecutionOrder + ", " +
-                        "a_random_test_order_seed => ?, "+
-                        "a_tags => ?"+
-                        "); " +
-                        "END;";
-         */
 
         Object[] sourceMappings = (options.sourceMappingOptions!=null)
                 ?FileMapper.buildFileMappingList(oracleConnection, options.sourceMappingOptions).toArray()
@@ -58,6 +39,7 @@ public class DynamicTestRunnerStatement implements TestRunnerStatement {
         Object[] testMappings = (options.testMappingOptions!=null)
                 ?FileMapper.buildFileMappingList(oracleConnection, options.testMappingOptions).toArray()
                 :null;
+
         return DynamicParameterList.builder()
                 .addIfNotEmpty("a_paths", options.pathList.toArray(), CustomTypes.UT_VARCHAR2_LIST, oracleConnection)
                 .addIfNotEmpty("a_reporters", options.reporterList.toArray(), CustomTypes.UT_REPORTERS, oracleConnection)

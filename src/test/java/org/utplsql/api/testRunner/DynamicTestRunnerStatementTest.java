@@ -47,24 +47,7 @@ public class DynamicTestRunnerStatementTest {
         DynamicTestRunnerStatement testRunnerStatement = DynamicTestRunnerStatement
                 .forVersion(Version.V3_1_7, oracleConnection, options, callableStatement);
 
-        /*
-        "ut_runner.run(" +
-                        "a_paths                  => ?, " +
-                        "a_reporters              => ?, " +
-                        "a_color_console          => " + colorConsoleStr + ", " +
-                        "a_coverage_schemes       => ?, " +
-                        "a_source_file_mappings   => ?, " +
-                        "a_test_file_mappings     => ?, " +
-                        "a_include_objects        => ?, " +
-                        "a_exclude_objects        => ?, " +
-                        "a_fail_on_errors         => " + failOnErrors + ", " +
-                        "a_client_character_set   => ?, " +
-                        "a_random_test_order      => " + randomExecutionOrder + ", " +
-                        "a_random_test_order_seed => ?, "+
-                        "a_tags => ?"+
-                        "); " +
-                        "END;";
-         */
+        // Assert all parameters are set appropriately
         assertThat(testRunnerStatement.getSql(), containsString("a_paths => ?"));
         verify(callableStatement).setArray(1, null);
         verify(oracleConnection).createOracleArray(CustomTypes.UT_VARCHAR2_LIST, options.pathList.toArray());
@@ -109,7 +92,5 @@ public class DynamicTestRunnerStatementTest {
 
         assertThat(testRunnerStatement.getSql(), containsString("a_tags => ?"));
         verify(callableStatement).setString(13, "WIP,long_running");
-
-
     }
 }
