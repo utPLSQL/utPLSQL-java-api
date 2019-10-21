@@ -65,6 +65,13 @@ public class DynamicTestRunnerStatement implements TestRunnerStatement {
                 .addIfNotEmpty("a_coverage_schemes", options.coverageSchemes.toArray(), CustomTypes.UT_VARCHAR2_LIST, oracleConnection)
                 .addIfNotEmpty("a_source_file_mappings", sourceMappings, CustomTypes.UT_FILE_MAPPINGS, oracleConnection)
                 .addIfNotEmpty("a_test_file_mappings", testMappings, CustomTypes.UT_FILE_MAPPINGS, oracleConnection)
+                .addIfNotEmpty("a_include_objects", options.includeObjects.toArray(), CustomTypes.UT_VARCHAR2_LIST, oracleConnection)
+                .addIfNotEmpty("a_exclude_objects", options.excludeObjects.toArray(), CustomTypes.UT_VARCHAR2_LIST, oracleConnection)
+                .addIfNotEmpty("a_fail_on_errors", options.failOnErrors)
+                .addIfNotEmpty("a_client_character_set", options.clientCharacterSet)
+                .addIfNotEmpty("a_random_test_order", options.randomTestOrder)
+                .addIfNotEmpty("a_random_test_order_seed", options.randomTestOrderSeed)
+                .addIfNotEmpty("a_tags", options.getTagsAsString())
                 .build();
     }
 

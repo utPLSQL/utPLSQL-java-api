@@ -33,6 +33,7 @@ class TestRunnerStatementProviderIT extends AbstractDatabaseTest {
         options.randomTestOrder = true;
         options.randomTestOrderSeed = 123;
         options.tags.add("WIP");
+        options.tags.add("long_running");
         return options;
     }
 

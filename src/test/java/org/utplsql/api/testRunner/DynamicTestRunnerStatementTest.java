@@ -87,6 +87,29 @@ public class DynamicTestRunnerStatementTest {
         verify(callableStatement).setArray(6, null);
         verify(oracleConnection, times(2)).createOracleArray(CustomTypes.UT_FILE_MAPPINGS, expectedFileMapping);
 
+        assertThat(testRunnerStatement.getSql(), containsString("a_include_objects => ?"));
+        verify(callableStatement).setArray(7, null);
+        verify(oracleConnection).createOracleArray(CustomTypes.UT_VARCHAR2_LIST, options.includeObjects.toArray());
+
+        assertThat(testRunnerStatement.getSql(), containsString("a_exclude_objects => ?"));
+        verify(callableStatement).setArray(8, null);
+        verify(oracleConnection).createOracleArray(CustomTypes.UT_VARCHAR2_LIST, options.includeObjects.toArray());
+
+        assertThat(testRunnerStatement.getSql(), containsString("a_fail_on_errors => (case ? when 1 then true else false)"));
+        verify(callableStatement).setInt(9, 1);
+
+        assertThat(testRunnerStatement.getSql(), containsString("a_client_character_set => ?"));
+        verify(callableStatement).setString(10, "UTF8");
+
+        assertThat(testRunnerStatement.getSql(), containsString("a_random_test_order => (case ? when 1 then true else false)"));
+        verify(callableStatement).setInt(11, 1);
+
+        assertThat(testRunnerStatement.getSql(), containsString("a_random_test_order_seed => ?"));
+        verify(callableStatement).setInt(12, 123);
+
+        assertThat(testRunnerStatement.getSql(), containsString("a_tags => ?"));
+        verify(callableStatement).setString(13, "WIP,long_running");
+
 
     }
 }
