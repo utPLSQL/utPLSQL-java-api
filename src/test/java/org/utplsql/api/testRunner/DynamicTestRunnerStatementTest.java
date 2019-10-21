@@ -10,8 +10,6 @@ import org.utplsql.api.Version;
 import java.sql.Array;
 import java.sql.CallableStatement;
 import java.sql.SQLException;
-import java.util.List;
-import java.util.concurrent.Callable;
 
 import static org.hamcrest.CoreMatchers.containsString;
 import static org.hamcrest.MatcherAssert.assertThat;
@@ -22,8 +20,7 @@ public class DynamicTestRunnerStatementTest {
     @Test
     void explore() throws SQLException {
         // Expectation objects
-        Object[] expectedSourceFileMapping = new Object[]{new FileMapping("source", "owner", "source", "PACKAGE")};
-        Object[] expectedTestFileMapping = new Object[]{new FileMapping("test", "owner", "test", "PACKAGE")};
+        Object[] expectedFileMapping = new Object[]{new FileMapping("someFile", "owner", "object", "PACKAGE")};
 
         // Mock some internals. This is not pretty, but a first step
         OracleConnection oracleConnection = mock(OracleConnection.class);
@@ -42,7 +39,7 @@ public class DynamicTestRunnerStatementTest {
         when(fileMapperStatement.getArray(1))
                 .thenReturn(fileMapperArray);
         when(fileMapperArray.getArray())
-                .thenReturn(expectedSourceFileMapping);
+                .thenReturn(expectedFileMapping);
 
         // Act
         TestRunnerOptions options = TestRunnerStatementProviderIT.getCompletelyFilledOptions();
@@ -85,7 +82,10 @@ public class DynamicTestRunnerStatementTest {
 
         assertThat(testRunnerStatement.getSql(), containsString("a_source_file_mappings => ?"));
         verify(callableStatement).setArray(5, null);
-        verify(oracleConnection).createOracleArray(CustomTypes.UT_FILE_MAPPINGS, expectedSourceFileMapping);
+
+        assertThat(testRunnerStatement.getSql(), containsString("a_test_file_mappings => ?"));
+        verify(callableStatement).setArray(6, null);
+        verify(oracleConnection, times(2)).createOracleArray(CustomTypes.UT_FILE_MAPPINGS, expectedFileMapping);
 
 
     }

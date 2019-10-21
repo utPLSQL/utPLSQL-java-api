@@ -55,12 +55,16 @@ public class DynamicTestRunnerStatement implements TestRunnerStatement {
         Object[] sourceMappings = (options.sourceMappingOptions!=null)
                 ?FileMapper.buildFileMappingList(oracleConnection, options.sourceMappingOptions).toArray()
                 :null;
+        Object[] testMappings = (options.testMappingOptions!=null)
+                ?FileMapper.buildFileMappingList(oracleConnection, options.testMappingOptions).toArray()
+                :null;
         return DynamicParameterList.builder()
                 .addIfNotEmpty("a_paths", options.pathList.toArray(), CustomTypes.UT_VARCHAR2_LIST, oracleConnection)
                 .addIfNotEmpty("a_reporters", options.reporterList.toArray(), CustomTypes.UT_REPORTERS, oracleConnection)
                 .addIfNotEmpty("a_color_console", options.colorConsole)
                 .addIfNotEmpty("a_coverage_schemes", options.coverageSchemes.toArray(), CustomTypes.UT_VARCHAR2_LIST, oracleConnection)
                 .addIfNotEmpty("a_source_file_mappings", sourceMappings, CustomTypes.UT_FILE_MAPPINGS, oracleConnection)
+                .addIfNotEmpty("a_test_file_mappings", testMappings, CustomTypes.UT_FILE_MAPPINGS, oracleConnection)
                 .build();
     }
 
