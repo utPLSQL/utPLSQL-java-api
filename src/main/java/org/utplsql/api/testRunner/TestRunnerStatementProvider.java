@@ -2,7 +2,6 @@ package org.utplsql.api.testRunner;
 
 import org.utplsql.api.TestRunnerOptions;
 import org.utplsql.api.Version;
-import org.utplsql.api.exception.InvalidVersionException;
 
 import java.sql.Connection;
 import java.sql.SQLException;
@@ -28,24 +27,6 @@ public class TestRunnerStatementProvider {
      * @throws SQLException
      */
     public static TestRunnerStatement getCompatibleTestRunnerStatement(Version databaseVersion, TestRunnerOptions options, Connection conn) throws SQLException {
-        AbstractTestRunnerStatement stmt = null;
-
-        try {
-            if (databaseVersion.isLessThan(Version.V3_0_3)) {
-                stmt = new Pre303TestRunnerStatement(options, conn);
-            } else if (databaseVersion.isLessThan(Version.V3_1_2)) {
-                stmt = new Pre312TestRunnerStatement(options, conn);
-            } else if (databaseVersion.isLessThan(Version.V3_1_7)) {
-                stmt = new Pre317TestRunnerStatement(options, conn);
-            }
-
-        } catch (InvalidVersionException ignored) {
-        }
-
-        if (stmt == null) {
-            stmt = new ActualTestRunnerStatement(options, conn);
-        }
-
-        return stmt;
+        return DynamicTestRunnerStatement.forVersion(databaseVersion, conn, options, null);
     }
 }

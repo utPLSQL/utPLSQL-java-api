@@ -8,6 +8,7 @@ import org.utplsql.api.compatibility.OptionalFeatures;
 import org.utplsql.api.db.DynamicParameterList;
 
 import java.sql.CallableStatement;
+import java.sql.Connection;
 import java.sql.SQLException;
 
 public class DynamicTestRunnerStatement implements TestRunnerStatement {
@@ -66,16 +67,21 @@ public class DynamicTestRunnerStatement implements TestRunnerStatement {
     }
 
     private void prepareStatement() throws SQLException {
-        if ( stmt == null )
-            oracleConnection.prepareCall(dynamicParameterList.getSql());
+        if ( stmt == null ) {
+            String sql =  "BEGIN " +
+                    "ut_runner.run(" +
+                    dynamicParameterList.getSql() +
+                    ");" +
+                    "END;";
+            stmt = oracleConnection.prepareCall(sql);
+        }
 
         dynamicParameterList.setParamsStartWithIndex(stmt, 1);
     }
 
     @Override
     public void execute() throws SQLException {
-
-        // Implement
+        stmt.execute();
     }
 
     @Override
@@ -90,7 +96,8 @@ public class DynamicTestRunnerStatement implements TestRunnerStatement {
         }
     }
 
-    public static DynamicTestRunnerStatement forVersion(Version version, OracleConnection connection, TestRunnerOptions options, CallableStatement statement ) throws SQLException {
-        return new DynamicTestRunnerStatement(version, connection, options, statement);
+    public static DynamicTestRunnerStatement forVersion(Version version, Connection connection, TestRunnerOptions options, CallableStatement statement ) throws SQLException {
+        OracleConnection oraConn = connection.unwrap(OracleConnection.class);
+        return new DynamicTestRunnerStatement(version, oraConn, options, statement);
     }
 }

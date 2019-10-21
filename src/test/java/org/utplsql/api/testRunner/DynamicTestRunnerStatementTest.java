@@ -76,7 +76,7 @@ public class DynamicTestRunnerStatementTest {
         verify(callableStatement).setArray(2, null);
         verify(oracleConnection).createOracleArray(CustomTypes.UT_REPORTERS, options.reporterList.toArray());
 
-        assertThat(testRunnerStatement.getSql(), containsString("a_color_console => (case ? when 1 then true else false)"));
+        assertThat(testRunnerStatement.getSql(), containsString("a_color_console => (case ? when 1 then true else false end)"));
         verify(callableStatement).setInt(3, 0);
 
         assertThat(testRunnerStatement.getSql(), containsString("a_coverage_schemes => ?"));
@@ -100,7 +100,7 @@ public class DynamicTestRunnerStatementTest {
     }
 
     private void checkFailOnError( boolean shouldBeThere ) throws SQLException {
-        assertThat(testRunnerStatement.getSql(), doesOrDoesNotContainString("a_fail_on_errors => (case ? when 1 then true else false)", shouldBeThere));
+        assertThat(testRunnerStatement.getSql(), doesOrDoesNotContainString("a_fail_on_errors => (case ? when 1 then true else false end)", shouldBeThere));
         verify(callableStatement, doesOrDoesNotGetCalled(shouldBeThere)).setInt(9, 1);
     }
 
@@ -110,7 +110,7 @@ public class DynamicTestRunnerStatementTest {
     }
 
     private void checkRandomTestOrder( boolean shouldBeThere ) throws SQLException {
-        assertThat(testRunnerStatement.getSql(), doesOrDoesNotContainString("a_random_test_order => (case ? when 1 then true else false)", shouldBeThere));
+        assertThat(testRunnerStatement.getSql(), doesOrDoesNotContainString("a_random_test_order => (case ? when 1 then true else false end)", shouldBeThere));
         verify(callableStatement, doesOrDoesNotGetCalled(shouldBeThere)).setInt(11, 1);
         assertThat(testRunnerStatement.getSql(), doesOrDoesNotContainString("a_random_test_order_seed => ?", shouldBeThere));
         verify(callableStatement, doesOrDoesNotGetCalled(shouldBeThere)).setInt(12, 123);
