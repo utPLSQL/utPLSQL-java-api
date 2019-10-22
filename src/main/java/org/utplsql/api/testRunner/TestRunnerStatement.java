@@ -11,6 +11,8 @@ public interface TestRunnerStatement extends AutoCloseable {
 
     void execute() throws SQLException;
 
+    String getSql();
+
     @Override
     void close() throws SQLException;
 }

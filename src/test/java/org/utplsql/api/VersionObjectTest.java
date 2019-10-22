@@ -79,6 +79,29 @@ class VersionObjectTest {
     }
 
     @Test
+    void versionCompareToWithBaseNull() {
+        Version base = Version.create("2.3.4");
+
+        // Less than
+        assertEquals(-1, base.compareTo(Version.create("3")));
+        assertEquals(-1, base.compareTo(Version.create("3.2")));
+        assertEquals(-1, base.compareTo(Version.create("2.4.1")));
+        assertEquals(-1, base.compareTo(Version.create("2.3.9.1")));
+        assertEquals(-1, base.compareTo(Version.create("2.3.4.1")));
+        assertEquals(-1, base.compareTo(Version.create("2.3.4.5")));
+        assertEquals(-1, base.compareTo(Version.create("2.3.4.9")));
+
+        // Greater than
+        assertEquals(1, base.compareTo(Version.create("1")));
+        assertEquals(1, base.compareTo(Version.create("1.6")));
+        assertEquals(1, base.compareTo(Version.create("2.2.4")));
+        assertEquals(1, base.compareTo(Version.create("2.3.3")));
+
+        // Equal
+        assertEquals(0, base.compareTo(Version.create("2.3.4")));
+    }
+
+    @Test
     void isGreaterOrEqualThan() throws InvalidVersionException {
         Version base = Version.create("2.3.4.5");
 
@@ -92,6 +115,26 @@ class VersionObjectTest {
         assertTrue(base.isGreaterOrEqualThan(Version.create("2.3.4.4")));
 
         assertFalse(base.isGreaterOrEqualThan(Version.create("2.3.4.6")));
+        assertFalse(base.isGreaterOrEqualThan(Version.create("2.3.5")));
+        assertFalse(base.isGreaterOrEqualThan(Version.create("2.4")));
+        assertFalse(base.isGreaterOrEqualThan(Version.create("3")));
+
+    }
+
+    @Test
+    void isGreaterOrEqualThanWithBaseNull() throws InvalidVersionException {
+        Version base = Version.create("2.3.4");
+
+        assertTrue(base.isGreaterOrEqualThan(Version.create("1")));
+        assertTrue(base.isGreaterOrEqualThan(Version.create("2")));
+        assertTrue(base.isGreaterOrEqualThan(Version.create("2.3")));
+        assertTrue(base.isGreaterOrEqualThan(Version.create("2.2")));
+        assertTrue(base.isGreaterOrEqualThan(Version.create("2.3.4")));
+        assertTrue(base.isGreaterOrEqualThan(Version.create("2.3.3")));
+        assertTrue(base.isGreaterOrEqualThan(Version.create("2.3.4.5")));
+        assertTrue(base.isGreaterOrEqualThan(Version.create("2.3.4.4")));
+        assertTrue(base.isGreaterOrEqualThan(Version.create("2.3.4.6")));
+
         assertFalse(base.isGreaterOrEqualThan(Version.create("2.3.5")));
         assertFalse(base.isGreaterOrEqualThan(Version.create("2.4")));
         assertFalse(base.isGreaterOrEqualThan(Version.create("3")));
