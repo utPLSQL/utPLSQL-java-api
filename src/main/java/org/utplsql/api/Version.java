@@ -32,7 +32,7 @@ public class Version implements Comparable<Version> {
     public final static Version V3_1_5 = new Version("3.1.5", 3, 1, 5, 2707, true);
     public final static Version V3_1_6 = new Version("3.1.6", 3, 1, 6, 2729, true);
     public final static Version V3_1_7 = new Version("3.1.7", 3, 1, 7, 3085, true);
-    public final static Version V3_1_8 = new Version("3.1.7", 3, 1, 8, 3188, true);
+    public final static Version V3_1_8 = new Version("3.1.8", 3, 1, 8, 3188, true);
     private final static Map<String, Version> knownVersions =
             Stream.of(V3_0_0, V3_0_1, V3_0_2, V3_0_3, V3_0_4, V3_1_0, V3_1_1, V3_1_2, V3_1_3, V3_1_4, V3_1_5, V3_1_6, V3_1_7, V3_1_8)
                     .collect(toMap(Version::toString, Function.identity()));
