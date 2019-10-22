@@ -5,7 +5,7 @@ val tag = System.getenv("TRAVIS_TAG")?.replaceFirst("^v".toRegex(), "")
 
 group = "org.utplsql"
 val mavenArtifactId = "java-api"
-val baseVersion = "3.1.8-SNAPSHOT"
+val baseVersion = "3.1.8"
 // if build is on tag like 3.1.7 or v3.1.7 then use tag as version replacing leading "v"
 version = if (tag != null && "^[0-9.]+$".toRegex().matches(tag)) tag else baseVersion
 
