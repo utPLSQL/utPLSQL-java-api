@@ -43,6 +43,8 @@ matrix:
     jdk: openjdk11
   - env: UTPLSQL_VERSION="v3.1.8"
     jdk: openjdk12
+  - env: UTPLSQL_VERSION="v3.1.7"
+    jdk: openjdk13
 
 before_cache:
   - rm -f  $HOME/.gradle/caches/modules-2/modules-2.lock

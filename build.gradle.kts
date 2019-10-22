@@ -10,8 +10,8 @@ val baseVersion = "3.1.8-SNAPSHOT"
 version = if (tag != null && "^[0-9.]+$".toRegex().matches(tag)) tag else baseVersion
 
 val coverageResourcesVersion = "1.0.1"
-val ojdbcVersion = "12.2.0.1"
-val junitVersion = "5.5.0"
+val ojdbcVersion = "19.3.0.0"
+val junitVersion = "5.5.2"
 
 val deployerJars by configurations.creating
 
@@ -29,14 +29,6 @@ java {
 
 // In this section you declare where to find the dependencies of your project
 repositories {
-    maven {
-        url = uri("https://www.oracle.com/content/secure/maven/content")
-        credentials {
-            // you may set this properties using gradle.properties file in the root of the project or in your GRADLE_HOME
-            username = (project.findProperty("ORACLE_OTN_USER") as String?) ?: System.getenv("ORACLE_OTN_USER")
-            password = (project.findProperty("ORACLE_OTN_PASSWORD") as String?) ?: System.getenv("ORACLE_OTN_PASSWORD")
-        }
-    }
     mavenCentral()
     jcenter()
 }
@@ -47,10 +39,10 @@ dependencies {
 
     // This dependency is used internally, and not exposed to consumers on their own compile classpath.
     implementation("org.slf4j:slf4j-api:1.7.26")
-    implementation("com.oracle.jdbc:ojdbc8:$ojdbcVersion") {
-        exclude(group = "com.oracle.jdbc")
+    implementation("com.oracle.ojdbc:ojdbc8:$ojdbcVersion") {
+        exclude(group = "com.oracle.ojdbc")
     }
-    implementation("com.oracle.jdbc:orai18n:$ojdbcVersion")
+    implementation("com.oracle.ojdbc:orai18n:$ojdbcVersion")
 
     // Use Jupiter test framework
     testImplementation("org.junit.jupiter:junit-jupiter:$junitVersion")
