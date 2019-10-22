@@ -43,7 +43,7 @@ matrix:
     jdk: openjdk11
   - env: UTPLSQL_VERSION="v3.1.8"
     jdk: openjdk12
-  - env: UTPLSQL_VERSION="v3.1.7"
+  - env: UTPLSQL_VERSION="v3.1.8"
     jdk: openjdk13
 
 before_cache:
