@@ -74,6 +74,11 @@ public class TestRunner {
         return this;
     }
 
+    public TestRunner addCoverageSchemes(Collection<String> schemaNames) {
+        this.options.coverageSchemes.addAll(schemaNames);
+        return this;
+    }
+
     public TestRunner includeObject(String obj) {
         options.includeObjects.add(obj);
         return this;
