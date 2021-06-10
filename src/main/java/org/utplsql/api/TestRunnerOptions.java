@@ -30,6 +30,7 @@ public class TestRunnerOptions {
     public boolean randomTestOrder = false;
     public Integer randomTestOrderSeed;
     public final Set<String> tags = new LinkedHashSet<>();
+    public boolean catchOraStuck = false;
 
     public String getTagsAsString() {
         return String.join(",", tags);

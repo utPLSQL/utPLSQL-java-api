@@ -145,6 +145,11 @@ public class TestRunner {
         return this;
     }
 
+    public TestRunner catchOraStuck( boolean catchOraStuck ) {
+        this.options.catchOraStuck = catchOraStuck;
+        return this;
+    }
+
     public TestRunnerOptions getOptions() { return options; }
 
     private void delayedAddReporters() {
@@ -213,7 +218,7 @@ public class TestRunner {
 
         TestRunnerStatement testRunnerStatement = null;
         try {
-            testRunnerStatement = initStatementWithTimeout(conn);
+            testRunnerStatement = ( options.catchOraStuck ) ? initStatementWithTimeout(conn) : initStatement(conn);
             logger.info("Running tests");
             testRunnerStatement.execute();
             logger.info("Running tests finished.");
@@ -225,6 +230,10 @@ public class TestRunner {
             if (testRunnerStatement != null) testRunnerStatement.close();
             handleException(e);
         }
+    }
+
+    private TestRunnerStatement initStatement( Connection conn ) throws SQLException {
+        return compatibilityProxy.getTestRunnerStatement(options, conn);
     }
 
     private TestRunnerStatement initStatementWithTimeout( Connection conn ) throws OracleCreateStatmenetStuckException, SQLException {
