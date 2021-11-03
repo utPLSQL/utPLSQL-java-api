@@ -11,7 +11,7 @@ env:
     - DOCKER_CFG=$HOME/.docker
     - DOCKER_REPO="utplsqlv3/oracledb"
     - CACHE_DIR=$HOME/.cache
-    - DB_URL="127.0.0.1:1521:XE"
+    - DB_URL="127.0.0.1:1521/XE"
     - DB_USER=app
     - DB_PASS=app
     - ORACLE_VERSION="11g-r2-xe"
