@@ -1,4 +1,4 @@
-name: Build, test, deploy documentation
+name: Build & test
 on:
   push:
     branches: [ develop ]

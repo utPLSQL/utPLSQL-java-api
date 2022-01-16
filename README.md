@@ -1,5 +1,4 @@
-[![Build Status](https://img.shields.io/travis/utPLSQL/utPLSQL-java-api/develop.svg?label=develop-branch)](https://travis-ci.org/utPLSQL/utPLSQL-java-api)
-[![Build Status](https://img.shields.io/travis/utPLSQL/utPLSQL-java-api/master.svg?label=master-branch)](https://travis-ci.org/utPLSQL/utPLSQL-java-api)
+[![Build status](https://github.com/utPLSQL/utPLSQL-java-api/actions/workflows/build.yml/badge.svg)](https://github.com/utPLSQL/utPLSQL-java-api/actions/workflows/build.yml)
 
 # utPLSQL-java-api
 This is a collection of classes, that makes it easy to access the [utPLSQL v3](https://github.com/utPLSQL/utPLSQL/) database objects using Java.
