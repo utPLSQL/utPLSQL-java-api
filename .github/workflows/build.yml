@@ -108,6 +108,24 @@ jobs:
           PACKAGECLOUD_TOKEN: ${{secrets.PACKAGECLOUD_TOKEN}}
         run: ./gradlew uploadArchives
 
+  dispatch:
+    name: Dispatch downstream builds
+    concurrency: trigger
+    needs: [ build, deploy ]
+    runs-on: ubuntu-latest
+    if: |
+      github.repository == 'utPLSQL/utPLSQL-java-api' && github.base_ref == null && github.ref == 'refs/heads/develop'
+    strategy:
+      matrix:
+        repo: ['utPLSQL/utPLSQL-maven-plugin', 'utPLSQL/utPLSQL-cli']
+    steps:
+      - name: Repository Dispatch
+        uses: peter-evans/repository-dispatch@v1
+        with:
+          token: ${{ secrets.API_TOKEN_GITHUB }}
+          repository:  ${{ matrix.repo }}
+          event-type: utPLSQL-java-api-build
+
   slack-workflow-status:
     if: always()
     name: Post Workflow Status To Slack
