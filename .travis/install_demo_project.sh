@@ -17,9 +17,13 @@ cd /${PROJECT_FILE}
 sqlplus -S -L ${DB_USER}/${DB_PASS}@//127.0.0.1:1521/xe <<SQL
 whenever sqlerror exit failure rollback
 whenever oserror  exit failure rollback
-set echo on
-
 @source/install.sql
+exit
+SQL
+
+sqlplus -S -L ${DB_USER}/${DB_PASS}@//127.0.0.1:1521/xe <<SQL
+whenever sqlerror exit failure rollback
+whenever oserror  exit failure rollback
 @test/install.sql
 exit
 SQL
