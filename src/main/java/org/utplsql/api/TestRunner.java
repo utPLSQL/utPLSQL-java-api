@@ -145,8 +145,8 @@ public class TestRunner {
         return this;
     }
 
-    public TestRunner catchOraStuck( boolean catchOraStuck ) {
-        this.options.catchOraStuck = catchOraStuck;
+    public TestRunner oraStuckTimeout(Integer oraStuckTimeout ) {
+        this.options.oraStuckTimeout = oraStuckTimeout;
         return this;
     }
 
@@ -218,7 +218,7 @@ public class TestRunner {
 
         TestRunnerStatement testRunnerStatement = null;
         try {
-            testRunnerStatement = ( options.catchOraStuck ) ? initStatementWithTimeout(conn) : initStatement(conn);
+            testRunnerStatement = ( options.oraStuckTimeout > 0 ) ? initStatementWithTimeout(conn, options.oraStuckTimeout) : initStatement(conn);
             logger.info("Running tests");
             testRunnerStatement.execute();
             logger.info("Running tests finished.");
@@ -236,7 +236,7 @@ public class TestRunner {
         return compatibilityProxy.getTestRunnerStatement(options, conn);
     }
 
-    private TestRunnerStatement initStatementWithTimeout( Connection conn ) throws OracleCreateStatmenetStuckException, SQLException {
+    private TestRunnerStatement initStatementWithTimeout( Connection conn, int timeout ) throws OracleCreateStatmenetStuckException, SQLException {
         ExecutorService executor = Executors.newSingleThreadExecutor();
         Callable<TestRunnerStatement> callable = () -> compatibilityProxy.getTestRunnerStatement(options, conn);
         Future<TestRunnerStatement> future = executor.submit(callable);
@@ -244,7 +244,7 @@ public class TestRunner {
         // We want to leave the statement open in case of stuck scenario
         TestRunnerStatement testRunnerStatement = null;
         try {
-            testRunnerStatement = future.get(2, TimeUnit.SECONDS);
+            testRunnerStatement = future.get(timeout, TimeUnit.SECONDS);
         } catch (TimeoutException e) {
             logger.error("Detected Oracle driver stuck during Statement initialization");
             executor.shutdownNow();
