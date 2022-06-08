@@ -33,10 +33,14 @@ public class Version implements Comparable<Version> {
     public final static Version V3_1_6 = new Version("3.1.6", 3, 1, 6, 2729, true);
     public final static Version V3_1_7 = new Version("3.1.7", 3, 1, 7, 3085, true);
     public final static Version V3_1_8 = new Version("3.1.8", 3, 1, 8, 3188, true);
+    public final static Version V3_1_9 = new Version("3.1.9", 3, 1, 9, 3268, true);
+    public final static Version V3_1_10 = new Version("3.1.10", 3, 1, 10, 3347, true);
+    public final static Version V3_1_11 = new Version("3.1.11", 3, 1, 11, 3557, true);
+    public final static Version V3_1_12 = new Version("3.1.12", 3, 1, 12, 3876, true);
     private final static Map<String, Version> knownVersions =
-            Stream.of(V3_0_0, V3_0_1, V3_0_2, V3_0_3, V3_0_4, V3_1_0, V3_1_1, V3_1_2, V3_1_3, V3_1_4, V3_1_5, V3_1_6, V3_1_7, V3_1_8)
+            Stream.of(V3_0_0, V3_0_1, V3_0_2, V3_0_3, V3_0_4, V3_1_0, V3_1_1, V3_1_2, V3_1_3, V3_1_4, V3_1_5, V3_1_6, V3_1_7, V3_1_8, V3_1_9, V3_1_10, V3_1_11, V3_1_12)
                     .collect(toMap(Version::toString, Function.identity()));
-    public final static Version LATEST = V3_1_8;
+    public final static Version LATEST = V3_1_12;
 
     private final String origString;
     private final Integer major;
