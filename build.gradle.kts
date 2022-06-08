@@ -38,7 +38,7 @@ dependencies {
     api("com.google.code.findbugs:jsr305:3.0.2")
 
     // This dependency is used internally, and not exposed to consumers on their own compile classpath.
-    implementation("org.slf4j:slf4j-api:1.7.26")
+    implementation("org.slf4j:slf4j-api:1.7.36")
     implementation("com.oracle.database.jdbc:ojdbc8:$ojdbcVersion") {
         exclude(group = "com.oracle.database.jdbc", module = "ucp")
     }
