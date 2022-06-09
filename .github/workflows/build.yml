@@ -106,7 +106,13 @@ jobs:
       - name: Set env variable
         uses: FranzDiebold/github-env-vars-action@v2 #https://github.com/marketplace/actions/github-environment-variables-action
       - name: Set CI_TAG
-        run: if [[ "${GITHUB_REF_TYPE}" == "tag" ]]; then echo "CI_TAG=${CI_REF}" >> $GITHUB_ENV; fi
+        run: if [[ "${GITHUB_REF_TYPE}" == "tag" ]]; then echo "CI_TAG=${CI_REF}" >> ${GITHUB_ENV}; fi
+      - name: Debug
+        run: echo "GITHUB_REF_TYPE=${GITHUB_REF_TYPE}; CI_TAG=${CI_TAG}; CI_REF=${CI_REF}"
+      - name: Set CI_BRANCH
+        run: if [[ "${GITHUB_REF_TYPE}" == "branch" ]]; then echo "CI_BRANCH=${CI_REF}" >> ${GITHUB_ENV}; fi
+      - name: Debug
+        run: echo "GITHUB_REF_TYPE=${GITHUB_REF_TYPE}; CI_BRANCH=${CI_BRANCH}; CI_REF=${CI_REF}"
       - name: Upload archives
         env:
           PACKAGECLOUD_TOKEN: ${{secrets.PACKAGECLOUD_TOKEN}}
