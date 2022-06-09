@@ -106,7 +106,7 @@ jobs:
       - name: Set env variable
         uses: FranzDiebold/github-env-vars-action@v2 #https://github.com/marketplace/actions/github-environment-variables-action
       - name: Set CI_TAG
-        run: if [["${GITHUB_REF_TYPE}" == "tag" ]]; then echo "CI_TAG=${CI_REF}" >> $GITHUB_ENV; fi
+        run: if [[ "${GITHUB_REF_TYPE}" == "tag" ]]; then echo "CI_TAG=${CI_REF}" >> $GITHUB_ENV; fi
       - name: Upload archives
         env:
           PACKAGECLOUD_TOKEN: ${{secrets.PACKAGECLOUD_TOKEN}}
