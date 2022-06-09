@@ -1,7 +1,7 @@
 import de.undercouch.gradle.tasks.download.Download
 import org.gradle.api.tasks.testing.logging.TestExceptionFormat
 
-val tag = System.getenv("TRAVIS_TAG")?.replaceFirst("^v".toRegex(), "")
+val tag = System.getenv("CI_TAG")?.replaceFirst("^v".toRegex(), "")
 
 group = "org.utplsql"
 val mavenArtifactId = "java-api"
