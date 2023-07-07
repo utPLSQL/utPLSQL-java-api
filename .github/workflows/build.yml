@@ -67,10 +67,10 @@ jobs:
           java-version: ${{matrix.jdk}}
 
       - name: Install utplsql
-        run: sh ${{ github.workspace }}/scripts/install_utplsql.sh
+        run: scripts/install_utplsql.sh
 
       - name: Install demo project
-        run: sh ${{ github.workspace }}/scripts/install_demo_project.sh
+        run: scripts/install_demo_project.sh
 
       - name: Maven unit and integration tests with sonar
         run: mvn clean verify
