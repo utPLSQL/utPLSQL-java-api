@@ -14,37 +14,12 @@ defaults:
 
 jobs:
   build:
+
     runs-on: ubuntu-latest
-
-    env:
-      ORACLE_VERSION: "gvenzl/oracle-xe:18.4.0-slim"
-      UTPLSQL_VERSION: "3.1.13"
-      UTPLSQL_FILE: "utPLSQL"
-      ORACLE_PASSWORD: oracle
-      DB_URL: "127.0.0.1:1521:XE"
-      DB_USER: app
-      DB_PASS: app
-
-    strategy:
-      fail-fast: false
-      matrix:
-        utplsql_version: [ "v3.0.1","v3.0.2","v3.0.3","v3.0.4","v3.1.1","v3.1.2","v3.1.3","v3.1.6","v3.1.7","v3.1.8","v3.1.9","v3.1.10","v3.1.11","develop" ]
-        utplsql_file: [ "utPLSQL" ]
-        jdk: [ '8' ]
-        include:
-          - utplsql_version: "v3.0.0"
-            jdk: '8'
-            utplsql_file: "utPLSQLv3.0.0"
-          - utplsql_version: "develop"
-            jdk: '11'
-            utplsql_file: "utPLSQL"
-          - utplsql_version: "develop"
-            jdk: '17'
-            utplsql_file: "utPLSQL"
 
     services:
       oracle:
-        image: gvenzl/oracle-xe:18.4.0-slim
+        image: gvenzl/oracle-xe:21-slim
         env:
           ORACLE_PASSWORD: oracle
         ports:
@@ -54,25 +29,33 @@ jobs:
           --health-interval 10s
           --health-timeout 5s
           --health-retries 10
-          --name oracle
 
     steps:
       - uses: actions/checkout@v2
         with:
           fetch-depth: 0
 
-      - uses: actions/setup-java@v2
-        with:
-          distribution: 'temurin'
-          java-version: ${{matrix.jdk}}
-
-      - name: Install utplsql
-        run: scripts/install_utplsql.sh
+      - name: Install utPLSQL
+        run: sh ${{ github.workspace }}/scripts/1_install_utplsql.sh
 
       - name: Install demo project
-        run: scripts/install_demo_project.sh
+        run: sh ${{ github.workspace }}/scripts/2_install_demo_project.sh
 
-      - name: Maven unit and integration tests with sonar
+      - name: Set up JDK 11
+        uses: actions/setup-java@v2
+        with:
+          java-version: '11'
+          distribution: 'adopt'
+
+      - name: Cache local Maven repository
+        uses: actions/cache@v2
+        with:
+          path: ~/.m2/repository
+          key: ${{ runner.os }}-maven-${{ hashFiles('**/pom.xml') }}
+          restore-keys: |
+            ${{ runner.os }}-maven-
+
+      - name: Maven unit and integration tests
         run: mvn clean verify
 
       - name: Publish unit test results
