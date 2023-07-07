@@ -36,20 +36,7 @@ jobs:
             jdk: '8'
             utplsql_file: "utPLSQLv3.0.0"
           - utplsql_version: "develop"
-            jdk: '9'
-            utplsql_file: "utPLSQL"
-          - utplsql_version: "develop"
-            jdk: '10'
-            utplsql_file: "utPLSQL"
-          - utplsql_version: "develop"
             jdk: '11'
-            utplsql_file: "utPLSQL"
-          - utplsql_version: "develop"
-            jdk: '12'
-            utplsql_file: "utPLSQL"
-          - utplsql_version: "develop"
-            jdk: '13'
-            utplsql_file: "utPLSQL"
 
     services:
       oracle:
