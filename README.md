@@ -8,39 +8,14 @@ This is a collection of classes, that makes it easy to access the [utPLSQL v3](h
 * Handles compatibility for all 3.x versions of utPLSQL
 
 ## Downloading
+
 This is a Maven Library project, you can add on your Java project as a dependency. 
 
-The project is hosted on [packagecloud.io](https://packagecloud.io/utPLSQL/utPLSQL-java-api)
-
-[![packagecloud](https://packagecloud.io/images/packagecloud-badge.png)](https://packagecloud.io/utPLSQL/utPLSQL-java-api)
-
-
-You install this Maven repository by adding it to the <repositories> section of your pom.xml. No special plugins or extensions are required.
-
-```xml
-<repositories>
-  <repository>
-    <id>utplsql-java-api</id>
-    <url>
-      https://packagecloud.io/utplsql/utplsql-java-api/maven2
-    </url>
-    <releases>
-      <enabled>true</enabled>
-    </releases>
-    <snapshots>
-      <enabled>true</enabled>
-    </snapshots>
-  </repository>
-</repositories>
-```
-
-To use the java-api library, add this to the `<dependencies>` section of your `pom.xml`.
 ```xml
 <dependency>
     <groupId>org.utplsql</groupId>
-    <artifactId>java-api</artifactId>
-    <version>3.1.7</version>
-    <scope>compile</scope>
+    <artifactId>utplsql-java-api</artifactId>
+    <version>3.1.10</version>
 </dependency>
 ```
 
