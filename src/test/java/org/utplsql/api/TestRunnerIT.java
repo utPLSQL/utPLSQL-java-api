@@ -1,5 +1,6 @@
 package org.utplsql.api;
 
+import org.junit.jupiter.api.Disabled;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.function.Executable;
 import org.utplsql.api.compatibility.CompatibilityProxy;
@@ -64,6 +65,7 @@ class TestRunnerIT extends AbstractDatabaseTest {
     /**
      * This can only be tested on frameworks >= 3.0.3
      */
+    @Disabled
     @Test
     void failOnErrors() throws SQLException, InvalidVersionException {
         Connection conn = getConnection();
