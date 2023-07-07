@@ -19,7 +19,7 @@ jobs:
     env:
       ORACLE_VERSION: "gvenzl/oracle-xe:18.4.0-slim"
       UTPLSQL_VERSION: "3.1.13"
-      UTPLSQL_FILE: ${{matrix.utplsql_file}}
+      UTPLSQL_FILE: "utPLSQL"
       ORACLE_PASSWORD: oracle
       DB_URL: "127.0.0.1:1521:XE"
       DB_USER: app
@@ -55,11 +55,6 @@ jobs:
         with:
           java-version: '11'
           distribution: 'adopt'
-          server-id: ossrh
-          server-username: MAVEN_USERNAME
-          server-password: MAVEN_PASSWORD
-          gpg-private-key: ${{ secrets.MAVEN_GPG_PRIVATE_KEY }}
-          gpg-passphrase: MAVEN_GPG_PASSPHRASE
 
       - name: Cache local Maven repository
         uses: actions/cache@v2
@@ -70,52 +65,10 @@ jobs:
             ${{ runner.os }}-maven-
 
       - name: Maven unit and integration tests with sonar
-        run: mvn clean verify sonar:sonar -Pcoverage -Dsonar.projectKey=org.utplsql:utplsql-maven-plugin
-        env:
-          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
-          SONAR_TOKEN: ${{ secrets.SONAR_TOKEN }}
-
-      - name: Maven deploy snapshot
-        run: mvn deploy -DskipTests
-        env:
-          MAVEN_USERNAME: ${{ secrets.OSSRH_USERNAME }}
-          MAVEN_PASSWORD: ${{ secrets.OSSRH_TOKEN }}
-          MAVEN_GPG_PASSPHRASE: ${{ secrets.MAVEN_GPG_PASSPHRASE }}
+        run: mvn clean verify
 
       - name: Publish unit test results
         uses: EnricoMi/publish-unit-test-result-action@v1.24
         if: always()
         with:
           files: target/**/TEST**.xml
-
-  dispatch:
-    name: Dispatch downstream builds
-    concurrency: trigger
-    needs: [ build, deploy ]
-    runs-on: ubuntu-latest
-    if: |
-      github.repository == 'utPLSQL/utPLSQL-java-api' && github.base_ref == null && github.ref == 'refs/heads/develop'
-    strategy:
-      matrix:
-        repo: [ 'utPLSQL/utPLSQL-maven-plugin', 'utPLSQL/utPLSQL-cli' ]
-    steps:
-      - name: Repository Dispatch
-        uses: peter-evans/repository-dispatch@v1
-        with:
-          token: ${{ secrets.API_TOKEN_GITHUB }}
-          repository: ${{ matrix.repo }}
-          event-type: utPLSQL-java-api-build
-
-  slack-workflow-status:
-    if: always()
-    name: Post Workflow Status To Slack
-    needs: [ build, deploy, dispatch ]
-    runs-on: ubuntu-latest
-    steps:
-      - name: Slack Workflow Notification
-        uses: Gamesight/slack-workflow-status@master
-        with:
-          repo_token: ${{secrets.GITHUB_TOKEN}}
-          slack_webhook_url: ${{secrets.SLACK_WEBHOOK_URL}}
-          name: 'Github Actions[bot]'
-          icon_url: 'https://octodex.github.com/images/mona-the-rivetertocat.png'
