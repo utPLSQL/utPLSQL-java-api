@@ -11,18 +11,12 @@ import java.util.List;
 
 public abstract class AbstractDatabaseTest {
 
-    private static String sUrl;
-    private static String sUser;
-    private static String sPass;
-
-    static {
-        sUrl = EnvironmentVariableUtil.getEnvValue("DB_URL", "localhost:1521:XE");
-        sUser = EnvironmentVariableUtil.getEnvValue("DB_USER", "app");
-        sPass = EnvironmentVariableUtil.getEnvValue("DB_PASS", "pass");
-    }
+    private static final String sUrl = "localhost:1521:XE";
+    private static final String sUser = "APP";
+    private static final String sPass = "pass";
 
     private Connection conn;
-    private List<Connection> connectionList = new ArrayList<>();
+    private final List<Connection> connectionList = new ArrayList<>();
 
     public static String getUser() {
         return sUser;
