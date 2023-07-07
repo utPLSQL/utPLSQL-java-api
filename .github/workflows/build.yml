@@ -22,6 +22,9 @@ jobs:
         image: gvenzl/oracle-xe:21-slim
         env:
           ORACLE_PASSWORD: oracle
+          DB_URL: "127.0.0.1:1521:XE"
+          DB_USER: APP
+          DB_PASS: pass
         ports:
           - 1521:1521
         options: >-
