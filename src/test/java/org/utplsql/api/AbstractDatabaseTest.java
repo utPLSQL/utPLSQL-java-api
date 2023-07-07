@@ -22,7 +22,7 @@ public abstract class AbstractDatabaseTest {
     }
 
     private Connection conn;
-    private List<Connection> connectionList = new ArrayList<>();
+    private final List<Connection> connectionList = new ArrayList<>();
 
     public static String getUser() {
         return sUser;
