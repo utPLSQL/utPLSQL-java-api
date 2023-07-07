@@ -21,6 +21,10 @@ public class TestRunnerOptions {
     public final List<String> testFiles = new ArrayList<>();
     public final List<String> includeObjects = new ArrayList<>();
     public final List<String> excludeObjects = new ArrayList<>();
+    public String includeSchemaExpr;
+    public String excludeSchemaExpr;
+    public String includeObjectExpr;
+    public String excludeObjectExpr;
     public boolean colorConsole = false;
     public FileMapperOptions sourceMappingOptions;
     public FileMapperOptions testMappingOptions;

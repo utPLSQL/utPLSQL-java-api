@@ -99,6 +99,26 @@ public class TestRunner {
         return this;
     }
 
+   public TestRunner includeSchemaExpr(String expr) {
+        options.includeSchemaExpr = expr;
+        return this;
+   }
+
+    public TestRunner excludeSchemaExpr(String expr) {
+        options.excludeSchemaExpr = expr;
+        return this;
+    }
+
+    public TestRunner includeObjectExpr(String expr) {
+        options.includeObjectExpr = expr;
+        return this;
+    }
+
+    public TestRunner excludeObjectExpr(String expr) {
+        options.excludeObjectExpr = expr;
+        return this;
+    }
+
     public TestRunner sourceMappingOptions(FileMapperOptions mapperOptions) {
         options.sourceMappingOptions = mapperOptions;
         return this;

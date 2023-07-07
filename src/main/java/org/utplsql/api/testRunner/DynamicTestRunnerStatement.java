@@ -7,6 +7,7 @@ import org.utplsql.api.Version;
 import org.utplsql.api.compatibility.OptionalFeatures;
 import org.utplsql.api.db.DynamicParameterList;
 
+import javax.swing.text.html.Option;
 import java.sql.CallableStatement;
 import java.sql.Connection;
 import java.sql.SQLException;
@@ -19,7 +20,7 @@ public class DynamicTestRunnerStatement implements TestRunnerStatement {
     private final TestRunnerOptions options;
     private final DynamicParameterList dynamicParameterList;
 
-    private DynamicTestRunnerStatement( Version utPlSQlVersion, OracleConnection connection, TestRunnerOptions options, CallableStatement statement ) throws SQLException {
+    private DynamicTestRunnerStatement(Version utPlSQlVersion, OracleConnection connection, TestRunnerOptions options, CallableStatement statement) throws SQLException {
         this.utPlSQlVersion = utPlSQlVersion;
         this.oracleConnection = connection;
         this.options = options;
@@ -32,12 +33,12 @@ public class DynamicTestRunnerStatement implements TestRunnerStatement {
 
     private DynamicParameterList initParameterList() throws SQLException {
 
-        Object[] sourceMappings = (options.sourceMappingOptions!=null)
-                ?FileMapper.buildFileMappingList(oracleConnection, options.sourceMappingOptions).toArray()
-                :null;
-        Object[] testMappings = (options.testMappingOptions!=null)
-                ?FileMapper.buildFileMappingList(oracleConnection, options.testMappingOptions).toArray()
-                :null;
+        Object[] sourceMappings = (options.sourceMappingOptions != null)
+                ? FileMapper.buildFileMappingList(oracleConnection, options.sourceMappingOptions).toArray()
+                : null;
+        Object[] testMappings = (options.testMappingOptions != null)
+                ? FileMapper.buildFileMappingList(oracleConnection, options.testMappingOptions).toArray()
+                : null;
 
         DynamicParameterList.DynamicParameterListBuilder builder = DynamicParameterList.builder()
                 .addIfNotEmpty("a_paths", options.pathList.toArray(), CustomTypes.UT_VARCHAR2_LIST, oracleConnection)
@@ -62,13 +63,19 @@ public class DynamicTestRunnerStatement implements TestRunnerStatement {
         if (OptionalFeatures.TAGS.isAvailableFor(utPlSQlVersion)) {
             builder.addIfNotEmpty("a_tags", options.getTagsAsString());
         }
+        if (OptionalFeatures.EXPR.isAvailableFor(utPlSQlVersion)) {
+            builder.addIfNotEmpty("a_include_schema_expr", options.includeSchemaExpr)
+                    .addIfNotEmpty("a_include_object_expr", options.includeObjectExpr)
+                    .addIfNotEmpty("a_exclude_schema_expr", options.excludeSchemaExpr)
+                    .addIfNotEmpty("a_exclude_object_expr", options.excludeObjectExpr);
+        }
 
         return builder.build();
     }
 
     private void prepareStatement() throws SQLException {
-        if ( stmt == null ) {
-            String sql =  "BEGIN " +
+        if (stmt == null) {
+            String sql = "BEGIN " +
                     "ut_runner.run(" +
                     dynamicParameterList.getSql() +
                     ");" +
@@ -96,7 +103,7 @@ public class DynamicTestRunnerStatement implements TestRunnerStatement {
         }
     }
 
-    public static DynamicTestRunnerStatement forVersion(Version version, Connection connection, TestRunnerOptions options, CallableStatement statement ) throws SQLException {
+    public static DynamicTestRunnerStatement forVersion(Version version, Connection connection, TestRunnerOptions options, CallableStatement statement) throws SQLException {
         OracleConnection oraConn = connection.unwrap(OracleConnection.class);
         return new DynamicTestRunnerStatement(version, oraConn, options, statement);
     }

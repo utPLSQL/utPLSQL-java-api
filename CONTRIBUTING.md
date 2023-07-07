@@ -1,11 +1,4 @@
 # Contributing
-To develop it locally, you need to setup your maven environment.
-
-### Maven Installation
-That's the easy part, you just need to download the Maven binaries and extract it somewhere, then put the maven/bin folder on your PATH.
-
-https://maven.apache.org/install.html
-
 *Don't forget to configure your JAVA_HOME environment variable.*
 
 ### Local database with utPLSQL and utPLSQL-demo-project
@@ -18,15 +11,12 @@ If you want to run tests against another database you may set `DB_URL`, `DB_USER
 
 When you have local database set up you can run the complete build including integration tests by executing 
 ```bash
-./gradlew build
-```
-
-To build the project without local database you may disable integration tests.
-```bash
-./gradlew build -x intTest
+./mvnw verify
 ```
 
 ### Skip the local database part
 
-If you want to skip the local database part, just run ``./gradlew test``. 
-You will be able to run ``./gradle test`` because integration tests are executed in the separate ``intTest`` task as part of overall ``check``.
+If you want to skip the local database part, just run
+```bash
+./mvnw test
+```

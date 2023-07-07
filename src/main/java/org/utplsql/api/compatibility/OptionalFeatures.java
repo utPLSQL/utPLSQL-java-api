@@ -13,7 +13,8 @@ public enum OptionalFeatures {
     CUSTOM_REPORTERS("3.1.0.1849", null),
     CLIENT_CHARACTER_SET("3.1.2.2130", null),
     RANDOM_EXECUTION_ORDER("3.1.7.2795", null),
-    TAGS("3.1.7.3006", null);
+    TAGS("3.1.7.3006", null),
+    EXPR("3.1.13", null);
 
     private final Version minVersion;
     private final Version maxVersion;

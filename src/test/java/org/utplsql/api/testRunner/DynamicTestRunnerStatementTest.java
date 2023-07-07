@@ -27,7 +27,7 @@ public class DynamicTestRunnerStatementTest {
     private TestRunnerOptions options;
     private Object[] expectedFileMapping;
 
-    private OracleConnection getMockedOracleConnection( Object[] expectedFileMapping ) throws SQLException {
+    private OracleConnection getMockedOracleConnection(Object[] expectedFileMapping) throws SQLException {
         OracleConnection oracleConnection = mock(OracleConnection.class);
         when(oracleConnection.unwrap(OracleConnection.class))
                 .thenReturn(oracleConnection);
@@ -35,7 +35,7 @@ public class DynamicTestRunnerStatementTest {
         return oracleConnection;
     }
 
-    private void mockFileMapper( OracleConnection mockedOracleConnection, Object[] expectedFileMapping ) throws SQLException {
+    private void mockFileMapper(OracleConnection mockedOracleConnection, Object[] expectedFileMapping) throws SQLException {
         Array fileMapperArray = mock(Array.class);
         CallableStatement fileMapperStatement = mock(CallableStatement.class);
 
@@ -50,19 +50,19 @@ public class DynamicTestRunnerStatementTest {
                 .thenReturn(fileMapperStatement);
     }
 
-    private Matcher<String> doesOrDoesNotContainString( String string, boolean shouldBeThere ) {
+    private Matcher<String> doesOrDoesNotContainString(String string, boolean shouldBeThere) {
         return (shouldBeThere)
                 ? containsString(string)
                 : not(containsString(string));
     }
 
-    private VerificationMode doesOrDoesNotGetCalled( boolean shouldBeThere ) {
+    private VerificationMode doesOrDoesNotGetCalled(boolean shouldBeThere) {
         return (shouldBeThere)
                 ? times(1)
                 : never();
     }
 
-    private void initTestRunnerStatementForVersion( Version version ) throws SQLException {
+    private void initTestRunnerStatementForVersion(Version version) throws SQLException {
         testRunnerStatement = DynamicTestRunnerStatement
                 .forVersion(version, oracleConnection, options, callableStatement);
     }
@@ -99,26 +99,37 @@ public class DynamicTestRunnerStatementTest {
         verify(oracleConnection).createOracleArray(CustomTypes.UT_VARCHAR2_LIST, options.includeObjects.toArray());
     }
 
-    private void checkFailOnError( boolean shouldBeThere ) throws SQLException {
+    private void checkFailOnError(boolean shouldBeThere) throws SQLException {
         assertThat(testRunnerStatement.getSql(), doesOrDoesNotContainString("a_fail_on_errors => (case ? when 1 then true else false end)", shouldBeThere));
         verify(callableStatement, doesOrDoesNotGetCalled(shouldBeThere)).setInt(9, 1);
     }
 
-    private void checkClientCharacterSet( boolean shouldBeThere ) throws SQLException {
+    private void checkClientCharacterSet(boolean shouldBeThere) throws SQLException {
         assertThat(testRunnerStatement.getSql(), doesOrDoesNotContainString("a_client_character_set => ?", shouldBeThere));
         verify(callableStatement, doesOrDoesNotGetCalled(shouldBeThere)).setString(10, "UTF8");
     }
 
-    private void checkRandomTestOrder( boolean shouldBeThere ) throws SQLException {
+    private void checkRandomTestOrder(boolean shouldBeThere) throws SQLException {
         assertThat(testRunnerStatement.getSql(), doesOrDoesNotContainString("a_random_test_order => (case ? when 1 then true else false end)", shouldBeThere));
         verify(callableStatement, doesOrDoesNotGetCalled(shouldBeThere)).setInt(11, 1);
         assertThat(testRunnerStatement.getSql(), doesOrDoesNotContainString("a_random_test_order_seed => ?", shouldBeThere));
         verify(callableStatement, doesOrDoesNotGetCalled(shouldBeThere)).setInt(12, 123);
     }
 
-    private void checkTags( boolean shouldBeThere ) throws SQLException {
+    private void checkTags(boolean shouldBeThere) throws SQLException {
         assertThat(testRunnerStatement.getSql(), doesOrDoesNotContainString("a_tags => ?", shouldBeThere));
         verify(callableStatement, doesOrDoesNotGetCalled(shouldBeThere)).setString(13, "WIP,long_running");
+    }
+
+    private void checkExpr(boolean shouldBeThere) throws SQLException {
+        assertThat(testRunnerStatement.getSql(), doesOrDoesNotContainString("a_include_schema_expr => ?", shouldBeThere));
+        verify(callableStatement, doesOrDoesNotGetCalled(shouldBeThere)).setString(14, "a_*");
+        assertThat(testRunnerStatement.getSql(), doesOrDoesNotContainString("a_include_object_expr  => ?", shouldBeThere));
+        verify(callableStatement, doesOrDoesNotGetCalled(shouldBeThere)).setString(15, "a_*");
+        assertThat(testRunnerStatement.getSql(), doesOrDoesNotContainString("a_exclude_schema_expr   => ?", shouldBeThere));
+        verify(callableStatement, doesOrDoesNotGetCalled(shouldBeThere)).setString(16, "ut3:*_package*");
+        assertThat(testRunnerStatement.getSql(), doesOrDoesNotContainString("a_exclude_object_expr  => ?", shouldBeThere));
+        verify(callableStatement, doesOrDoesNotGetCalled(shouldBeThere)).setString(17, "ut3:*_package*");
     }
 
     @BeforeEach
@@ -142,6 +153,7 @@ public class DynamicTestRunnerStatementTest {
         checkClientCharacterSet(false);
         checkRandomTestOrder(false);
         checkTags(false);
+        checkExpr(false);
     }
 
     @Test
@@ -153,6 +165,7 @@ public class DynamicTestRunnerStatementTest {
         checkClientCharacterSet(false);
         checkRandomTestOrder(false);
         checkTags(false);
+        checkExpr(false);
     }
 
     @Test
@@ -164,6 +177,7 @@ public class DynamicTestRunnerStatementTest {
         checkClientCharacterSet(false);
         checkRandomTestOrder(false);
         checkTags(false);
+        checkExpr(false);
     }
 
     @Test
@@ -175,6 +189,7 @@ public class DynamicTestRunnerStatementTest {
         checkClientCharacterSet(false);
         checkRandomTestOrder(false);
         checkTags(false);
+        checkExpr(false);
     }
 
     @Test
@@ -186,6 +201,7 @@ public class DynamicTestRunnerStatementTest {
         checkClientCharacterSet(false);
         checkRandomTestOrder(false);
         checkTags(false);
+        checkExpr(false);
     }
 
     @Test
@@ -197,6 +213,7 @@ public class DynamicTestRunnerStatementTest {
         checkClientCharacterSet(true);
         checkRandomTestOrder(false);
         checkTags(false);
+        checkExpr(false);
     }
 
     @Test
@@ -208,6 +225,7 @@ public class DynamicTestRunnerStatementTest {
         checkClientCharacterSet(true);
         checkRandomTestOrder(false);
         checkTags(false);
+        checkExpr(false);
     }
 
     @Test
@@ -219,6 +237,7 @@ public class DynamicTestRunnerStatementTest {
         checkClientCharacterSet(true);
         checkRandomTestOrder(false);
         checkTags(false);
+        checkExpr(false);
     }
 
     @Test
@@ -230,6 +249,7 @@ public class DynamicTestRunnerStatementTest {
         checkClientCharacterSet(true);
         checkRandomTestOrder(false);
         checkTags(false);
+        checkExpr(false);
     }
 
     @Test
@@ -241,6 +261,7 @@ public class DynamicTestRunnerStatementTest {
         checkClientCharacterSet(true);
         checkRandomTestOrder(false);
         checkTags(false);
+        checkExpr(false);
     }
 
     @Test
@@ -252,6 +273,7 @@ public class DynamicTestRunnerStatementTest {
         checkClientCharacterSet(true);
         checkRandomTestOrder(true);
         checkTags(true);
+        checkExpr(false);
     }
 
     @Test
@@ -263,5 +285,18 @@ public class DynamicTestRunnerStatementTest {
         checkClientCharacterSet(true);
         checkRandomTestOrder(true);
         checkTags(true);
+        checkExpr(false);
+    }
+
+    @Test
+    void version_3_1_13_parameters() throws SQLException {
+        initTestRunnerStatementForVersion(Version.V3_1_8);
+
+        checkBaseParameters();
+        checkFailOnError(true);
+        checkClientCharacterSet(true);
+        checkRandomTestOrder(true);
+        checkTags(true);
+        checkExpr(true);
     }
 }
