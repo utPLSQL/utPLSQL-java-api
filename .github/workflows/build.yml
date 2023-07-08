@@ -46,6 +46,11 @@ jobs:
         with:
           java-version: '11'
           distribution: 'adopt'
+          server-id: ossrh
+          server-username: MAVEN_USERNAME
+          server-password: MAVEN_PASSWORD
+          gpg-private-key: ${{ secrets.MAVEN_GPG_PRIVATE_KEY }}
+          gpg-passphrase: MAVEN_GPG_PASSPHRASE
 
       - name: Cache local Maven repository
         uses: actions/cache@v2
@@ -56,7 +61,17 @@ jobs:
             ${{ runner.os }}-maven-
 
       - name: Maven unit and integration tests
-        run: mvn clean verify
+        run: mvn clean verify sonar:sonar -Pcoverage -Dsonar.projectKey=org.utplsql:utplsql-java-api
+        env:
+          GITHUB_TOKEN: ${{ secrets.API_TOKEN_GITHUB }}
+          SONAR_TOKEN: ${{ secrets.SONAR_TOKEN }}
+
+      - name: Maven deploy snapshot
+        run: mvn deploy -DskipTests
+        env:
+          MAVEN_USERNAME: ${{ secrets.MAVEN_USERNAME }}
+          MAVEN_PASSWORD: ${{ secrets.MAVEN_PASSWORD }}
+          MAVEN_GPG_PASSPHRASE: ${{ secrets.MAVEN_GPG_PASSPHRASE }}
 
       - name: Publish unit test results
         uses: EnricoMi/publish-unit-test-result-action@v1.24
