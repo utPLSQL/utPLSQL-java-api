@@ -61,7 +61,7 @@ jobs:
             ${{ runner.os }}-maven-
 
       - name: Maven unit and integration tests
-        run: mvn clean verify sonar:sonar -Pcoverage -Dsonar.projectKey=org.utplsql:utplsql-java-api
+        run: mvn clean verify sonar:sonar -Pcoverage -Dsonar.projectKey=utPLSQL_utPLSQL-java-api
         env:
           GITHUB_TOKEN: ${{ secrets.API_TOKEN_GITHUB }}
           SONAR_TOKEN: ${{ secrets.SONAR_TOKEN }}
