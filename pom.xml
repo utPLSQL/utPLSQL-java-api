@@ -29,6 +29,16 @@
         </license>
     </licenses>
 
+    <developers>
+        <developer>
+            <name>Simon Martinelli</name>
+            <organization>utPLSQL.org</organization>
+            <organizationUrl>http://utplsql.org</organizationUrl>
+            <email>simon@martineli.ch</email>
+            <url>https://martinelli.ch</url>
+        </developer>
+    </developers>
+
     <dependencies>
         <dependency>
             <groupId>org.slf4j</groupId>
