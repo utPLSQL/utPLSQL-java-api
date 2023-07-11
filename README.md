@@ -11,11 +11,13 @@ This is a collection of classes, that makes it easy to access the [utPLSQL v3](h
 
 This is a Maven Library project, you can add on your Java project as a dependency. 
 
+*Notice: You no longer need to configure an additional repository. The library is available in Maven Central since version 3.1.15.*
+
 ```xml
 <dependency>
     <groupId>org.utplsql</groupId>
     <artifactId>utplsql-java-api</artifactId>
-    <version>3.1.10</version>
+    <version>3.1.15</version>
 </dependency>
 ```
 
