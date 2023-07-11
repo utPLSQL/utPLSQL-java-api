@@ -17,7 +17,7 @@ This is a Maven Library project, you can add on your Java project as a dependenc
 <dependency>
     <groupId>org.utplsql</groupId>
     <artifactId>utplsql-java-api</artifactId>
-    <version>3.1.15</version>
+    <version>3.1.16</version>
 </dependency>
 ```
 
