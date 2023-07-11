@@ -56,7 +56,7 @@ jobs:
           restore-keys: |
             ${{ runner.os }}-maven-
 
-      - name: Maven deploy snapshot
+      - name: Maven deploy release
         run: mvn clean deploy -Prelease
         env:
           MAVEN_USERNAME: ${{ secrets.MAVEN_USERNAME }}

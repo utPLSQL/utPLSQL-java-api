@@ -63,6 +63,8 @@ public class Version implements Comparable<Version> {
     /**
      * Use {@link Version#create} factory method instead
      * For removal
+     *
+     * @param versionString Version as String
      */
     @Deprecated()
     public Version(String versionString) {

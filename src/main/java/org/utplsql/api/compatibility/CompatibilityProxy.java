@@ -135,6 +135,8 @@ public class CompatibilityProxy {
     /**
      * Checks if actual API-version is compatible with utPLSQL database version and throws a DatabaseNotCompatibleException if not
      * Throws a DatabaseNotCompatibleException if version compatibility can not be checked.
+     *
+     * @throws DatabaseNotCompatibleException if versions are not compatible
      */
     public void failOnNotCompatible() throws DatabaseNotCompatibleException {
         if (!isCompatible()) {
