@@ -39,6 +39,11 @@
         </developer>
     </developers>
 
+    <scm>
+        <connection>scm:git@github.com:utPLSQL/utPLSQL-java-api.git</connection>
+        <url>https://github.com/utPLSQL/utPLSQL-java-api</url>
+    </scm>
+
     <dependencies>
         <dependency>
             <groupId>org.slf4j</groupId>
