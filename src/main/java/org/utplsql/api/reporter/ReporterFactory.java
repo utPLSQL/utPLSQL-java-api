@@ -122,6 +122,7 @@ public final class ReporterFactory implements ORADataFactory {
      * If no specific ReporterFactoryMethod is registered, returns a default {Reporter}
      *
      * @param reporterName Name of the reporter
+     * @return Reporter
      */
     public Reporter createReporter(String reporterName) {
         return createReporter(reporterName, null);
