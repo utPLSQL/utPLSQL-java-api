@@ -4,7 +4,7 @@
 
     <groupId>org.utplsql</groupId>
     <artifactId>utplsql-java-api</artifactId>
-    <version>3.1.13</version>
+    <version>3.1.14</version>
 
     <name>utPLSQL Java API</name>
     <description>Java API for running Unit Tests with utPLSQL v3+.</description>
@@ -28,6 +28,16 @@
             <distribution>repo</distribution>
         </license>
     </licenses>
+
+    <developers>
+        <developer>
+            <name>Simon Martinelli</name>
+            <organization>utPLSQL.org</organization>
+            <organizationUrl>http://utplsql.org</organizationUrl>
+            <email>simon@martineli.ch</email>
+            <url>https://martinelli.ch</url>
+        </developer>
+    </developers>
 
     <dependencies>
         <dependency>
