@@ -32,6 +32,10 @@ class TestRunnerStatementProviderIT extends AbstractDatabaseTest {
         options.randomTestOrderSeed = 123;
         options.tags.add("WIP");
         options.tags.add("long_running");
+        options.includeSchemaExpr = "a_*";
+        options.includeObjectExpr = "a_*";
+        options.excludeSchemaExpr = "ut3:*_package*";
+        options.excludeObjectExpr = "ut3:*_package*";
         return options;
     }
 
