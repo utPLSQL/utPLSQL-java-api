@@ -34,7 +34,7 @@ class TestRunnerIT extends AbstractDatabaseTest {
      * This can only be run against versions >= 3.0.3
      */
     @Test
-    void runWithoutCompatibilityCheck() throws SQLException, InvalidVersionException {
+    void runWithoutCompatibilityCheck() throws SQLException {
 
         DatabaseInformation databaseInformation = new DefaultDatabaseInformation();
 
@@ -57,7 +57,7 @@ class TestRunnerIT extends AbstractDatabaseTest {
                 .addReporter(CoreReporters.UT_COVERALLS_REPORTER.name())
                 .addReporter(CoreReporters.UT_SONAR_TEST_REPORTER.name())
                 .addReporter(CoreReporters.UT_TEAMCITY_REPORTER.name())
-                .addReporter(CoreReporters.UT_XUNIT_REPORTER.name())
+                .addReporter(CoreReporters.UT_JUNIT_REPORTER.name())
                 .run(conn);
     }
 

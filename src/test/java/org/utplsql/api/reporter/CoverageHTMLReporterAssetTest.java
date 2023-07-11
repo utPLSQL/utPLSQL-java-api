@@ -21,7 +21,7 @@ class CoverageHTMLReporterAssetTest {
     private void testFileExists(Path filePath) {
         File f = new File(tempDir.resolve(TEST_FOLDER).resolve(filePath).toUri());
 
-        assertTrue(f.exists(), () -> "File " + f.toString() + " does not exist");
+        assertTrue(f.exists(), () -> "File " + f + " does not exist");
     }
 
     @Test

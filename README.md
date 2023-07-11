@@ -87,7 +87,7 @@ It also provides a more generic approach to Reporter-handling.
 
 If you request the Reporter-Factory for a Reporter it has no specific implementation for it will just
 return an instance of a `DefaultReporter` with the given name as SQL-Type, assuming
-that it exists in the database. Therefore you can address custom reporters without the need 
+that it exists in the database. Therefore, you can address custom reporters without the need 
 of a specific java-side implementation.
 
 ```java

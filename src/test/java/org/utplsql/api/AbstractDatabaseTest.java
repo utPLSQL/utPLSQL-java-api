@@ -11,21 +11,21 @@ import java.util.List;
 
 public abstract class AbstractDatabaseTest {
 
-    private static String sUrl;
-    private static String sUser;
-    private static String sPass;
+    private static final String DB_URL;
+    private static final String DB_USER;
+    private static final String DB_PASS;
 
     static {
-        sUrl = EnvironmentVariableUtil.getEnvValue("DB_URL", "localhost:1521:XE");
-        sUser = EnvironmentVariableUtil.getEnvValue("DB_USER", "app");
-        sPass = EnvironmentVariableUtil.getEnvValue("DB_PASS", "pass");
+        DB_URL = EnvironmentVariableUtil.getEnvValue("DB_URL", "localhost:1521:XE");
+        DB_USER = EnvironmentVariableUtil.getEnvValue("DB_USER", "app");
+        DB_PASS = EnvironmentVariableUtil.getEnvValue("DB_PASS", "pass");
     }
 
     private Connection conn;
     private final List<Connection> connectionList = new ArrayList<>();
 
     public static String getUser() {
-        return sUser;
+        return DB_USER;
     }
 
     @BeforeEach
@@ -38,7 +38,7 @@ public abstract class AbstractDatabaseTest {
     }
 
     protected synchronized Connection newConnection() throws SQLException {
-        Connection conn = DriverManager.getConnection("jdbc:oracle:thin:@" + sUrl, sUser, sPass);
+        Connection conn = DriverManager.getConnection("jdbc:oracle:thin:@" + DB_URL, DB_USER, DB_PASS);
         connectionList.add(conn);
         return conn;
     }

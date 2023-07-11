@@ -28,7 +28,7 @@ public class CompatibilityProxy {
     public static final String UTPLSQL_COMPATIBILITY_VERSION = "3";
     private final DatabaseInformation databaseInformation;
     private Version utPlsqlVersion;
-    private Version realDbPlsqlVersion;
+    private final Version realDbPlsqlVersion;
     private boolean compatible = false;
 
     public CompatibilityProxy(Connection conn) throws SQLException {
@@ -36,12 +36,12 @@ public class CompatibilityProxy {
     }
 
     @Deprecated
-    public CompatibilityProxy(Connection conn, boolean skipCompatibilityCheck ) throws SQLException {
+    public CompatibilityProxy(Connection conn, boolean skipCompatibilityCheck) throws SQLException {
         this(conn, skipCompatibilityCheck, null);
     }
 
     @Deprecated
-    public CompatibilityProxy(Connection conn, boolean skipCompatibilityCheck, @Nullable  DatabaseInformation databaseInformation ) throws SQLException {
+    public CompatibilityProxy(Connection conn, boolean skipCompatibilityCheck, @Nullable DatabaseInformation databaseInformation) throws SQLException {
         this(conn, skipCompatibilityCheck ? Version.LATEST : null, databaseInformation);
     }
 
@@ -59,7 +59,7 @@ public class CompatibilityProxy {
                 : new DefaultDatabaseInformation();
 
         realDbPlsqlVersion = this.databaseInformation.getUtPlsqlFrameworkVersion(conn);
-        if ( assumedUtPlsqlVersion != null ) {
+        if (assumedUtPlsqlVersion != null) {
             utPlsqlVersion = assumedUtPlsqlVersion;
             compatible = utPlsqlVersion.getNormalizedString().startsWith(UTPLSQL_COMPATIBILITY_VERSION);
         } else {
@@ -71,10 +71,10 @@ public class CompatibilityProxy {
      * Receives the current framework version from database and checks - depending on the framework version - whether
      * the API version is compatible or not.
      *
-     * @param conn
-     * @throws SQLException
+     * @param conn {@link Connection}
+     * @throws DatabaseNotCompatibleException if the database is not compatible
      */
-    private void doCompatibilityCheckWithDatabase(Connection conn) throws SQLException {
+    private void doCompatibilityCheckWithDatabase(Connection conn) throws DatabaseNotCompatibleException {
         utPlsqlVersion = realDbPlsqlVersion;
         Version clientVersion = Version.create(UTPLSQL_COMPATIBILITY_VERSION);
 
@@ -118,16 +118,16 @@ public class CompatibilityProxy {
     }
 
     /**
-     * Simple fallback check for compatiblity: Major and Minor version must be equal
+     * Simple fallback check for compatibility: Major and Minor version must be equal
      *
-     * @param requested
-     * @return
+     * @param versionRequested Requested version
+     * @return weather the version is available or not
      */
-    private boolean versionCompatibilityCheckPre303(String requested) {
-        Version requestedVersion = Version.create(requested);
+    private boolean versionCompatibilityCheckPre303(String versionRequested) {
+        Version requestedVersion = Version.create(versionRequested);
 
         Objects.requireNonNull(utPlsqlVersion.getMajor(), "Illegal database Version: " + utPlsqlVersion.toString());
-        return utPlsqlVersion.getMajor().equals(requestedVersion.getMajor())
+        return Objects.equals(utPlsqlVersion.getMajor(), requestedVersion.getMajor())
                 && (requestedVersion.getMinor() == null
                 || requestedVersion.getMinor().equals(utPlsqlVersion.getMinor()));
     }
@@ -147,16 +147,20 @@ public class CompatibilityProxy {
     }
 
     @Deprecated
-    public Version getDatabaseVersion() { return utPlsqlVersion; }
+    public Version getDatabaseVersion() {
+        return utPlsqlVersion;
+    }
 
     public Version getUtPlsqlVersion() {
         return utPlsqlVersion;
     }
 
-    public Version getRealDbPlsqlVersion() { return realDbPlsqlVersion; }
+    public Version getRealDbPlsqlVersion() {
+        return realDbPlsqlVersion;
+    }
 
     public String getVersionDescription() {
-        if ( utPlsqlVersion != realDbPlsqlVersion ) {
+        if (utPlsqlVersion != realDbPlsqlVersion) {
             return realDbPlsqlVersion.toString() + " (Assumed: " + utPlsqlVersion.toString() + ")";
         } else {
             return utPlsqlVersion.toString();
@@ -166,10 +170,10 @@ public class CompatibilityProxy {
     /**
      * Returns a TestRunnerStatement compatible with the current framework
      *
-     * @param options
-     * @param conn
-     * @return
-     * @throws SQLException
+     * @param options {@link TestRunnerOptions}
+     * @param conn    {@link Connection}
+     * @return TestRunnerStatement
+     * @throws SQLException if there are problems with the database access
      */
     public TestRunnerStatement getTestRunnerStatement(TestRunnerOptions options, Connection conn) throws SQLException {
         return TestRunnerStatementProvider.getCompatibleTestRunnerStatement(utPlsqlVersion, options, conn);
@@ -178,10 +182,10 @@ public class CompatibilityProxy {
     /**
      * Returns an OutputBuffer compatible with the current framework
      *
-     * @param reporter
-     * @param conn
-     * @return
-     * @throws SQLException
+     * @param reporter {@link Reporter}
+     * @param conn     {@link Connection}
+     * @return OutputBuffer
+     * @throws SQLException if there are problems with the database access
      */
     public OutputBuffer getOutputBuffer(Reporter reporter, Connection conn) throws SQLException {
         return OutputBufferProvider.getCompatibleOutputBuffer(utPlsqlVersion, reporter, conn);

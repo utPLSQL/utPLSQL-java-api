@@ -7,7 +7,7 @@ import java.io.InputStreamReader;
 
 /**
  * This class is getting updated automatically by the build process.
- * Please do not update its constants manually cause they will be overwritten.
+ * Please do not update its constants manually because they will be overwritten.
  *
  * @author pesse
  */
@@ -18,10 +18,11 @@ public class JavaApiVersionInfo {
 
     static {
         try {
-
-            try (InputStream in = JavaApiVersionInfo.class.getClassLoader().getResourceAsStream("utplsql-api.version");
-                 BufferedReader reader = new BufferedReader(new InputStreamReader(in))) {
-                MAVEN_PROJECT_VERSION = reader.readLine();
+            try (InputStream in = JavaApiVersionInfo.class.getClassLoader().getResourceAsStream("utplsql-api.version")) {
+                assert in != null;
+                try (BufferedReader reader = new BufferedReader(new InputStreamReader(in))) {
+                    MAVEN_PROJECT_VERSION = reader.readLine();
+                }
             }
         } catch (IOException e) {
             System.out.println("WARNING: Could not get Version information!");

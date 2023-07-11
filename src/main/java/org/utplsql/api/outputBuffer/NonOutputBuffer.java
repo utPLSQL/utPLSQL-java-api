@@ -4,7 +4,6 @@ import org.utplsql.api.reporter.Reporter;
 
 import java.io.PrintStream;
 import java.sql.Connection;
-import java.sql.SQLException;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.function.Consumer;
@@ -33,14 +32,14 @@ class NonOutputBuffer implements OutputBuffer {
     }
 
     @Override
-    public void printAvailable(Connection conn, PrintStream ps) throws SQLException {
+    public void printAvailable(Connection conn, PrintStream ps) {
         List<PrintStream> printStreams = new ArrayList<>(1);
         printStreams.add(ps);
         printAvailable(conn, printStreams);
     }
 
     @Override
-    public void printAvailable(Connection conn, List<PrintStream> printStreams) throws SQLException {
+    public void printAvailable(Connection conn, List<PrintStream> printStreams) {
         fetchAvailable(conn, s -> {
             for (PrintStream ps : printStreams) {
                 ps.println(s);

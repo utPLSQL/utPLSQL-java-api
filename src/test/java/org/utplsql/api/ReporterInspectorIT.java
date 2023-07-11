@@ -24,7 +24,6 @@ class ReporterInspectorIT extends AbstractDatabaseTest {
 
     @Test
     void testGetReporterInfo() throws SQLException, InvalidVersionException {
-
         CompatibilityProxy proxy = new CompatibilityProxy(getConnection());
 
         ReporterInspector inspector = ReporterInspector.create(getReporterFactory(), getConnection());
@@ -37,7 +36,7 @@ class ReporterInspectorIT extends AbstractDatabaseTest {
         assertEquals(infos.get(CoreReporters.UT_DOCUMENTATION_REPORTER.name()).getType(), ReporterInfo.Type.SQL_WITH_JAVA);
         assertEquals(infos.get(CoreReporters.UT_SONAR_TEST_REPORTER.name()).getType(), ReporterInfo.Type.SQL);
         assertEquals(infos.get(CoreReporters.UT_TEAMCITY_REPORTER.name()).getType(), ReporterInfo.Type.SQL);
-        assertEquals(infos.get(CoreReporters.UT_XUNIT_REPORTER.name()).getType(), ReporterInfo.Type.SQL);
+        assertEquals(infos.get(CoreReporters.UT_JUNIT_REPORTER.name()).getType(), ReporterInfo.Type.SQL);
 
         if (CoreReporters.UT_COVERAGE_COBERTURA_REPORTER.isAvailableFor(proxy.getUtPlsqlVersion())) {
             assertEquals(infos.get(CoreReporters.UT_COVERAGE_COBERTURA_REPORTER.name()).getType(), ReporterInfo.Type.SQL);

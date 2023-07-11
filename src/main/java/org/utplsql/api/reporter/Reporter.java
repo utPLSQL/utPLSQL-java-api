@@ -63,8 +63,8 @@ public abstract class Reporter implements ORAData {
      * This is necessary because we set up DefaultOutputBuffer (and maybe other stuff) we don't want to know and care about
      * in the java API. Let's just do the instantiation of the Reporter in the database and map it into this object.
      *
-     * @param oraConn
-     * @throws SQLException
+     * @param oraConn {@link OracleConnection}
+     * @throws SQLException if there are problems with the database access
      */
     private void initDbReporter(OracleConnection oraConn, ReporterFactory reporterFactory) throws SQLException {
         OracleCallableStatement callableStatement = (OracleCallableStatement) oraConn.prepareCall("{? = call " + selfType + "()}");

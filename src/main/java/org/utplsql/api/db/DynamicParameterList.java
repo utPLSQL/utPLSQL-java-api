@@ -16,7 +16,7 @@ import java.util.stream.Collectors;
  */
 public class DynamicParameterList {
 
-    private LinkedHashMap<String, DynamicParameter> params;
+    private final LinkedHashMap<String, DynamicParameter> params;
 
     interface DynamicParameter {
         void setParam( CallableStatement statement, int index ) throws SQLException;
@@ -77,7 +77,7 @@ public class DynamicParameterList {
      */
     public static class DynamicParameterListBuilder {
 
-        private LinkedHashMap<String, DynamicParameterList.DynamicParameter> params = new LinkedHashMap<>();
+        private final LinkedHashMap<String, DynamicParameterList.DynamicParameter> params = new LinkedHashMap<>();
 
         private DynamicParameterListBuilder() {
 

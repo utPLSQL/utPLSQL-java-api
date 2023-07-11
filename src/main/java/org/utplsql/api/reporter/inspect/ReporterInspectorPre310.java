@@ -35,7 +35,7 @@ class ReporterInspectorPre310 extends AbstractReporterInspector {
         descriptions.put(CoreReporters.UT_DOCUMENTATION_REPORTER, "");
         descriptions.put(CoreReporters.UT_SONAR_TEST_REPORTER, "");
         descriptions.put(CoreReporters.UT_TEAMCITY_REPORTER, "");
-        descriptions.put(CoreReporters.UT_XUNIT_REPORTER, "");
+        descriptions.put(CoreReporters.UT_JUNIT_REPORTER, "");
     }
 
     @Override

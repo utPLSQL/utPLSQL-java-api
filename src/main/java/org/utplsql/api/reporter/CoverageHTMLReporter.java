@@ -26,9 +26,8 @@ public class CoverageHTMLReporter extends DefaultReporter {
      * Write the bundled assets necessary for the HTML Coverage report to a given targetPath
      *
      * @param targetDirectory Directory where the assets should be stored
-     * @throws RuntimeException
      */
-    protected static void writeReportAssetsTo(Path targetDirectory) throws RuntimeException {
+    protected static void writeReportAssetsTo(Path targetDirectory) {
         ResourceUtil.copyResources(Paths.get("CoverageHTMLReporter"), targetDirectory);
     }
 

@@ -19,11 +19,11 @@ public class OutputBufferProvider {
      * Returns an OutputBuffer compatible with the given databaseVersion
      * If we are at 3.1.0 or greater, returns an OutputBuffer based upon the information whether the Reporter has Output or not
      *
-     * @param databaseVersion
-     * @param reporter
-     * @param conn
-     * @return
-     * @throws SQLException
+     * @param databaseVersion {@link Version}
+     * @param reporter {@link Reporter}
+     * @param conn {@link Connection}
+     * @return OutputBuffer
+     * @throws SQLException if there are problems with the database access
      */
     public static OutputBuffer getCompatibleOutputBuffer(Version databaseVersion, Reporter reporter, Connection conn) throws SQLException {
         OracleConnection oraConn = conn.unwrap(OracleConnection.class);

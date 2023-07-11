@@ -22,10 +22,10 @@ public interface ReporterInspector {
     /**
      * Returns a new instance of a ReporterInspector, based on the utPLSQL version used in the connection
      *
-     * @param reporterFactory
-     * @param conn
-     * @return
-     * @throws SQLException
+     * @param reporterFactory {@link ReporterFactory}
+     * @param conn            {@link Connection}
+     * @return ReporterInspector
+     * @throws SQLException if there are problems with the database access
      */
     static ReporterInspector create(ReporterFactory reporterFactory, Connection conn) throws SQLException, InvalidVersionException {
 

@@ -24,7 +24,7 @@ public class TestRunnerStatementProvider {
      * @param options         TestRunnerOptions to be used
      * @param conn            Active Connection
      * @return TestRunnerStatment compatible with the database framework
-     * @throws SQLException
+     * @throws SQLException if there are problems with the database access
      */
     public static TestRunnerStatement getCompatibleTestRunnerStatement(Version databaseVersion, TestRunnerOptions options, Connection conn) throws SQLException {
         return DynamicTestRunnerStatement.forVersion(databaseVersion, conn, options, null);

@@ -7,7 +7,6 @@ import org.utplsql.api.Version;
 import org.utplsql.api.compatibility.OptionalFeatures;
 import org.utplsql.api.db.DynamicParameterList;
 
-import javax.swing.text.html.Option;
 import java.sql.CallableStatement;
 import java.sql.Connection;
 import java.sql.SQLException;

@@ -17,7 +17,7 @@ class DatabaseInformationIT extends AbstractDatabaseTest {
 
         Version v = databaseInformation.getUtPlsqlFrameworkVersion(getConnection());
         assertTrue(v.isValid());
-        System.out.println(v.getNormalizedString() + " - " + v.toString());
+        System.out.println(v.getNormalizedString() + " - " + v);
     }
 
     @Test

@@ -13,7 +13,7 @@ class DBHelperIT extends AbstractDatabaseTest {
     void getFrameworkVersion() throws SQLException {
         Version v = DBHelper.getDatabaseFrameworkVersion(getConnection());
         assertTrue(v.isValid());
-        System.out.println(v.getNormalizedString() + " - " + v.toString());
+        System.out.println(v.getNormalizedString() + " - " + v);
     }
 
     @Test

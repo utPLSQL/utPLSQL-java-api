@@ -14,8 +14,6 @@ import java.util.Arrays;
 import static org.hamcrest.CoreMatchers.containsString;
 import static org.hamcrest.CoreMatchers.not;
 import static org.hamcrest.MatcherAssert.assertThat;
-import static org.hamcrest.core.IsInstanceOf.instanceOf;
-import static org.junit.jupiter.api.Assertions.assertEquals;
 
 class TestRunnerStatementProviderIT extends AbstractDatabaseTest {
 
@@ -37,7 +35,7 @@ class TestRunnerStatementProviderIT extends AbstractDatabaseTest {
         return options;
     }
 
-    TestRunnerStatement getTestRunnerStatementForVersion( Version version ) throws SQLException {
+    TestRunnerStatement getTestRunnerStatementForVersion(Version version) throws SQLException {
         return TestRunnerStatementProvider.getCompatibleTestRunnerStatement(version, getCompletelyFilledOptions(), getConnection());
     }
 

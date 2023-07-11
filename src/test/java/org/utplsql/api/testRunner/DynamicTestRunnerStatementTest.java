@@ -290,7 +290,7 @@ public class DynamicTestRunnerStatementTest {
 
     @Test
     void version_3_1_13_parameters() throws SQLException {
-        initTestRunnerStatementForVersion(Version.V3_1_8);
+        initTestRunnerStatementForVersion(Version.V3_1_11);
 
         checkBaseParameters();
         checkFailOnError(true);

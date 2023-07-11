@@ -24,8 +24,8 @@ public class ResourceUtil {
      * @param targetDirectory If set to true it will only return files, not directories
      */
     public static void copyResources(Path resourceAsPath, Path targetDirectory) {
-        String resourceName = "/" + resourceAsPath.toString();
         try {
+            String resourceName = "/" + resourceAsPath;
             Files.createDirectories(targetDirectory);
             URI uri = ResourceUtil.class.getResource(resourceName).toURI();
             Path myPath;
@@ -46,12 +46,10 @@ public class ResourceUtil {
     private static void copyRecursive(Path from, Path targetDirectory) throws IOException {
         Files.walkFileTree(from, new SimpleFileVisitor<Path>() {
 
-            private Path currentTarget;
-
             @Override
             public FileVisitResult preVisitDirectory(Path dir, BasicFileAttributes attrs) throws IOException {
                 super.preVisitDirectory(dir, attrs);
-                currentTarget = targetDirectory.resolve(from.relativize(dir).toString());
+                Path currentTarget = targetDirectory.resolve(from.relativize(dir).toString());
                 Files.createDirectories(currentTarget);
                 return FileVisitResult.CONTINUE;
             }

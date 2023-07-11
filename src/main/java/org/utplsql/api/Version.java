@@ -37,10 +37,12 @@ public class Version implements Comparable<Version> {
     public final static Version V3_1_10 = new Version("3.1.10", 3, 1, 10, 3347, true);
     public final static Version V3_1_11 = new Version("3.1.11", 3, 1, 11, 3557, true);
     public final static Version V3_1_12 = new Version("3.1.12", 3, 1, 12, 3876, true);
+    public final static Version V3_1_13 = new Version("3.1.13", 3, 1, 13, 3592, true);
+
     private final static Map<String, Version> knownVersions =
-            Stream.of(V3_0_0, V3_0_1, V3_0_2, V3_0_3, V3_0_4, V3_1_0, V3_1_1, V3_1_2, V3_1_3, V3_1_4, V3_1_5, V3_1_6, V3_1_7, V3_1_8, V3_1_9, V3_1_10, V3_1_11, V3_1_12)
+            Stream.of(V3_0_0, V3_0_1, V3_0_2, V3_0_3, V3_0_4, V3_1_0, V3_1_1, V3_1_2, V3_1_3, V3_1_4, V3_1_5, V3_1_6, V3_1_7, V3_1_8, V3_1_9, V3_1_10, V3_1_11, V3_1_13)
                     .collect(toMap(Version::toString, Function.identity()));
-    public final static Version LATEST = V3_1_12;
+    public final static Version LATEST = V3_1_13;
 
     private final String origString;
     private final Integer major;
@@ -64,7 +66,8 @@ public class Version implements Comparable<Version> {
      */
     @Deprecated()
     public Version(String versionString) {
-        assert versionString != null;
+        Objects.requireNonNull(versionString);
+
         Version dummy = parseVersionString(versionString);
 
         this.origString = dummy.origString;
@@ -110,8 +113,7 @@ public class Version implements Comparable<Version> {
                 // We need a valid major version as minimum requirement for a Version object to be valid
                 valid = major != null;
             }
-        } catch (NumberFormatException e) {
-            valid = false;
+        } catch (NumberFormatException ignore) {
         }
 
         return new Version(origString, major, minor, bugfix, build, valid);
@@ -149,7 +151,7 @@ public class Version implements Comparable<Version> {
     /**
      * Returns a normalized form of the parsed version information
      *
-     * @return
+     * @return normalized string
      */
     public String getNormalizedString() {
         if (isValid()) {
@@ -213,9 +215,8 @@ public class Version implements Comparable<Version> {
             }
 
             curResult = compareToWithNulls(getBuild(), o.getBuild(), nullMeansEqual);
-            if (curResult != 0) {
-                return curResult;
-            }
+
+            return curResult;
         }
 
         return 0;
@@ -234,11 +235,11 @@ public class Version implements Comparable<Version> {
     /**
      * Compares this version to a given version and returns true if this version is greater or equal than the given one
      * If one of the version parts of the base version is null, this level is assumed equal no matter the comparing level's version part
-     * Throws an InvalidVersionException if either this or the given version are invalid
+     * Throws an {@link InvalidVersionException} if either this or the given version are invalid
      *
      * @param v Version to compare with
-     * @return
-     * @throws InvalidVersionException
+     * @return true if is greater or equal
+     * @throws InvalidVersionException If the version does not match
      */
     public boolean isGreaterOrEqualThan(Version v) throws InvalidVersionException {
 
@@ -247,7 +248,15 @@ public class Version implements Comparable<Version> {
         return compareTo(v, true) >= 0;
     }
 
-
+    /**
+     * Compares this version to a given version and returns true if this version is greater than the given one
+     * If one of the version parts of the base version is null, this level is assumed equal no matter the comparing level's version part
+     * Throws an {@link InvalidVersionException} if either this or the given version are invalid
+     *
+     * @param v Version to compare with
+     * @return true if is greater
+     * @throws InvalidVersionException If the version does not match
+     */
     public boolean isGreaterThan(Version v) throws InvalidVersionException {
         versionsAreValid(v);
 
@@ -257,11 +266,11 @@ public class Version implements Comparable<Version> {
     /**
      * Compares this version to a given version and returns true if this version is less or equal than the given one
      * If one of the version parts of the base version is null, this level is assumed equal no matter the comparing level's version part
-     * Throws an InvalidVersionException if either this or the given version are invalid
+     * Throws an {@link InvalidVersionException} if either this or the given version are invalid
      *
      * @param v Version to compare with
-     * @return
-     * @throws InvalidVersionException
+     * @return if version is less or equal
+     * @throws InvalidVersionException If version is invalid
      */
     public boolean isLessOrEqualThan(Version v) throws InvalidVersionException {
 
@@ -270,6 +279,15 @@ public class Version implements Comparable<Version> {
         return compareTo(v, true) <= 0;
     }
 
+    /**
+     * Compares this version to a given version and returns true if this version is less than the given one
+     * If one of the version parts of the base version is null, this level is assumed equal no matter the comparing level's version part
+     * Throws an {@link InvalidVersionException} if either this or the given version are invalid
+     *
+     * @param v Version to compare with
+     * @return if version is less
+     * @throws InvalidVersionException If version is invalid
+     */
     public boolean isLessThan(Version v) throws InvalidVersionException {
         versionsAreValid(v);
 

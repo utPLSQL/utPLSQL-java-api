@@ -40,7 +40,6 @@ class OutputBufferIT extends AbstractDatabaseTest {
     @Test
     void printAvailableLines() throws SQLException {
         ExecutorService executorService = Executors.newFixedThreadPool(2);
-
         try {
             final Reporter reporter = createReporter();
 

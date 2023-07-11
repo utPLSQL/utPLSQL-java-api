@@ -22,6 +22,7 @@ public enum CoreReporters {
     UT_SONAR_TEST_REPORTER(Version.V3_0_0, null),
     UT_TEAMCITY_REPORTER(Version.V3_0_0, null),
     UT_TFS_JUNIT_REPORTER(Version.V3_1_0, null),
+    @Deprecated
     UT_XUNIT_REPORTER(Version.V3_0_0, null);
 
     private final Version since;

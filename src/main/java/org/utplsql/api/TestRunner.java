@@ -99,10 +99,10 @@ public class TestRunner {
         return this;
     }
 
-   public TestRunner includeSchemaExpr(String expr) {
+    public TestRunner includeSchemaExpr(String expr) {
         options.includeSchemaExpr = expr;
         return this;
-   }
+    }
 
     public TestRunner excludeSchemaExpr(String expr) {
         options.excludeSchemaExpr = expr;
@@ -144,18 +144,18 @@ public class TestRunner {
         return this;
     }
 
-    public TestRunner randomTestOrder(boolean randomTestOrder ) {
+    public TestRunner randomTestOrder(boolean randomTestOrder) {
         this.options.randomTestOrder = randomTestOrder;
         return this;
     }
 
-    public TestRunner randomTestOrderSeed( Integer seed ) {
+    public TestRunner randomTestOrderSeed(Integer seed) {
         this.options.randomTestOrderSeed = seed;
-        if ( seed != null ) this.options.randomTestOrder = true;
+        if (seed != null) this.options.randomTestOrder = true;
         return this;
     }
 
-    public TestRunner addTag( String tag ) {
+    public TestRunner addTag(String tag) {
         this.options.tags.add(tag);
         return this;
     }
@@ -165,12 +165,14 @@ public class TestRunner {
         return this;
     }
 
-    public TestRunner oraStuckTimeout(Integer oraStuckTimeout ) {
+    public TestRunner oraStuckTimeout(Integer oraStuckTimeout) {
         this.options.oraStuckTimeout = oraStuckTimeout;
         return this;
     }
 
-    public TestRunnerOptions getOptions() { return options; }
+    public TestRunnerOptions getOptions() {
+        return options;
+    }
 
     private void delayedAddReporters() {
         if (reporterFactory != null) {
@@ -182,10 +184,10 @@ public class TestRunner {
 
     private void handleException(Throwable e) throws SQLException {
         // Just pass exceptions already categorized
-        if ( e instanceof UtPLSQLNotInstalledException ) throw (UtPLSQLNotInstalledException)e;
-        else if ( e instanceof SomeTestsFailedException ) throw (SomeTestsFailedException)e;
-        else if ( e instanceof OracleCreateStatmenetStuckException ) throw (OracleCreateStatmenetStuckException)e;
-        // Categorize exceptions
+        if (e instanceof UtPLSQLNotInstalledException) throw (UtPLSQLNotInstalledException) e;
+        else if (e instanceof SomeTestsFailedException) throw (SomeTestsFailedException) e;
+        else if (e instanceof OracleCreateStatmenetStuckException) throw (OracleCreateStatmenetStuckException) e;
+            // Categorize exceptions
         else if (e instanceof SQLException) {
             SQLException sqlException = (SQLException) e;
             if (sqlException.getErrorCode() == SomeTestsFailedException.ERROR_CODE) {
@@ -206,7 +208,7 @@ public class TestRunner {
 
         DatabaseInformation databaseInformation = new DefaultDatabaseInformation();
 
-        if ( options.skipCompatibilityCheck ) {
+        if (options.skipCompatibilityCheck) {
             compatibilityProxy = new CompatibilityProxy(conn, Version.LATEST, databaseInformation);
         } else {
             compatibilityProxy = new CompatibilityProxy(conn, databaseInformation);
@@ -238,7 +240,7 @@ public class TestRunner {
 
         TestRunnerStatement testRunnerStatement = null;
         try {
-            testRunnerStatement = ( options.oraStuckTimeout > 0 ) ? initStatementWithTimeout(conn, options.oraStuckTimeout) : initStatement(conn);
+            testRunnerStatement = (options.oraStuckTimeout > 0) ? initStatementWithTimeout(conn, options.oraStuckTimeout) : initStatement(conn);
             logger.info("Running tests");
             testRunnerStatement.execute();
             logger.info("Running tests finished.");
@@ -252,17 +254,18 @@ public class TestRunner {
         }
     }
 
-    private TestRunnerStatement initStatement( Connection conn ) throws SQLException {
+    private TestRunnerStatement initStatement(Connection conn) throws SQLException {
         return compatibilityProxy.getTestRunnerStatement(options, conn);
     }
 
-    private TestRunnerStatement initStatementWithTimeout( Connection conn, int timeout ) throws OracleCreateStatmenetStuckException, SQLException {
+    private TestRunnerStatement initStatementWithTimeout(Connection conn, int timeout) throws SQLException {
+        TestRunnerStatement testRunnerStatement;
         ExecutorService executor = Executors.newSingleThreadExecutor();
         Callable<TestRunnerStatement> callable = () -> compatibilityProxy.getTestRunnerStatement(options, conn);
         Future<TestRunnerStatement> future = executor.submit(callable);
 
         // We want to leave the statement open in case of stuck scenario
-        TestRunnerStatement testRunnerStatement = null;
+        testRunnerStatement = null;
         try {
             testRunnerStatement = future.get(timeout, TimeUnit.SECONDS);
         } catch (TimeoutException e) {

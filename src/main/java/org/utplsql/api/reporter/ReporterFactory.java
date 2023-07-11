@@ -128,7 +128,7 @@ public final class ReporterFactory implements ORADataFactory {
     /**
      * Returns a set of all registered reporter's names
      *
-     * @return Set of reporter names
+     * @return Map of reporter names
      */
     public Map<String, String> getRegisteredReporterInfo() {
         Map<String, String> descMap = new HashMap<>(reportFactoryMethodMap.size());
