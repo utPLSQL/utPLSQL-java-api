@@ -32,7 +32,7 @@ public class DynamicParameterList {
 
     /** Returns the SQL of this ParameterList as comma-separated list of the parameter identifiers:<br>
      *
-     * e.g. "a_parameter1 => ?, a_parameter2 => ?"
+     * e.g. <pre>"a_parameter1 => ?, a_parameter2 => ?"</pre>
      *
      * @return comma-separated list of parameter identifiers
      */

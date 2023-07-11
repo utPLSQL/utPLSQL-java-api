@@ -25,7 +25,8 @@ public interface ReporterInspector {
      * @param reporterFactory {@link ReporterFactory}
      * @param conn            {@link Connection}
      * @return ReporterInspector
-     * @throws SQLException if there are problems with the database access
+     * @throws SQLException            if there are problems with the database access
+     * @throws InvalidVersionException if version is not valid
      */
     static ReporterInspector create(ReporterFactory reporterFactory, Connection conn) throws SQLException, InvalidVersionException {
 
