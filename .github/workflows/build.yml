@@ -16,7 +16,7 @@ jobs:
   build:
 
     env:
-      DB_URL: localhost:1521/FREEPDB1
+      DB_URL: //localhost:1521/FREEPDB1
 
     runs-on: ubuntu-latest
 
