@@ -15,6 +15,9 @@ defaults:
 jobs:
   build:
 
+    env:
+      DB_URL: localhost:1521/FREEPDB1
+
     runs-on: ubuntu-latest
 
     services:
@@ -23,7 +26,6 @@ jobs:
         env:
           ORACLE_PASSWORD: oracle
           SERVICE_NAME: FREEPDB1
-          DB_URL: localhost:1521/FREEPDB1
         ports:
           - 1521:1521
         options: >-
