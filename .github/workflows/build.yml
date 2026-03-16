@@ -15,10 +15,9 @@ defaults:
 jobs:
   build:
 
-    env:
-      DB_URL: //localhost:1521/FREEPDB1
-
     runs-on: ubuntu-latest
+    env:
+      DB_URL: "//localhost:1521/FREEPDB1"
 
     services:
       oracle:

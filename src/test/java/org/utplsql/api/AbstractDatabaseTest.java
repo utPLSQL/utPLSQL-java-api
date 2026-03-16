@@ -17,7 +17,7 @@ public abstract class AbstractDatabaseTest {
 
     static {
         DB_URL = EnvironmentVariableUtil.getEnvValue("DB_URL", "localhost:1521:XE");
-        DB_USER = EnvironmentVariableUtil.getEnvValue("DB_USER", "app");
+        DB_USER = EnvironmentVariableUtil.getEnvValue("DB_USER", "APP");
         DB_PASS = EnvironmentVariableUtil.getEnvValue("DB_PASS", "pass");
     }
 
