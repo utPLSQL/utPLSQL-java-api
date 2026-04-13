@@ -108,13 +108,6 @@
                         </goals>
                     </execution>
                 </executions>
-                <configuration>
-                    <environmentVariables>
-                        <DB_URL>${dbUrl}</DB_URL>
-                        <DB_USER>${dbUser}</DB_USER>
-                        <DB_PASS>${dbPass}</DB_PASS>
-                    </environmentVariables>
-                </configuration>
             </plugin>
             <plugin>
                 <groupId>com.amashchenko.maven.plugin</groupId>
