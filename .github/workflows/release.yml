@@ -18,6 +18,7 @@ jobs:
         image: gvenzl/oracle-free:23-slim-faststart
         env:
           ORACLE_PASSWORD: oracle
+          SERVICE_NAME: FREEPDB1
         ports:
           - 1521:1521
         options: >-
@@ -42,7 +43,7 @@ jobs:
         with:
           java-version: '11'
           distribution: 'adopt'
-          server-id: ossrh
+          server-id: central
           server-username: MAVEN_USERNAME
           server-password: MAVEN_PASSWORD
           gpg-private-key: ${{ secrets.MAVEN_GPG_PRIVATE_KEY }}
