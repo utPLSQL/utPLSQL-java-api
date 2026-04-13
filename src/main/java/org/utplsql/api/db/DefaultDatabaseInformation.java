@@ -33,7 +33,7 @@ public class DefaultDatabaseInformation implements DatabaseInformation {
     @Override
     public String getOracleVersion(Connection conn) throws SQLException {
         String result = null;
-        try (PreparedStatement stmt = conn.prepareStatement("select version from product_component_version where product like 'Oracle Database%'")) {
+        try (PreparedStatement stmt = conn.prepareStatement("select version from product_component_version where product like 'Oracle Database%' or product like 'Oracle AI Database%'")) {
             ResultSet rs = stmt.executeQuery();
 
             if (rs.next()) {
