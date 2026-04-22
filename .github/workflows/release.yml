@@ -93,7 +93,7 @@ jobs:
 
       - name: Commit and tag release version
         run: |
-          git add pom.xml "**/pom.xml"
+          git add -u
           git commit -m "chore(release): release ${{ inputs.release_version }} [skip ci]"
           git tag -a "v${{ inputs.release_version }}" -m "Release ${{ inputs.release_version }}"
 
@@ -103,7 +103,7 @@ jobs:
 
       - name: Commit next snapshot version
         run: |
-          git add pom.xml "**/pom.xml"
+          git add -u
           git commit -m "chore(release): bump to ${{ inputs.next_snapshot }}-SNAPSHOT [skip ci]"
 
       - name: Push commits and tag

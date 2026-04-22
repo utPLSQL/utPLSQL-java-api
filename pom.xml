@@ -8,7 +8,7 @@
 
     <name>utPLSQL Java API</name>
     <description>Java API for running Unit Tests with utPLSQL v3+.</description>
-    <url>https://github.com/utPLSQL/utPLSQL-java-api</url>
+    <url>https://utplsql.org</url>
 
     <properties>
         <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
@@ -29,15 +29,38 @@
         </license>
     </licenses>
 
-    <developers>
-        <developer>
+    <issueManagement>
+        <system>GitHub Issues</system>
+        <url>https://github.com/utPLSQL/utPLSQL-java-api/issues</url>
+    </issueManagement>
+
+    <contributors>
+        <contributor>
+            <name>Vinicius Avellar Moreira</name>
+            <organization>utPLSQL.org</organization>
+            <organizationUrl>https://utplsql.org</organizationUrl>
+            <email>amvinicius@gmail.com</email>
+        </contributor>
+        <contributor>
+            <name>Samuel Nitsche</name>
+            <organization>utPLSQL.org</organization>
+            <organizationUrl>https://utplsql.org</organizationUrl>
+            <email>derpesse@gmail.com</email>
+        </contributor>
+        <contributor>
+            <name>Jacek Gebal</name>
+            <organization>utPLSQL.org</organization>
+            <organizationUrl>https://utplsql.org</organizationUrl>
+            <email>jgebal@gmail.com</email>
+        </contributor>
+        <contributor>
             <name>Simon Martinelli</name>
             <organization>utPLSQL.org</organization>
-            <organizationUrl>http://utplsql.org</organizationUrl>
+            <organizationUrl>https://utplsql.org</organizationUrl>
             <email>simon@martineli.ch</email>
             <url>https://martinelli.ch</url>
-        </developer>
-    </developers>
+        </contributor>
+    </contributors>
 
     <scm>
         <connection>scm:git@github.com:utPLSQL/utPLSQL-java-api.git</connection>
