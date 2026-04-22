@@ -77,7 +77,7 @@ jobs:
           MAVEN_GPG_PASSPHRASE: ${{ secrets.MAVEN_GPG_PASSPHRASE }}
 
       - name: Publish unit test results
-        uses: EnricoMi/publish-unit-test-result-action@v1.24
+        uses: EnricoMi/publish-unit-test-result-action@v2
         if: always()
         with:
           files: target/**/TEST**.xml

@@ -92,7 +92,7 @@ abstract class AbstractOutputBuffer implements OutputBuffer {
             cstmt.execute();
             cstmt.setFetchSize(fetchSize);
 
-            try (ResultSet resultSet = (ResultSet) cstmt.getObject(1)) {
+            try (ResultSet resultSet = (ResultSet) cstmt.getObject("lines_cursor")) {
                 while (resultSet.next()) {
                     onLineFetched.accept(resultSet.getString("text"));
                 }
@@ -114,7 +114,7 @@ abstract class AbstractOutputBuffer implements OutputBuffer {
             cstmt.execute();
             cstmt.setFetchSize(fetchSize);
 
-            try (ResultSet resultSet = (ResultSet) cstmt.getObject(1)) {
+            try (ResultSet resultSet = (ResultSet) cstmt.getObject("lines_cursor")) {
 
                 List<String> outputLines = new ArrayList<>();
                 while (resultSet.next()) {

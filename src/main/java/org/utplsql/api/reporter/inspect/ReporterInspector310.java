@@ -1,16 +1,8 @@
 package org.utplsql.api.reporter.inspect;
 
-import oracle.jdbc.OracleCallableStatement;
-import oracle.jdbc.OracleConnection;
-import oracle.jdbc.OracleType;
-import org.utplsql.api.compatibility.CompatibilityProxy;
-import org.utplsql.api.reporter.Reporter;
 import org.utplsql.api.reporter.ReporterFactory;
 
-import java.sql.Connection;
-import java.sql.PreparedStatement;
-import java.sql.ResultSet;
-import java.sql.SQLException;
+import java.sql.*;
 import java.util.*;
 
 /**
@@ -48,7 +40,7 @@ class ReporterInspector310 extends AbstractReporterInspector {
         String reporterName = reporterNameWithOwner.substring(reporterNameWithOwner.indexOf(".") + 1).toUpperCase();
 
         ReporterInfo.Type type = ReporterInfo.Type.SQL;
-        String description = getDescription(reporterName);
+        String description = getDescription(reporterNameWithOwner);
 
         if (registeredReporterFactoryMethods.containsKey(reporterName)) {
             type = ReporterInfo.Type.SQL_WITH_JAVA;
@@ -58,16 +50,12 @@ class ReporterInspector310 extends AbstractReporterInspector {
         return new ReporterInfo(reporterName, type, description);
     }
 
-    private String getDescription(String reporterName) throws SQLException {
-        CompatibilityProxy compatibilityProxy = new CompatibilityProxy(connection);
-        Reporter reporter = reporterFactory.createReporter(reporterName).init(connection, compatibilityProxy, reporterFactory);
-        OracleConnection oraCon = connection.unwrap(OracleConnection.class);
-
-        try (OracleCallableStatement stmt = (OracleCallableStatement) oraCon.prepareCall("{ ? = call ?.get_description() }")) {
-            stmt.registerOutParameter(1, OracleType.VARCHAR2);
-            stmt.setORAData(2, reporter);
+    private String getDescription(String reporterNameWithOwner) throws SQLException {
+        String plsql = "DECLARE l_obj " + reporterNameWithOwner + " := " + reporterNameWithOwner + "(); "
+                + "BEGIN :1 := l_obj.get_description(); END;";
+        try (CallableStatement stmt = connection.prepareCall(plsql)) {
+            stmt.registerOutParameter(1, Types.VARCHAR);
             stmt.execute();
-
             return stmt.getString(1);
         }
     }

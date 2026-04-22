@@ -1,7 +1,6 @@
 package org.utplsql.api.outputBuffer;
 
 import oracle.jdbc.OracleCallableStatement;
-import oracle.jdbc.OracleConnection;
 import oracle.jdbc.OracleTypes;
 import org.utplsql.api.reporter.Reporter;
 
@@ -28,10 +27,16 @@ class DefaultOutputBuffer extends AbstractOutputBuffer {
 
     @Override
     protected CallableStatement getLinesCursorStatement(Connection conn) throws SQLException {
-        OracleConnection oraConn = conn.unwrap(OracleConnection.class);
-        OracleCallableStatement cstmt = (OracleCallableStatement) oraConn.prepareCall("{? = call ?.get_lines_cursor() }");
-        cstmt.registerOutParameter(1, OracleTypes.CURSOR);
-        cstmt.setORAData(2, getReporter());
+        Reporter reporter = getReporter();
+        String plsql = "declare" +
+                "  l_rep " + reporter.getTypeName() + " := " + reporter.getTypeName() + "(); " +
+                "begin" +
+                "  l_rep.set_reporter_id(:reporter_id); " +
+                "  :lines_cursor := l_rep.get_lines_cursor(); " +
+                "end;";
+        OracleCallableStatement cstmt = (OracleCallableStatement) conn.prepareCall(plsql);
+        cstmt.setString("reporter_id", reporter.getId());
+        cstmt.registerOutParameter("lines_cursor", OracleTypes.CURSOR);
         return cstmt;
     }
 }
