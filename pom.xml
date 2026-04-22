@@ -34,33 +34,33 @@
         <url>https://github.com/utPLSQL/utPLSQL-java-api/issues</url>
     </issueManagement>
 
-    <contributors>
-        <contributor>
+    <developers>
+        <developer>
             <name>Vinicius Avellar Moreira</name>
             <organization>utPLSQL.org</organization>
             <organizationUrl>https://utplsql.org</organizationUrl>
             <email>amvinicius@gmail.com</email>
-        </contributor>
-        <contributor>
+        </developer>
+        <developer>
             <name>Samuel Nitsche</name>
             <organization>utPLSQL.org</organization>
             <organizationUrl>https://utplsql.org</organizationUrl>
             <email>derpesse@gmail.com</email>
-        </contributor>
-        <contributor>
+        </developer>
+        <developer>
             <name>Jacek Gebal</name>
             <organization>utPLSQL.org</organization>
             <organizationUrl>https://utplsql.org</organizationUrl>
             <email>jgebal@gmail.com</email>
-        </contributor>
-        <contributor>
+        </developer>
+        <developer>
             <name>Simon Martinelli</name>
             <organization>utPLSQL.org</organization>
             <organizationUrl>https://utplsql.org</organizationUrl>
             <email>simon@martineli.ch</email>
             <url>https://martinelli.ch</url>
-        </contributor>
-    </contributors>
+        </developer>
+    </developers>
 
     <scm>
         <connection>scm:git@github.com:utPLSQL/utPLSQL-java-api.git</connection>
