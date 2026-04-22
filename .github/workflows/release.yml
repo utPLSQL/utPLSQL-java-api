@@ -1,8 +1,8 @@
 name: Build and deploy release
 
 on:
-  push:
-    branches: [ main ]
+  release:
+    types: [ released ]
 
 defaults:
   run:
