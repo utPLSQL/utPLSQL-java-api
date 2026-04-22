@@ -4,7 +4,7 @@
 
     <groupId>org.utplsql</groupId>
     <artifactId>utplsql-java-api</artifactId>
-    <version>3.1.17-SNAPSHOT</version>
+    <version>3.2.01-SNAPSHOT</version>
 
     <name>utPLSQL Java API</name>
     <description>Java API for running Unit Tests with utPLSQL v3+.</description>
@@ -12,10 +12,10 @@
 
     <properties>
         <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
-        <maven.compiler.source>1.8</maven.compiler.source>
-        <maven.compiler.target>1.8</maven.compiler.target>
-        <junit.jupiter.version>5.5.2</junit.jupiter.version>
-        <oracle.jdbc.version>19.3.0.0</oracle.jdbc.version>
+        <maven.compiler.source>11</maven.compiler.source>
+        <maven.compiler.target>11</maven.compiler.target>
+        <junit.jupiter.version>5.12.2</junit.jupiter.version>
+        <oracle.jdbc.version>23.7.0.25.01</oracle.jdbc.version>
 
         <sonar.organization>utplsql</sonar.organization>
         <sonar.host.url>https://sonarcloud.io</sonar.host.url>
@@ -48,17 +48,17 @@
         <dependency>
             <groupId>org.slf4j</groupId>
             <artifactId>slf4j-api</artifactId>
-            <version>1.7.36</version>
+            <version>2.0.17</version>
         </dependency>
         <dependency>
             <groupId>com.oracle.database.jdbc</groupId>
-            <artifactId>ojdbc8</artifactId>
-            <version>19.3.0.0</version>
+            <artifactId>ojdbc11</artifactId>
+            <version>${oracle.jdbc.version}</version>
         </dependency>
         <dependency>
             <groupId>com.oracle.database.nls</groupId>
             <artifactId>orai18n</artifactId>
-            <version>19.3.0.0</version>
+            <version>${oracle.jdbc.version}</version>
         </dependency>
         <dependency>
             <groupId>com.google.code.findbugs</groupId>
@@ -75,12 +75,14 @@
         <dependency>
             <groupId>org.hamcrest</groupId>
             <artifactId>hamcrest</artifactId>
-            <version>2.1</version>
+            <version>2.2</version>
+            <scope>test</scope>
         </dependency>
         <dependency>
             <groupId>org.mockito</groupId>
             <artifactId>mockito-core</artifactId>
-            <version>3.0.0</version>
+            <version>5.17.0</version>
+            <scope>test</scope>
         </dependency>
     </dependencies>
 
@@ -94,8 +96,13 @@
         <plugins>
             <plugin>
                 <groupId>org.apache.maven.plugins</groupId>
+                <artifactId>maven-compiler-plugin</artifactId>
+                <version>3.14.0</version>
+            </plugin>
+            <plugin>
+                <groupId>org.apache.maven.plugins</groupId>
                 <artifactId>maven-surefire-plugin</artifactId>
-                <version>3.1.2</version>
+                <version>3.5.3</version>
             </plugin>
             <plugin>
                 <groupId>org.apache.maven.plugins</groupId>
@@ -112,7 +119,7 @@
             <plugin>
                 <groupId>com.amashchenko.maven.plugin</groupId>
                 <artifactId>gitflow-maven-plugin</artifactId>
-                <version>1.18.0</version>
+                <version>1.21.0</version>
                 <configuration>
                     <verbose>true</verbose>
                     <gitFlowConfig>
@@ -131,7 +138,7 @@
                     <plugin>
                         <groupId>org.jacoco</groupId>
                         <artifactId>jacoco-maven-plugin</artifactId>
-                        <version>0.8.7</version>
+                        <version>0.8.13</version>
                         <executions>
                             <execution>
                                 <id>prepare-agent</id>
@@ -162,7 +169,7 @@
                     <plugin>
                         <groupId>org.apache.maven.plugins</groupId>
                         <artifactId>maven-javadoc-plugin</artifactId>
-                        <version>3.3.1</version>
+                        <version>3.11.2</version>
                         <executions>
                             <execution>
                                 <id>attach-javadocs</id>
@@ -175,7 +182,7 @@
                     <plugin>
                         <groupId>org.apache.maven.plugins</groupId>
                         <artifactId>maven-source-plugin</artifactId>
-                        <version>3.2.1</version>
+                        <version>3.3.1</version>
                         <executions>
                             <execution>
                                 <id>attach-sources</id>
@@ -189,7 +196,7 @@
                     <plugin>
                         <groupId>org.apache.maven.plugins</groupId>
                         <artifactId>maven-gpg-plugin</artifactId>
-                        <version>3.0.1</version>
+                        <version>3.2.7</version>
                         <executions>
                             <execution>
                                 <id>sign-artifacts</id>
