@@ -28,15 +28,15 @@ class DefaultOutputBuffer extends AbstractOutputBuffer {
     @Override
     protected CallableStatement getLinesCursorStatement(Connection conn) throws SQLException {
         Reporter reporter = getReporter();
-        String plsql = "DECLARE" +
-                "  l_rep " + reporter.getTypeName() + " := " + reporter.getTypeName() +"(); " +
-                "BEGIN" +
-                "  l_rep.set_reporter_id(:1); " +
-                "  :2 := l_rep.get_lines_cursor(); " +
-                "END;";
+        String plsql = "declare" +
+                "  l_rep " + reporter.getTypeName() + " := " + reporter.getTypeName() + "(); " +
+                "begin" +
+                "  l_rep.set_reporter_id(:reporter_id); " +
+                "  :lines_cursor := l_rep.get_lines_cursor(); " +
+                "end;";
         OracleCallableStatement cstmt = (OracleCallableStatement) conn.prepareCall(plsql);
-        cstmt.setString(1, reporter.getId());
-        cstmt.registerOutParameter(2, OracleTypes.CURSOR);
+        cstmt.setString("reporter_id", reporter.getId());
+        cstmt.registerOutParameter("lines_cursor", OracleTypes.CURSOR);
         return cstmt;
     }
 }

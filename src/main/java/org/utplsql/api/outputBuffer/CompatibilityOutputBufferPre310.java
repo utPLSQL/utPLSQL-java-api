@@ -20,9 +20,9 @@ class CompatibilityOutputBufferPre310 extends AbstractOutputBuffer {
 
     @Override
     protected CallableStatement getLinesCursorStatement(Connection conn) throws SQLException {
-        CallableStatement cstmt = conn.prepareCall("BEGIN ? := ut_output_buffer.get_lines_cursor(?); END;");
-        cstmt.registerOutParameter(1, OracleTypes.CURSOR);
-        cstmt.setString(2, getReporter().getId());
+        CallableStatement cstmt = conn.prepareCall("begin :lines_cursor := ut_output_buffer.get_lines_cursor(:reporter_id); end;");
+        cstmt.registerOutParameter("lines_cursor", OracleTypes.CURSOR);
+        cstmt.setString("reporter_id", getReporter().getId());
         return cstmt;
     }
 }
