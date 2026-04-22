@@ -20,3 +20,8 @@ If you want to skip the local database part, just run
 ```bash
 ./mvnw test
 ```
+
+### Publishing a new release
+
+To publish a new release manually execute the [Release workflow](https://github.com/utPLSQL/utPLSQL-java-api/actions/workflows/release.yml).
+Provide correct versions for current release and next snapshot.

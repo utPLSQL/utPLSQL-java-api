@@ -1,17 +1,25 @@
-name: Build and deploy release
+name: Release
 
 on:
-  release:
-    types: [ released ]
+  workflow_dispatch:
+    inputs:
+      release_version:
+        description: 'Release version (e.g. v3.2.01)'
+        required: true
+      next_snapshot:
+        description: 'Next snapshot version (e.g. v3.2.02-SNAPSHOT)'
+        required: true
 
 defaults:
   run:
     shell: bash
 
 jobs:
-  build:
+  release:
 
     runs-on: ubuntu-latest
+    permissions:
+      contents: write  # needed to push tags and commits
     env:
       DB_URL: "//localhost:1521/FREEPDB1"
 
@@ -30,9 +38,11 @@ jobs:
           --health-retries 10
 
     steps:
-      - uses: actions/checkout@v4
+      - name: Checkout
+        uses: actions/checkout@v4
         with:
-          fetch-depth: 0
+          fetch-depth: 0  # full history needed for tagging
+          token: ${{ secrets.GITHUB_TOKEN }}
 
       - name: Install utPLSQL
         run: sh ${{ github.workspace }}/scripts/1_install_utplsql.sh
@@ -51,6 +61,11 @@ jobs:
           gpg-private-key: ${{ secrets.MAVEN_GPG_PRIVATE_KEY }}
           gpg-passphrase: MAVEN_GPG_PASSPHRASE
 
+      - name: Configure Git
+        run: |
+          git config user.name "github-actions[bot]"
+          git config user.email "github-actions[bot]@users.noreply.github.com"
+
       - name: Cache local Maven repository
         uses: actions/cache@v4
         with:
@@ -59,11 +74,22 @@ jobs:
           restore-keys: |
             ${{ runner.os }}-maven-
 
-      - name: Maven deploy release
-        run: mvn clean deploy -Prelease
+      - name: Set release version
+        run: mvn versions:set -DremoveSnapshot=true -DgenerateBackupPoms=false
+
+      - name: Set release version
+        run: |
+          mvn versions:set -DnewVersion=${{ inputs.release_version }} -DgenerateBackupPoms=false
+
+      - name: Build and test release
+        run: mvn clean verify -Prelease
+
+      - name: Deploy to Maven Central / Nexus
+        if: success()
+        run: mvn deploy -Prelease --no-transfer-progress -DskipTests
         env:
-          MAVEN_USERNAME: ${{ secrets.MAVEN_USERNAME }}
-          MAVEN_PASSWORD: ${{ secrets.MAVEN_PASSWORD }}
+          MAVEN_USERNAME: ${{ secrets.OSSRH_USERNAME }}
+          MAVEN_PASSWORD: ${{ secrets.OSSRH_TOKEN }}
           MAVEN_GPG_PASSPHRASE: ${{ secrets.MAVEN_GPG_PASSPHRASE }}
 
       - name: Publish unit test results
@@ -71,3 +97,30 @@ jobs:
         if: always()
         with:
           files: target/**/TEST**.xml
+
+      - name: Commit and tag release version
+        run: |
+          git add pom.xml "**/pom.xml"
+          git commit -m "chore(release): release ${{ inputs.release_version }} [skip ci]"
+          git tag -a "v${{ inputs.release_version }}" -m "Release ${{ inputs.release_version }}"
+
+      - name: Set next snapshot version
+        run: |
+          mvn versions:set -DnewVersion=${{ inputs.next_snapshot }} -DgenerateBackupPoms=false
+
+      - name: Commit next snapshot version
+        run: |
+          git add pom.xml "**/pom.xml"
+          git commit -m "chore(release): bump to ${{ inputs.next_snapshot }} [skip ci]"
+
+      - name: Push commits and tag
+        run: |
+          git push origin HEAD:${{ github.ref_name }}
+          git push origin "v${{ inputs.release_version }}"
+
+      - name: Create GitHub Release
+        uses: softprops/action-gh-release@v2
+        with:
+          tag_name: "v${{ inputs.release_version }}"
+          name: "Release ${{ inputs.release_version }}"
+          generate_release_notes: true
