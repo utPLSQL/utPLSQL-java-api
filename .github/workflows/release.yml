@@ -7,7 +7,7 @@ on:
         description: 'Release version (e.g. 3.2.01)'
         required: true
       next_snapshot:
-        description: 'Next snapshot version (e.g. 3.2.02-SNAPSHOT)'
+        description: 'Next snapshot version (e.g. 3.2.02) without the "-SNAPSHOT" word'
         required: true
 
 defaults:
@@ -75,9 +75,6 @@ jobs:
             ${{ runner.os }}-maven-
 
       - name: Set release version
-        run: mvn versions:set -DremoveSnapshot=true -DgenerateBackupPoms=false
-
-      - name: Set release version
         run: |
           mvn versions:set -DnewVersion=${{ inputs.release_version }} -DgenerateBackupPoms=false
 
@@ -106,12 +103,12 @@ jobs:
 
       - name: Set next snapshot version
         run: |
-          mvn versions:set -DnewVersion=${{ inputs.next_snapshot }} -DgenerateBackupPoms=false
+          mvn versions:set -DnewVersion=${{ inputs.next_snapshot }}-SNAPSHOT -DgenerateBackupPoms=false
 
       - name: Commit next snapshot version
         run: |
           git add pom.xml "**/pom.xml"
-          git commit -m "chore(release): bump to ${{ inputs.next_snapshot }} [skip ci]"
+          git commit -m "chore(release): bump to ${{ inputs.next_snapshot }}-SNAPSHOT [skip ci]"
 
       - name: Push commits and tag
         run: |
