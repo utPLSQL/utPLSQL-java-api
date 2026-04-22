@@ -4,10 +4,10 @@ on:
   workflow_dispatch:
     inputs:
       release_version:
-        description: 'Release version (e.g. v3.2.01)'
+        description: 'Release version (e.g. 3.2.01)'
         required: true
       next_snapshot:
-        description: 'Next snapshot version (e.g. v3.2.02-SNAPSHOT)'
+        description: 'Next snapshot version (e.g. 3.2.02-SNAPSHOT)'
         required: true
 
 defaults:
