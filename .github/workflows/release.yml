@@ -80,6 +80,8 @@ jobs:
 
       - name: Build and test release
         run: mvn clean verify -Prelease
+        env:
+          MAVEN_GPG_PASSPHRASE: ${{ secrets.MAVEN_GPG_PASSPHRASE }}
 
       - name: Deploy to Maven Central / Nexus
         if: success()
