@@ -68,7 +68,7 @@ public abstract class Reporter implements ORAData {
      */
     private void initDbReporter(OracleConnection oraConn, ReporterFactory reporterFactory) throws SQLException {
         OracleCallableStatement callableStatement = (OracleCallableStatement) oraConn.prepareCall("{? = call " + selfType + "()}");
-        callableStatement.registerOutParameter(1, OracleTypes.STRUCT, "UT_OUTPUT_REPORTER_BASE");
+        callableStatement.registerOutParameter(1, OracleTypes.STRUCT, "UT_REPORTER_BASE");
         callableStatement.execute();
 
         Reporter obj = (Reporter) callableStatement.getORAData(1, reporterFactory);
