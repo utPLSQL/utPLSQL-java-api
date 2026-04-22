@@ -9,6 +9,6 @@ class JavaApiVersionTest {
 
     @Test
     void getJavaApiVersion() {
-        assertThat(JavaApiVersionInfo.getVersion(), startsWith("3.1"));
+        assertThat(JavaApiVersionInfo.getVersion(), startsWith("3.2"));
     }
 }
