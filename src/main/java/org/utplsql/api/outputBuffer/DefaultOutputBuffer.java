@@ -27,11 +27,16 @@ class DefaultOutputBuffer extends AbstractOutputBuffer {
 
     @Override
     protected CallableStatement getLinesCursorStatement(Connection conn) throws SQLException {
-        String plsql = "DECLARE l_rep ut_output_reporter_base; "
-                + "BEGIN l_rep := :2; :1 := l_rep.get_lines_cursor(); END;";
+        Reporter reporter = getReporter();
+        String plsql = "DECLARE" +
+                "  l_rep " + reporter.getTypeName() + "; " +
+                "BEGIN" +
+                "  l_rep := treat(:2 as " + reporter.getTypeName() + ");" +
+                "  :1 := l_rep.get_lines_cursor(); " +
+                "END;";
         OracleCallableStatement cstmt = (OracleCallableStatement) conn.prepareCall(plsql);
         cstmt.registerOutParameter(1, OracleTypes.CURSOR);
-        cstmt.setORAData(2, getReporter());
+        cstmt.setORAData(2, reporter);
         return cstmt;
     }
 }
