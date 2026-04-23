@@ -122,5 +122,16 @@ CREATE OR REPLACE PACKAGE BODY TEST_PKG_TEST_ME AS
     UT.EXPECT(VEXPECTED).TO_(EQUAL(VACTUAL));
   END;
 
+
+  PROCEDURE TEST_THAT_FAILS IS
+  BEGIN
+    UT.FAIL('Tis test is meant to fail to demonstrate failure');
+  END;
+
+  PROCEDURE TEST_THAT_RAISES_EXCEPTION IS
+    l_num number;
+  BEGIN
+    l_num := 1/0;
+  END;
 END;
 /
