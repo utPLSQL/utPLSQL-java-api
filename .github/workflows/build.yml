@@ -83,7 +83,7 @@ jobs:
       - name: Trigger utPLSQL-cli snapshot build
         uses: peter-evans/repository-dispatch@v3
         with:
-          token: ${{ secrets.API_TOKEN_GITHUB }}
+          token: ${{ secrets.CLI_REPO_TOKEN }}
           repository: utPLSQL/utPLSQL-cli
           event-type: utPLSQL-java-api-build
           client-payload: '{"api_version": "${{ steps.project_version.outputs.version }}"}'
