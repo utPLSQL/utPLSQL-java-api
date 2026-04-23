@@ -84,5 +84,10 @@ CREATE OR REPLACE PACKAGE TEST_PKG_TEST_ME AS
   -- %tags(cursor)
   PROCEDURE TEST_PR_TEST_ME_CURSOR;
 
+  -- %test( This is a failing test)
+  PROCEDURE TEST_THAT_FAILS;
+
+  -- %test( This is a test that raises an exception)
+  PROCEDURE TEST_THAT_RAISES_EXCEPTION;
 END;
 /

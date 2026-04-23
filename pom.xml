@@ -19,6 +19,9 @@
 
         <sonar.organization>utplsql</sonar.organization>
         <sonar.host.url>https://sonarcloud.io</sonar.host.url>
+
+        <coverage.html.version>1.0.1</coverage.html.version>
+        <coverage.html.download.dir>${project.build.directory}/coverage-html-download</coverage.html.download.dir>
     </properties>
 
     <licenses>
@@ -117,6 +120,49 @@
             </resource>
         </resources>
         <plugins>
+            <plugin>
+                <groupId>com.googlecode.maven-download-plugin</groupId>
+                <artifactId>download-maven-plugin</artifactId>
+                <version>1.8.1</version>
+                <executions>
+                    <execution>
+                        <id>download-coverage-html-assets</id>
+                        <phase>generate-resources</phase>
+                        <goals>
+                            <goal>wget</goal>
+                        </goals>
+                        <configuration>
+                            <url>https://github.com/utPLSQL/utPLSQL-coverage-html/archive/refs/tags/${coverage.html.version}.zip</url>
+                            <outputDirectory>${coverage.html.download.dir}</outputDirectory>
+                            <outputFileName>coverage-html.zip</outputFileName>
+                            <unpack>true</unpack>
+                        </configuration>
+                    </execution>
+                </executions>
+            </plugin>
+            <plugin>
+                <groupId>org.apache.maven.plugins</groupId>
+                <artifactId>maven-resources-plugin</artifactId>
+                <version>3.3.1</version>
+                <executions>
+                    <execution>
+                        <id>copy-coverage-html-assets</id>
+                        <phase>process-resources</phase>
+                        <goals>
+                            <goal>copy-resources</goal>
+                        </goals>
+                        <configuration>
+                            <outputDirectory>${project.build.outputDirectory}/CoverageHTMLReporter</outputDirectory>
+                            <resources>
+                                <resource>
+                                    <directory>${coverage.html.download.dir}/utPLSQL-coverage-html-${coverage.html.version}/assets</directory>
+                                    <filtering>false</filtering>
+                                </resource>
+                            </resources>
+                        </configuration>
+                    </execution>
+                </executions>
+            </plugin>
             <plugin>
                 <groupId>org.apache.maven.plugins</groupId>
                 <artifactId>maven-compiler-plugin</artifactId>
