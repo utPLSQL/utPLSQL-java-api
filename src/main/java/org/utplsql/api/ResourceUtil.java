@@ -3,6 +3,7 @@ package org.utplsql.api;
 import java.io.IOException;
 import java.net.URI;
 import java.net.URISyntaxException;
+import java.net.URL;
 import java.nio.file.*;
 import java.nio.file.attribute.BasicFileAttributes;
 import java.util.Collections;
@@ -27,7 +28,12 @@ public class ResourceUtil {
         try {
             String resourceName = "/" + resourceAsPath;
             Files.createDirectories(targetDirectory);
-            URI uri = ResourceUtil.class.getResource(resourceName).toURI();
+            URL resourceUrl = ResourceUtil.class.getResource(resourceName);
+            if (resourceUrl == null) {
+                throw new IOException("Coverage HTML assets not found in classpath: " + resourceName
+                        + ". The JAR was built without bundled coverage HTML reporter assets.");
+            }
+            URI uri = resourceUrl.toURI();
             Path myPath;
             if (uri.getScheme().equalsIgnoreCase("jar")) {
                 try (FileSystem fileSystem = FileSystems.newFileSystem(uri, Collections.emptyMap())) {
@@ -44,7 +50,7 @@ public class ResourceUtil {
     }
 
     private static void copyRecursive(Path from, Path targetDirectory) throws IOException {
-        Files.walkFileTree(from, new SimpleFileVisitor<Path>() {
+        Files.walkFileTree(from, new SimpleFileVisitor<>() {
 
             @Override
             public FileVisitResult preVisitDirectory(Path dir, BasicFileAttributes attrs) throws IOException {

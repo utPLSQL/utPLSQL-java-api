@@ -1,6 +1,5 @@
 package org.utplsql.api.reporter;
 
-import org.junit.jupiter.api.Disabled;
 import org.junit.jupiter.api.Tag;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.io.TempDir;
@@ -25,7 +24,6 @@ class CoverageHTMLReporterAssetTest {
         assertTrue(f.exists(), () -> "File " + f + " does not exist");
     }
 
-    @Disabled("No idea why this ever worked")
     @Test
     void writeReporterAssetsTo() throws RuntimeException {
 
