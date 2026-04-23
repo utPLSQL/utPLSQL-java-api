@@ -4,7 +4,7 @@
 
     <groupId>org.utplsql</groupId>
     <artifactId>utplsql-java-api</artifactId>
-    <version>3.2.3-SNAPSHOT</version>
+    <version>3.2.3</version>
 
     <name>utPLSQL Java API</name>
     <description>Java API for running Unit Tests with utPLSQL v3+.</description>
