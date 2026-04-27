@@ -7,8 +7,13 @@ on:
         description: 'Release version (e.g. 3.2.3)'
         required: true
       next_snapshot:
-        description: 'Next snapshot version (e.g. 3.2.4) without the "-SNAPSHOT" word'
-        required: true
+        description: 'Next development version (default: auto-increment patch,e.g. 3.2.4) without the "-SNAPSHOT" word'
+        required: false
+
+permissions:
+  contents: write
+  id-token: write
+  attestations: write
 
 defaults:
   run:
@@ -75,8 +80,7 @@ jobs:
             ${{ runner.os }}-maven-
 
       - name: Set release version
-        run: |
-          mvn versions:set -DnewVersion=${{ inputs.release_version }} -DgenerateBackupPoms=false
+        run: mvn versions:set -DnewVersion=${{ inputs.release_version }} -DgenerateBackupPoms=false
 
       - name: Build and test release
         run: mvn clean verify -Prelease
@@ -93,18 +97,21 @@ jobs:
 
       - name: Commit and tag release version
         run: |
-          git add -u
-          git commit -m "chore(release): release ${{ inputs.release_version }} [skip ci]"
+          git add pom.xml
+          git commit -m "Release ${{ inputs.release_version }} [skip ci]"
           git tag -a "v${{ inputs.release_version }}" -m "Release ${{ inputs.release_version }}"
 
-      - name: Set next snapshot version
+      - name: Calculate and set next development version
         run: |
-          mvn versions:set -DnewVersion=${{ inputs.next_snapshot }}-SNAPSHOT -DgenerateBackupPoms=false
-
-      - name: Commit next snapshot version
-        run: |
-          git add -u
-          git commit -m "chore(release): bump to ${{ inputs.next_snapshot }}-SNAPSHOT [skip ci]"
+          if [[ -n "${{ inputs.next_snapshot }}" ]]; then
+            NEXT="${{ inputs.next_snapshot }}-SNAPSHOT"
+          else
+            IFS='.' read -r major minor patch <<< "${{ inputs.release_version }}"
+            NEXT="${major}.${minor}.$((patch + 1))-SNAPSHOT"
+          fi
+          mvn -B versions:set -DnewVersion="$NEXT" -DgenerateBackupPoms=false
+          git add pom.xml
+          git commit -m "Prepare next development version $NEXT [skip ci]"
 
       - name: Push commits and tag
         run: |
