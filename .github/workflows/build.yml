@@ -70,6 +70,7 @@ jobs:
           SONAR_TOKEN: ${{ secrets.SONAR_TOKEN }}
 
       - name: Maven deploy snapshot
+        if: github.event_name != 'pull_request'
         run: mvn deploy -DskipTests
         env:
           MAVEN_USERNAME: ${{ secrets.MAVEN_USERNAME }}
@@ -77,10 +78,12 @@ jobs:
           MAVEN_GPG_PASSPHRASE: ${{ secrets.MAVEN_GPG_PASSPHRASE }}
 
       - name: Get project version
+        if: github.event_name != 'pull_request'
         id: project_version
         run: echo "version=$(mvn help:evaluate -Dexpression=project.version -q -DforceStdout)" >> $GITHUB_OUTPUT
 
       - name: Trigger utPLSQL-cli snapshot build
+        if: github.event_name != 'pull_request'
         uses: peter-evans/repository-dispatch@v3
         with:
           token: ${{ secrets.CLI_REPO_TOKEN }}
