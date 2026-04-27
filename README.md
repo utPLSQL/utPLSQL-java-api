@@ -1,6 +1,7 @@
 [![latest-release](https://img.shields.io/github/release/utPLSQL/utPLSQL-java-api.svg)](https://github.com/utPLSQL/utPLSQL-java-api/releases)
 [![license](https://img.shields.io/github/license/utPLSQL/utPLSQL-java-api.svg)](https://www.apache.org/licenses/LICENSE-2.0)
 [![Build status](https://github.com/utPLSQL/utPLSQL-java-api/actions/workflows/build.yml/badge.svg)](https://github.com/utPLSQL/utPLSQL-java-api/actions/workflows/build.yml)
+[![Quality Gate Status](https://sonarcloud.io/api/project_badges/measure?project=utPLSQL_utPLSQL-java-api&metric=alert_status)](https://sonarcloud.io/summary/new_code?id=utPLSQL_utPLSQL-java-api)
 
 # utPLSQL-java-api
 This is a collection of classes, that makes it easy to access the [utPLSQL v3](https://github.com/utPLSQL/utPLSQL/) database objects using Java.
