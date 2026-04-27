@@ -1,3 +1,5 @@
+[![latest-release](https://img.shields.io/github/release/utPLSQL/utPLSQL-java-api.svg)](https://github.com/utPLSQL/utPLSQL-java-api/releases)
+[![license](https://img.shields.io/github/license/utPLSQL/utPLSQL-java-api.svg)](https://www.apache.org/licenses/LICENSE-2.0)
 [![Build status](https://github.com/utPLSQL/utPLSQL-java-api/actions/workflows/build.yml/badge.svg)](https://github.com/utPLSQL/utPLSQL-java-api/actions/workflows/build.yml)
 
 # utPLSQL-java-api
