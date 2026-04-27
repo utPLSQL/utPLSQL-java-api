@@ -82,17 +82,23 @@ jobs:
         id: project_version
         run: echo "version=$(mvn help:evaluate -Dexpression=project.version -q -DforceStdout)" >> $GITHUB_OUTPUT
 
-      - name: Trigger snapshot builds
+      - name: Trigger utPLSQL-cli snapshot build
         if: github.event_name != 'pull_request'
-        env:
-          GH_TOKEN: ${{ secrets.CLI_REPO_TOKEN }}
-        run: |
-          for repo in utPLSQL/utPLSQL-cli utPLSQL/utPLSQL-maven-plugin; do
-            gh api repos/$repo/dispatches \
-              --method POST \
-              --field event_type=utPLSQL-java-api-build \
-              --field client_payload='{"api_version":"${{ steps.project_version.outputs.version }}"}'
-          done
+        uses: peter-evans/repository-dispatch@v3
+        with:
+          token: ${{ secrets.CLI_REPO_TOKEN }}
+          repository: utPLSQL/utPLSQL-cli
+          event-type: utPLSQL-java-api-build
+          client-payload: '{"api_version": "${{ steps.project_version.outputs.version }}"}'
+
+      - name: Trigger utPLSQL-maven-plugin snapshot build
+        if: github.event_name != 'pull_request'
+        uses: peter-evans/repository-dispatch@v3
+        with:
+          token: ${{ secrets.CLI_REPO_TOKEN }}
+          repository: utPLSQL/utPLSQL-maven-plugin
+          event-type: utPLSQL-java-api-build
+          client-payload: '{"api_version": "${{ steps.project_version.outputs.version }}"}'
 
       - name: Publish unit test results
         uses: EnricoMi/publish-unit-test-result-action@v2
