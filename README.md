@@ -17,13 +17,13 @@ This is a Maven Library project, you can add on your Java project as a dependenc
 <dependency>
     <groupId>org.utplsql</groupId>
     <artifactId>utplsql-java-api</artifactId>
-    <version>3.1.16</version>
+    <version>3.2.3</version>
 </dependency>
 ```
 
 ## Compatibility
-The latest Java-API is always compatible with all database frameworks of the same major version.
-For example API-3.0.4 is compatible with database framework 3.0.0-3.1.* but not with database framework 2.x.
+The latest Java-API is always compatible with database frameworks of the same minor version.
+For example API-3.2.3 is compatible with database framework 3.2 but not with database framework 3.0 or 3.3
 
 It is although recommended to always use the latest release of the API to build your tools for utPLSQL.
 
