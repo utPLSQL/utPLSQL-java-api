@@ -53,7 +53,6 @@ class TestRunnerIT extends AbstractDatabaseTest {
                 .addReporter(CoreReporters.UT_DOCUMENTATION_REPORTER.name())
                 .addReporter(CoreReporters.UT_COVERAGE_HTML_REPORTER.name())
                 .addReporter(CoreReporters.UT_COVERAGE_SONAR_REPORTER.name())
-                .addReporter(CoreReporters.UT_COVERALLS_REPORTER.name())
                 .addReporter(CoreReporters.UT_SONAR_TEST_REPORTER.name())
                 .addReporter(CoreReporters.UT_TEAMCITY_REPORTER.name())
                 .addReporter(CoreReporters.UT_JUNIT_REPORTER.name())

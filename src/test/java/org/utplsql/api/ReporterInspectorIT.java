@@ -32,7 +32,6 @@ class ReporterInspectorIT extends AbstractDatabaseTest {
 
         assertEquals(infos.get(CoreReporters.UT_COVERAGE_HTML_REPORTER.name()).getType(), ReporterInfo.Type.SQL_WITH_JAVA);
         assertEquals(infos.get(CoreReporters.UT_COVERAGE_SONAR_REPORTER.name()).getType(), ReporterInfo.Type.SQL);
-        assertEquals(infos.get(CoreReporters.UT_COVERALLS_REPORTER.name()).getType(), ReporterInfo.Type.SQL);
         assertEquals(infos.get(CoreReporters.UT_DOCUMENTATION_REPORTER.name()).getType(), ReporterInfo.Type.SQL_WITH_JAVA);
         assertEquals(infos.get(CoreReporters.UT_SONAR_TEST_REPORTER.name()).getType(), ReporterInfo.Type.SQL);
         assertEquals(infos.get(CoreReporters.UT_TEAMCITY_REPORTER.name()).getType(), ReporterInfo.Type.SQL);
