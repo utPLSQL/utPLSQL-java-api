@@ -1,5 +1,6 @@
 package org.utplsql.api.outputBuffer;
 
+import oracle.jdbc.OracleTypes;
 import org.utplsql.api.reporter.Reporter;
 
 import java.io.PrintStream;
@@ -78,6 +79,27 @@ abstract class AbstractOutputBuffer implements OutputBuffer {
     }
 
     protected abstract CallableStatement getLinesCursorStatement(Connection conn) throws SQLException;
+
+    /**
+     * Prepares the given PL/SQL block and binds the :reporter_id and :lines_cursor parameters.
+     * The returned statement must be closed by the caller. It is closed here if binding fails.
+     *
+     * @param conn  DB connection
+     * @param plsql PL/SQL block using the :reporter_id and :lines_cursor bind variables
+     * @return the prepared statement
+     * @throws SQLException any sql errors
+     */
+    protected CallableStatement prepareLinesCursorStatement(Connection conn, String plsql) throws SQLException {
+        CallableStatement cstmt = conn.prepareCall(plsql);
+        try {
+            cstmt.setString("reporter_id", reporter.getId());
+            cstmt.registerOutParameter("lines_cursor", OracleTypes.CURSOR);
+            return cstmt;
+        } catch (SQLException | RuntimeException e) {
+            cstmt.close();
+            throw e;
+        }
+    }
 
     /**
      * Print the lines as soon as they are produced and call the callback passing the new line.
