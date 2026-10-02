@@ -13,6 +13,8 @@ import java.util.List;
 
 import static org.hamcrest.MatcherAssert.assertThat;
 import static org.hamcrest.Matchers.contains;
+import static org.hamcrest.Matchers.sameInstance;
+import static org.junit.jupiter.api.Assertions.assertThrows;
 import static org.mockito.ArgumentMatchers.anyString;
 import static org.mockito.Mockito.*;
 
@@ -62,5 +64,17 @@ class DefaultOutputBufferTest {
         verify(callableStatement).setFetchSize(1);
         verify(callableStatement).execute();
         verify(callableStatement).close();
+    }
+
+    @Test
+    void statementIsClosedWhenBindingFails() throws SQLException {
+        SQLException bindError = new SQLException("bind failed");
+        doThrow(bindError).when(callableStatement).setString(anyString(), anyString());
+
+        SQLException thrown = assertThrows(SQLException.class, () -> new DefaultOutputBuffer(reporter).fetchAll(connection));
+
+        assertThat(thrown, sameInstance(bindError));
+        verify(callableStatement).close();
+        verify(callableStatement, never()).execute();
     }
 }
